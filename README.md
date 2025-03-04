@@ -1,4 +1,4 @@
-# Nombre del Proyecto
+# Mini Proyecto Gina
 
 ## Integrantes del Equipo
 - Miguel Angel Batres Luna
