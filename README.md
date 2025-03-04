@@ -6,7 +6,7 @@
 - Martin Romo 
 
 ## Descripción del Proyecto
-[ ] Breve descripción del juego y su propósito.
+- [ ] Breve descripción del juego y su propósito.
 
 ## Enlaces Importantes
 - [ ] **Repositorio en GitHub:** [Enlace al repositorio](#)
