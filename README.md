@@ -5,79 +5,99 @@
 - Ariel Emilio Parra Martinez
 - Martin Romo 
 
-## Descripción del Proyecto
-- [ ] Breve descripción del juego y su propósito.
+## Información General
 
-## Enlaces Importantes
-- [ ] **Repositorio en GitHub:** [Enlace al repositorio](#)
-- [ ] **Video Explicativo:** [Enlace al video principal](#)
-- [ ] **Backup 1 del Video:** [Enlace de respaldo](#)
-- [ ] **Backup 2 del Video:** [Enlace de respaldo](#)
+Este documento detalla los requisitos y criterios de evaluación para el desarrollo del juego.
 
-## Instrucciones para Ejecutar el Código
-- [ ] Explicación detallada de cómo instalar dependencias, ejecutar el código y cualquier requerimiento adicional.
+## Contenidos del Documento
 
-## Dinámica del Juego
+### Redacción y Rúbrica
 
-### Nivel 1
-- [ ] Explicación de la mecánica del primer nivel.
-- [ ] Objetivos y reglas.
-- [ ] Cómo completar el nivel.
+- [ ] **Portada** con los integrantes del equipo (0.2 pts)
+- [ ] **Link de GitHub** donde se puede descargar el proyecto (0.2 pts)
+- [ ] **Link del video grabado**, además de los links de respaldo
+- [ ] **Link a la nube** con el video explicando la rúbrica, sistema y código (0.2 pts)
+- [ ] **Link de respaldo** en la nube del video explicando la rúbrica, sistema y código (0.2 pts)
+- [ ] **Segundo link de respaldo** en la nube del video explicando la rúbrica, sistema y código (0.2 pts)
+- [ ] **Explicación de la operación del primer nivel** y del segundo nivel (diferencias con el primero) (0.5 pts)
+- [ ] **Imágenes de todas las pantallas** del sistema (sin omitir ninguna) (1 pts)
+- [ ] **Instrucciones detalladas** para ejecutar el código (0.5 pts)
+- [ ] **Reporte de actividades y conclusiones por integrante** (2 pts)
+
+### Foro en Aula Virtual
+
+- [ ] **Video corto** mostrando y narrando el juego, pantallas y niveles (1 pts)
+- [ ] **Publicación en el foro** con el link al video corto, nombres de los integrantes y nombre del juego (1 pts)
+
+### Características a Evaluar
+
+- [ ] **Consistencia en el diseño** del juego (2 pts)
+- [ ] **Pantalla de presentación del juego** con nombre y logotipo (1.5 pts)
+- [ ] **Menú del juego** con opciones: Jugar, Records, Instrucciones y Créditos (1 pts)
+
+### Jugar
+
+- [ ] **Captura de alias del jugador** con validaciones (6 pts)
+- [ ] **Elección de personaje** con mínimo dos opciones (4 pts)
+- [ ] **Posibilidad de iniciar el juego** (0.5 pts)
+
+### Records
+
+- [ ] **Mostrar registros de jugadores** con nombre, puntuación y fecha (6 pts)
+
+### Instrucciones
+
+- [ ] **Explicar la dinámica del juego** en cada nivel (3 pts)
+
+### Créditos
+
+- [ ] **Pantalla con nombres de los integrantes**, materia y fecha (4 pts)
+
+### Reglas del Juego
+
+- [ ] **Definir reglas del Nivel 1**
+- [ ] **Cambios en imágenes, escenario y contexto** respecto al juego de ejemplo en Phaser
+- [ ] **Pantalla de Game Over** con opción de regresar al menú (3 pts)
+- [ ] **Pantalla de felicitación** al completar los niveles con alias del jugador (3 pts)
+- [ ] **Manejo y control de 3 vidas** (3 pts)
+
+### Recursos Especiales
+
+- [ ] **Recursos que cambian de color/características aleatoriamente** (6 pts)
+
+### Persistencia de Datos
+
+- [ ] **Guardado y actualización de alias y puntuaciones en localStorage** (5 pts)
+
+### Sonido y Música
+
+- [ ] **Música de fondo con opción de prender/pausar** (3 pts)
+- [ ] **Efectos de sonido para acciones importantes** (3 pts)
+
+### Interfaz de Juego
+
+- [ ] **Mostrar alias, puntuación, vidas, nivel y fecha** (3 pts)
+- [ ] **Pausar y reanudar el juego** (3 pts)
 
 ### Nivel 2
-- [ ] Diferencias respecto al nivel 1.
-- [ ] Mecánicas adicionales.
-- [ ] Cómo se completa este nivel.
 
-## Imágenes del Juego
-- [ ] Capturas de pantalla de todas las pantallas del sistema.
+- [ ] **Cambio de diseño de fondo**
+- [ ] **Definir nuevas reglas y mecánica adicional** (8 pts)
 
-## Reporte de Actividades y Conclusiones
+### Aspectos Técnicos
 
-### Reporte por Integrante
-- [ ] **[Nombre 1]:** Actividades realizadas.
-- [ ] **[Nombre 2]:** Actividades realizadas.
-- [ ] **[Nombre 3]:** Actividades realizadas.
-- [ ] **[Nombre 4]:** Actividades realizadas.
-
-### Conclusiones Individuales
-- [ ] **[Nombre 1]:** Conclusión.
-- [ ] **[Nombre 2]:** Conclusión.
-- [ ] **[Nombre 3]:** Conclusión.
-- [ ] **[Nombre 4]:** Conclusión.
-
-## Foro en Aula Virtual
-- [ ] **Enlace al video corto del juego:** [Enlace](#)
-- [ ] **Nombres de los integrantes y nombre del juego publicados en el foro.**
-
-## Características Evaluadas
-
-### Diseño y Presentación
-- [ ] Consistencia en las pantallas del juego.
-- [ ] Pantalla de presentación con nombre y logotipo.
-- [ ] Menú del juego con opciones (Jugar, Records, Instrucciones, Créditos).
-
-### Jugabilidad
-- [ ] Validación del alias del jugador.
-- [ ] Elección de personaje.
-- [ ] Registro y ordenamiento de records en LocalStorage.
-
-### Niveles del Juego
-- [ ] Explicación de la mecánica del primer y segundo nivel.
-- [ ] Control de vidas.
-- [ ] Recursos especiales y temporizados.
-
-### Funcionalidades Adicionales
-- [ ] Música de fondo y efectos de sonido.
-- [ ] Información en el tablero (alias, puntuación, vidas, nivel, fecha).
-- [ ] Pausa y reanudación del juego.
-
-### Código y Tecnologías Utilizadas
-- [ ] Uso de LocalStorage para manejo de datos.
-- [ ] Implementación de Flexbox y Grid CSS.
-- [ ] Variables en archivos de estilos.
-- [ ] Uso de Canvas y Drag & Drop en una funcionalidad útil.
-
----
-Este README está diseñado para ser completado conforme se avanza en el proyecto.
+- [ ] **Centrar pantallas del juego en el navegador** (1 pts)
+- [ ] **Mostrar y explicar en consola:**
+  - Guardado de alias en localStorage
+  - Verificación de alias existente
+  - Orden de records en tabla
+  - Actualización de tabla al jugar con otro alias
+- [ ] **Mostrar en código:**
+  - Control de vidas (0.5 pts)
+  - Mecánica del recurso especial (1 pts)
+  - Uso de Flexbox en la vista (1 pts)
+  - Uso de CSS Grid en la vista (1 pts)
+  - Uso de variables en estilos (1 pts)
+  - Uso de Canvas en una pantalla personalizada (4 pts)
+  - Implementación de Drag and Drop con una función útil (5 pts)
 
