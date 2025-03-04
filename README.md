@@ -1,7 +1,9 @@
 # Nombre del Proyecto
 
 ## Integrantes del Equipo
-[Miguel Angel Batres Luna]
+- Miguel Angel Batres Luna
+- Ariel Emilio Parra Martinez
+- Martin Romo 
 
 ## Descripción del Proyecto
 [ ] Breve descripción del juego y su propósito.
