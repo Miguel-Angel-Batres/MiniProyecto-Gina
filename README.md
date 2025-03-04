@@ -1,10 +1,7 @@
 # Nombre del Proyecto
 
 ## Integrantes del Equipo
-- [ ] Nombre 1
-- [ ] Nombre 2
-- [ ] Nombre 3
-- [ ] Nombre 4
+[Miguel Angel Batres Luna]
 
 ## Descripción del Proyecto
 [ ] Breve descripción del juego y su propósito.
