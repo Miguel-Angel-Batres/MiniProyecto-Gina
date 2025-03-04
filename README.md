@@ -15,7 +15,7 @@
 - [ ] **Backup 2 del Video:** [Enlace de respaldo](#)
 
 ## Instrucciones para Ejecutar el Código
-[ ] Explicación detallada de cómo instalar dependencias, ejecutar el código y cualquier requerimiento adicional.
+- [ ] Explicación detallada de cómo instalar dependencias, ejecutar el código y cualquier requerimiento adicional.
 
 ## Dinámica del Juego
 
@@ -30,7 +30,7 @@
 - [ ] Cómo se completa este nivel.
 
 ## Imágenes del Juego
-[ ] Capturas de pantalla de todas las pantallas del sistema.
+- [ ] Capturas de pantalla de todas las pantallas del sistema.
 
 ## Reporte de Actividades y Conclusiones
 
