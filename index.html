@@ -6,6 +6,16 @@
     <title>Making your first Phaser 3 Game - Part 10</title>
     <script src="node_modules/phaser/dist/phaser.min.js"></script>
     <style type="text/css">
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body, h1, p, button {
+    font-family: 'Press Start 2P', cursive;
+}
+
+          img, canvas {
+          image-rendering: pixelated !important;
+      }
+
           html {
             margin: 0;
             padding: 0;
@@ -15,8 +25,10 @@
           }
           body{
             height: 100%;
-            background-image: url('assets/fondo.jpg');
-            background-size: cover;
+            background-image: url('assets/bg.png');
+            background-size: contain;
+background-repeat: no-repeat;
+background-position: center;
           }
           body.active{
             display: flex;

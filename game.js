@@ -8,14 +8,17 @@ class GameScene extends Phaser.Scene {
       this.gameOver = false;
     }
     preload() {
-      this.load.image("sky", "assets/sky.png");
+      this.load.image("sky", "assets/bg1.png");
       this.load.image("ground", "assets/platform.png");
       this.load.image("star", "assets/star.png");
       this.load.image("bomb", "assets/bomb.png");
       this.load.spritesheet("dude", "assets/dude.png", {
-        frameWidth: 32,
-        frameHeight: 48,
-      });
+        frameWidth: 54,
+        frameHeight: 77,
+      });  
+      this.load.on("filecomplete", (key) => {
+        this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST);
+    });
     }
   
     create() {
@@ -79,6 +82,7 @@ class GameScene extends Phaser.Scene {
   
       // The score
       this.scoreText = this.add.text(16, 16, "score: 0", {
+        fontFamily: '"Press Start 2P", Arial', 
         fontSize: "32px",
         fill: "#000",
       });
