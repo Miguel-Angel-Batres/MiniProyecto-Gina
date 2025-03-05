@@ -1,0 +1,134 @@
+  
+<!doctype html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8" />
+    <title>Making your first Phaser 3 Game - Part 10</title>
+    <script src="node_modules/phaser/dist/phaser.min.js"></script>
+    <style type="text/css">
+          html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Esto evita las barras de desplazamiento */
+            width: 100%;
+            height: 100%;
+          }
+          body{
+            height: 100%;
+            background-image: url('assets/fondo.jpg');
+            background-size: cover;
+          }
+          body.active{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background-image: none;
+            background-color: #000;
+          }
+          .menu{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-radius: 10px;
+            margin: auto;
+            margin-top: 100px;
+            gap: 50px;
+          }
+          h1{
+            font-size: 60px;
+            margin: 0;
+          }
+          button{
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 40px;
+            border-radius: 10px;
+            background-color: #0985dd;
+            border: none;
+            cursor: pointer;
+          }
+          button:hover{
+            background-color: #0d6b9e;
+          }
+          button:active{
+            background-color: #0a4f6f;
+          }
+          .instrucciones{
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-radius: 10px;
+            margin: auto;
+            margin-top: 100px;
+            gap: 20px;
+          }
+          .instrucciones p{
+            font-size: 30px;
+          }
+    </style>
+</head>
+<body class="body">
+    <div class="menu">
+        <h1>Hora de Aventura</h1>
+        <button id="start">Jugar</button>
+        <button id="ayuda">Instrucciones</button>
+        <button id="creditos">Créditos</button>
+        <button id="salir">Salir</button>
+    </div>
+    <div class="instrucciones" >
+        <h1>Instrucciones</h1>
+        <p>Usa las flechas del teclado para moverte</p>
+        <p>Presiona D para morirte xd</p>
+         <p>Presiona W para ganar xd</p>
+         <p>Presiona ESC para pausar/salir</p>
+         <button id="salirMenu">Salir al Menu</button>
+    </div>
+
+    
+    <script type="module">
+      import { startGame } from './config.js'; // Asegúrate de tener la función startGame exportada correctamente
+
+      // Esperamos que el DOM esté completamente cargado antes de manipular elementos
+      document.addEventListener('DOMContentLoaded', () => {
+        // Obtén el botón de "Jugar" y asigna el evento
+        document
+          .getElementById('start')
+          .addEventListener('click', () => {
+            // Ocultar el menú
+            document.querySelector('.menu').style.display = 'none';
+            // Cambiar el fondo
+            document.querySelector('body').classList.add('active');
+            
+            // Iniciar el juego
+            startGame();
+          });
+        // Obtén el botón de "Instrucciones" y asigna el evento
+        document
+          .getElementById('ayuda')
+          .addEventListener('click', () => {
+            // Ocultar el menú
+            document.querySelector('.menu').style.display = 'none';
+            // Mostrar las instrucciones
+            document.querySelector('.instrucciones').style.display = 'flex';
+
+          });
+        // Obtén el botón de "SalirMenu" y asigna el evento
+        document 
+          .getElementById('salirMenu')
+          .addEventListener('click', () => {
+            // Ocultar todos los menus
+            document.querySelector('.instrucciones').style.display = 'none';
+            //document.querySelector('.creditos').style.display = 'none';
+            // Mostrar el menú
+            document.querySelector('.menu').style.display = 'flex';
+          });
+      });
+        
+    </script>
+</body>
+</html>
