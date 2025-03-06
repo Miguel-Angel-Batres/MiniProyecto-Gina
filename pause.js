@@ -8,8 +8,14 @@ class PauseScene extends Phaser.Scene{
     create(){
         let background = this.add.image(750, 400, 'sky');
         background.setDisplaySize(1500, 800);
-        this.add.text(575, 400, 'Press SPACE to resume', { fontSize: '32px', fill: '#000' });
-        this.add.text(570, 450, 'Press ESC to go to menu', { fontSize: '32px', fill: '#000' });
+        this.add.text(575, 400, 'Press SPACE to resume', {
+            fontFamily: '"Press Start 2P", Arial',
+             fontSize: '32px', fill: '#000' 
+        });
+        this.add.text(570, 450, 'Press ESC to go to menu', { 
+            fontFamily: '"Press Start 2P", Arial',
+            fontSize: '32px', fill: '#000'
+         });
         this.input.keyboard.on('keydown-SPACE', () => {
             this.scene.resume('GameScene');
             this.scene.stop();

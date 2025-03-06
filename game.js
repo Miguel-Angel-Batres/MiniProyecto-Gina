@@ -28,15 +28,41 @@ class GameScene extends Phaser.Scene {
   }
 
   create() {
-    let background = this.add.image(750, 400, "sky");
-    background.setDisplaySize(1500, 800);
+     // Seteando el mundo a 5000px de ancho
+     this.physics.world.setBounds(0, 0, 5000, 800); 
 
-    this.platforms = this.physics.add.staticGroup();
-    this.platforms.create(750, 800, "ground").setDisplaySize(1500, 64).refreshBody();
+     // Fondo del mundo
+     let background = this.add.image(750, 400, "sky");
+     background.setDisplaySize(1500, 800);
+     background.setScrollFactor(0); // Fondo fijo
+ 
+ 
+     // Fisicas de las plataformas
+     this.platforms = this.physics.add.staticGroup();
 
+      // Creando plataformas fijas
+     this.platforms.create(750, 800, "ground").setDisplaySize(1500, 64).refreshBody();
+     this.platforms.create(2250, 800, "ground").setDisplaySize(1500, 64).refreshBody();
+     this.platforms.create(3750, 800, "ground").setDisplaySize(2500, 64).refreshBody();
+ 
+     // Creando plataformas flotantes
+     this.platforms.create(400, 600, "ground").setDisplaySize(200, 32).refreshBody();
+     this.platforms.create(900, 500, "ground").setDisplaySize(200, 32).refreshBody();
+     this.platforms.create(1600, 400, "ground").setDisplaySize(200, 32).refreshBody();
+     this.platforms.create(2200, 550, "ground").setDisplaySize(200, 32).refreshBody();
+     this.platforms.create(2800, 450, "ground").setDisplaySize(200, 32).refreshBody();
+     this.platforms.create(3500, 350, "ground").setDisplaySize(200, 32).refreshBody();
+ 
+
+    // Fisicas del player
     this.player = this.physics.add.sprite(100, 450, "finn").setScale(2);
     this.player.setBounce(0.2);
     this.player.setCollideWorldBounds(true);
+    this.player.setGravityY(400);
+
+    // Fijando camara al player
+    this.cameras.main.setBounds(0, 0, 5000, 800);
+    this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
 
     this.anims.create({
       key: "left",
@@ -124,7 +150,7 @@ class GameScene extends Phaser.Scene {
     }
 
     if (this.cursors.up.isDown && this.player.body.touching.down) {
-      this.player.setVelocityY(-330);
+      this.player.setVelocityY(-600);
     }
   }
 
