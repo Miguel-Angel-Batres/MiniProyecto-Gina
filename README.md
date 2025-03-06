@@ -3,7 +3,7 @@
 ## Integrantes del Equipo
 - Miguel Angel Batres Luna
 - Ariel Emilio Parra Martinez
-- Martin Romo 
+- Martin Alfonso Romo Martinez 
 
 ## Información General
 
