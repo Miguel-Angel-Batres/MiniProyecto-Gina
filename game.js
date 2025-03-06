@@ -67,7 +67,7 @@ class GameScene extends Phaser.Scene {
     this.anims.create({
       key: "left",
       frames: this.anims.generateFrameNumbers("finn", { start: 0, end: 7 }),
-      frameRate: 10,
+      frameRate: 6,
       repeat: -1,
     });
 
@@ -75,13 +75,13 @@ class GameScene extends Phaser.Scene {
     this.anims.create({
       key: "turn",
       frames: [{ key: "finn", frame: 8 }],
-      frameRate: 20,
+      frameRate: 10,
     });
 
     this.anims.create({
       key: "right",
       frames: this.anims.generateFrameNumbers("finn", { start: 9, end: 16 }),
-      frameRate: 10,
+      frameRate: 6,
       repeat: -1,
     });
 
@@ -105,12 +105,14 @@ class GameScene extends Phaser.Scene {
       fontSize: "32px",
       fill: "#000",
     });
+    this.scoreText.setScrollFactor(0);
 
     this.livesText = this.add.text(16, 50, "Lives: 3", {
       fontFamily: '"Press Start 2P", Arial',
       fontSize: "32px",
       fill: "#000",
     });
+    this.livesText.setScrollFactor(0);
 
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.stars, this.platforms);
