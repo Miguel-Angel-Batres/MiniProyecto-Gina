@@ -9,8 +9,14 @@ class WinScene extends Phaser.Scene {
 
     create() {
         this.add.image(750, 400, 'sky').setDisplaySize(1500, 800);
-        this.add.text(690, 400, 'You win!', { fontSize: '32px', fill: '#000' });
-        this.add.text (550, 450, 'Press SPACE to go to menu', { fontSize: '32px', fill: '#000' });
+        this.add.text(690, 400, 'You win!', {
+            fontFamily: '"Press Start 2P", Arial',
+            fontSize: '32px', fill: '#000' 
+        });
+        this.add.text (550, 450, 'Press SPACE to go to menu', {
+            fontFamily: '"Press Start 2P", Arial',
+            fontSize: '32px', fill: '#000'
+         });
         // precionar espacio para volver al menu
         this.input.keyboard.on('keydown-SPACE', () => {
             this.scene.stop('GameScene');

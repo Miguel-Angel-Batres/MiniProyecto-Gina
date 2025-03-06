@@ -4,7 +4,7 @@ class GameScene extends Phaser.Scene {
     this.score = 0;
     this.lives = 3;
   }
-  init(){
+  init() {
     this.score = 0;
     this.lives = 3;
     this.gameOver = false;
@@ -12,12 +12,16 @@ class GameScene extends Phaser.Scene {
   preload() {
     this.load.image("sky", "assets/bg1.png");
     this.load.image("ground", "assets/platform.png");
-    this.load.image("star", "assets/star.png");
+    this.load.image("candy", "assets/candy.png");
     this.load.image("bomb", "assets/bomb.png");
-    this.load.spritesheet("dude", "assets/dude.png", {
+    this.load.spritesheet("finn", "assets/finn.png", {
       frameWidth: 54,
-      frameHeight: 77,
-    });  
+      frameHeight: 83,
+    });
+    this.load.spritesheet("jake", "assets/jake.png", {
+      frameWidth: 55,
+      frameHeight: 68,
+    });
     this.load.on("filecomplete", (key) => {
       this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST);
     });
@@ -30,26 +34,27 @@ class GameScene extends Phaser.Scene {
     this.platforms = this.physics.add.staticGroup();
     this.platforms.create(750, 800, "ground").setDisplaySize(1500, 64).refreshBody();
 
-    this.player = this.physics.add.sprite(100, 450, "dude").setScale(2);
+    this.player = this.physics.add.sprite(100, 450, "finn").setScale(2);
     this.player.setBounce(0.2);
     this.player.setCollideWorldBounds(true);
 
     this.anims.create({
       key: "left",
-      frames: this.anims.generateFrameNumbers("dude", { start: 0, end: 3 }),
+      frames: this.anims.generateFrameNumbers("finn", { start: 0, end: 7 }),
       frameRate: 10,
       repeat: -1,
     });
 
+    
     this.anims.create({
       key: "turn",
-      frames: [{ key: "dude", frame: 4 }],
+      frames: [{ key: "finn", frame: 8 }],
       frameRate: 20,
     });
 
     this.anims.create({
       key: "right",
-      frames: this.anims.generateFrameNumbers("dude", { start: 5, end: 8 }),
+      frames: this.anims.generateFrameNumbers("finn", { start: 9, end: 16 }),
       frameRate: 10,
       repeat: -1,
     });
@@ -57,7 +62,7 @@ class GameScene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
 
     this.stars = this.physics.add.group({
-      key: "star",
+      key: "candy",
       repeat: 11,
       setXY: { x: 12, y: 0, stepX: 70 },
     });
@@ -70,13 +75,13 @@ class GameScene extends Phaser.Scene {
     this.bombs = this.physics.add.group();
 
     this.scoreText = this.add.text(16, 16, "Score: 0", {
-      fontFamily: '"Press Start 2P", Arial', 
+      fontFamily: '"Press Start 2P", Arial',
       fontSize: "32px",
       fill: "#000",
     });
 
     this.livesText = this.add.text(16, 50, "Lives: 3", {
-      fontFamily: '"Press Start 2P", Arial', 
+      fontFamily: '"Press Start 2P", Arial',
       fontSize: "32px",
       fill: "#000",
     });
@@ -87,12 +92,12 @@ class GameScene extends Phaser.Scene {
 
     this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
     this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
-    
+
     this.input.keyboard.on('keydown-ESC', () => {
       this.scene.launch('PauseScene');
       this.scene.pause();
     });
-    
+
     this.input.keyboard.on('keydown-D', () => {
       this.hitBomb();
     });
@@ -123,8 +128,8 @@ class GameScene extends Phaser.Scene {
     }
   }
 
-  collectStar(player, star) {
-    star.disableBody(true, true);
+  collectStar(player, candy) {
+    candy.disableBody(true, true);
 
     this.score += 10;
     this.scoreText.setText("Score: " + this.score);
@@ -146,7 +151,7 @@ class GameScene extends Phaser.Scene {
       bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
       bomb.allowGravity = false;
 
-      if(this.bombs.countActive(true) === 2){
+      if (this.bombs.countActive(true) === 2) {
         this.scene.start('WinScene');
       }
     }
@@ -155,25 +160,25 @@ class GameScene extends Phaser.Scene {
   hitBomb(player, bomb) {
     // Restar una vida
     this.lives--;
-    this.livesText.setText("Lives: " + this.lives); 
+    this.livesText.setText("Lives: " + this.lives);
 
-    if (this.lives <= 0) { 
-        // Si las vidas llegan a 0, termina el juego
-        this.physics.pause();
-        this.player.setTint(0xff0000);
-        this.player.anims.play("turn");
-        this.gameOver = true;
+    if (this.lives <= 0) {
+      // Si las vidas llegan a 0, termina el juego
+      this.physics.pause();
+      this.player.setTint(0xff0000);
+      this.player.anims.play("turn");
+      this.gameOver = true;
 
-        this.time.delayedCall(1000, () => {
-            this.scene.start('LoseScene');
-        });
+      this.time.delayedCall(1000, () => {
+        this.scene.start('LoseScene');
+      });
     } else {
-        // Si aún hay vidas, solo reposicionamos al jugador sin eliminar las bombas
-        this.player.setPosition(100, 450);
-        this.player.setVelocity(0, 0); // Detener cualquier movimiento
-        this.player.clearTint(); // Quitar el color rojo
+      // Si aún hay vidas, solo reposicionamos al jugador sin eliminar las bombas
+      this.player.setPosition(100, 450);
+      this.player.setVelocity(0, 0); // Detener cualquier movimiento
+      this.player.clearTint(); // Quitar el color rojo
     }
-}
+  }
 }
 
 export { GameScene };
