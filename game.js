@@ -67,7 +67,7 @@ class GameScene extends Phaser.Scene {
     this.anims.create({
       key: "left",
       frames: this.anims.generateFrameNumbers("finn", { start: 0, end: 7 }),
-      frameRate: 6,
+      frameRate: 8,
       repeat: -1,
     });
 
@@ -75,13 +75,13 @@ class GameScene extends Phaser.Scene {
     this.anims.create({
       key: "turn",
       frames: [{ key: "finn", frame: 8 }],
-      frameRate: 10,
+      frameRate: 12,
     });
 
     this.anims.create({
       key: "right",
       frames: this.anims.generateFrameNumbers("finn", { start: 9, end: 16 }),
-      frameRate: 6,
+      frameRate: 8,
       repeat: -1,
     });
 
