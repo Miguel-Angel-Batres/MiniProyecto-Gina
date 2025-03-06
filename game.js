@@ -8,9 +8,12 @@ class GameScene extends Phaser.Scene {
     this.score = 0;
     this.lives = 3;
     this.gameOver = false;
+    this.selectedCharacter = this.game.registry.get("selectedCharacter");
+
+
   }
   preload() {
-    this.load.image("sky", "assets/bg1.png");
+    this.load.image("sky", "assets/bg2.png");
     this.load.image("ground", "assets/platform.png");
     this.load.image("candy", "assets/candy.png");
     this.load.image("bomb", "assets/bomb.png");
@@ -25,6 +28,7 @@ class GameScene extends Phaser.Scene {
     this.load.on("filecomplete", (key) => {
       this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST);
     });
+
   }
 
   create() {
@@ -55,15 +59,11 @@ class GameScene extends Phaser.Scene {
  
 
     // Fisicas del player
+    console.log(this.selectedCharacter);
+    if(this.selectedCharacter === 'finn'){
+      console.log('finn');
     this.player = this.physics.add.sprite(100, 450, "finn").setScale(2);
-    this.player.setBounce(0.2);
-    this.player.setCollideWorldBounds(true);
-    this.player.setGravityY(400);
-
-    // Fijando camara al player
-    this.cameras.main.setBounds(0, 0, 5000, 800);
-    this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
-
+ 
     this.anims.create({
       key: "left",
       frames: this.anims.generateFrameNumbers("finn", { start: 0, end: 7 }),
@@ -84,6 +84,38 @@ class GameScene extends Phaser.Scene {
       frameRate: 8,
       repeat: -1,
     });
+  }
+  if(this.selectedCharacter === 'jake'){
+    this.player = this.physics.add.sprite(100, 450, "jake").setScale(2);
+    console.log('jake');
+    this.anims.create({
+      key: "left",
+      frames: this.anims.generateFrameNumbers("jake", { start: 0, end: 7 }),
+      frameRate: 8,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "turn",
+      frames: [{ key: "jake", frame: 8 }],
+      frameRate: 12,
+    });
+
+    this.anims.create({
+      key: "right",
+      frames: this.anims.generateFrameNumbers("jake", { start: 9, end: 16 }),
+      frameRate: 8,
+      repeat: -1,
+    });
+  
+  }
+    this.player.setBounce(0.2);
+    this.player.setCollideWorldBounds(true);
+    this.player.setGravityY(400);
+
+    // Fijando camara al player
+    this.cameras.main.setBounds(0, 0, 5000, 800);
+    this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
 
     this.cursors = this.input.keyboard.createCursorKeys();
 

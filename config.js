@@ -14,10 +14,11 @@ const config = {
       debug: false,
     },
   },
-  scene: [GameScene, PauseScene, WinScene, LoseScene]
+  scene: [GameScene, PauseScene, WinScene, LoseScene],
 };
-function startGame() {
+function startGame(personaje) {
   var game = new Phaser.Game(config);
+  game.registry.set("selectedCharacter", personaje);
   console.log("juego empezado");
 }
 export { startGame }; // Exporta la función para poder ser importada en otro archivo
