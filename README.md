@@ -29,15 +29,15 @@ Este documento detalla los requisitos y criterios de evaluación para el desarro
 
 ## Características a Evaluar
 
-- [ ] **Consistencia en el diseño** del juego (2 pts)
-- [ ] **Pantalla de presentación del juego** con nombre y logotipo (1.5 pts)
-- [ ] **Menú del juego** con opciones: Jugar, Records, Instrucciones y Créditos (1 pts)
+- [x] **Consistencia en el diseño** del juego (2 pts)
+- [x] **Pantalla de presentación del juego** con nombre y logotipo (1.5 pts)
+- [x] **Menú del juego** con opciones: Jugar, Records, Instrucciones y Créditos (1 pts)
 
 ## Jugar
 
 - [ ] **Captura de alias del jugador** con validaciones (6 pts)
-- [ ] **Elección de personaje** con mínimo dos opciones (4 pts)
-- [ ] **Posibilidad de iniciar el juego** (0.5 pts)
+- [x] **Elección de personaje** con mínimo dos opciones (4 pts)
+- [x] **Posibilidad de iniciar el juego** (0.5 pts)
 
 ## Records
 
@@ -45,7 +45,7 @@ Este documento detalla los requisitos y criterios de evaluación para el desarro
 
 ## Instrucciones
 
-- [ ] **Explicar la dinámica del juego** en cada nivel (3 pts)
+- [x] **Explicar la dinámica del juego** en cada nivel (3 pts)
 
 ## Créditos
 
@@ -54,10 +54,10 @@ Este documento detalla los requisitos y criterios de evaluación para el desarro
 ## Reglas del Juego
 
 - [ ] **Definir reglas del Nivel 1**
-- [ ] **Cambios en imágenes, escenario y contexto** respecto al juego de ejemplo en Phaser
-- [ ] **Pantalla de Game Over** con opción de regresar al menú (3 pts)
-- [ ] **Pantalla de felicitación** al completar los niveles con alias del jugador (3 pts)
-- [ ] **Manejo y control de 3 vidas** (3 pts)
+- [x] **Cambios en imágenes, escenario y contexto** respecto al juego de ejemplo en Phaser
+- [x] **Pantalla de Game Over** con opción de regresar al menú (3 pts)
+- [x] **Pantalla de felicitación** al completar los niveles con alias del jugador (3 pts)
+- [x] **Manejo y control de 3 vidas** (3 pts)
 
 ## Recursos Especiales
 
@@ -75,25 +75,25 @@ Este documento detalla los requisitos y criterios de evaluación para el desarro
 ## Interfaz de Juego
 
 - [ ] **Mostrar alias, puntuación, vidas, nivel y fecha** (3 pts)
-- [ ] **Pausar y reanudar el juego** (3 pts)
+- [x] **Pausar y reanudar el juego** (3 pts)
 
 ## Nivel 2
 
-- [ ] **Cambio de diseño de fondo**
+- [x] **Cambio de diseño de fondo**
 - [ ] **Definir nuevas reglas y mecánica adicional** (8 pts)
 
 ## Aspectos Técnicos
 
-- [ ] **Centrar pantallas del juego en el navegador** (1 pts)
+- [x] **Centrar pantallas del juego en el navegador** (1 pts)
 - [ ] **Mostrar y explicar en consola:**
   - [ ] Guardado de alias en localStorage
   - [ ] Verificación de alias existente
   - [ ] Orden de records en tabla
   - [ ] Actualización de tabla al jugar con otro alias
 - [ ] **Mostrar en código:**
-  - [ ] Control de vidas (0.5 pts)
+  - [x] Control de vidas (0.5 pts)
   - [ ] Mecánica del recurso especial (1 pts)
-  - [ ] Uso de Flexbox en la vista (1 pts)
+  - [x] Uso de Flexbox en la vista (1 pts)
   - [ ] Uso de CSS Grid en la vista (1 pts)
   - [ ] Uso de variables en estilos (1 pts)
   - [ ] Uso de Canvas en una pantalla personalizada (4 pts)
