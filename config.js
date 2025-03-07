@@ -6,8 +6,12 @@ import { LoseScene } from './losemenu.js';
 
 const config = {
   type: Phaser.AUTO,
-  width: 1500,
-  height: 800,
+  width: window.innerWidth,
+  height: window.innerHeight,
+  scale: {
+    mode: Phaser.Scale.RESIZE,  // Ajusta el tamaño automáticamente
+    autoCenter: Phaser.Scale.CENTER_BOTH,  // Centra el juego
+  },
   physics: {
     default: 'arcade',
     arcade: {
@@ -17,10 +21,10 @@ const config = {
   },
   scene: [Level1,Level2, PauseScene, WinScene, LoseScene],
 };
-function startGame(personaje) {
+function startGame(hero) {
   var game = new Phaser.Game(config);
-  game.registry.set("selectedCharacter", personaje);
+  game.registry.set("selectedCharacter", hero);
   game.registry.set("level", 1);
-  console.log("juego empezado");
+  console.log("Game Started");
 }
 export { startGame }; // Exporta la función para poder ser importada en otro archivo

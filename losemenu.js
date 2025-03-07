@@ -8,7 +8,6 @@ class LoseScene extends Phaser.Scene {
     }
 
     create() {
-        this.add.image(750, 400, 'sky').setDisplaySize(1500, 800);
         this.add.text(620, 400, 'You lose!', {
             fontFamily: '"Press Start 2P", Arial',
             fontSize: '32px', fill: '#000'

@@ -6,8 +6,7 @@ class PauseScene extends Phaser.Scene{
         this.load.image('sky', 'assets/sky.png');
     }
     create(){
-        let background = this.add.image(750, 400, 'sky');
-        background.setDisplaySize(1500, 800);
+    
         this.add.text(420, 400, 'Press SPACE to resume', {
             fontFamily: '"Press Start 2P", Arial',
              fontSize: '32px', fill: '#000' 

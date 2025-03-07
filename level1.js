@@ -9,8 +9,6 @@ class Level1 extends Phaser.Scene {
     this.lives = 3;
     this.gameOver = false;
     this.selectedCharacter = this.game.registry.get("selectedCharacter");
-
-
   }
   preload() {
     this.load.image("sky", "assets/bg1.png");
@@ -18,6 +16,7 @@ class Level1 extends Phaser.Scene {
     this.load.image("candy", "assets/candy.png");
     this.load.image("bomb", "assets/bomb.png");
     this.load.image("sandwich", "assets/sandwich.png");
+    this.load.image("sword", "assets/sword.png");
     this.load.spritesheet("finn", "assets/finn.png", {
       frameWidth: 54,
       frameHeight: 83,
@@ -26,6 +25,9 @@ class Level1 extends Phaser.Scene {
       frameWidth: 55,
       frameHeight: 68,
     });
+    this.load.image("heart", "assets/heart.png"); // Cargar imagen del corazón
+
+
     this.load.on("filecomplete", (key) => {
       this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST);
     });
@@ -33,12 +35,13 @@ class Level1 extends Phaser.Scene {
   }
 
   create() {
+    
      // Seteando el mundo a 5000px de ancho
      this.physics.world.setBounds(0, 0, 5000, 800); 
 
      // Fondo del mundo
      let background = this.add.image(750, 400, "sky");
-     background.setDisplaySize(1500, 800);
+     background.setDisplaySize(1920, 1080);
      background.setScrollFactor(0); // Fondo fijo
  
  
@@ -58,9 +61,9 @@ class Level1 extends Phaser.Scene {
      this.platforms.create(2800, 450, "ground").setDisplaySize(200, 32).refreshBody();
      this.platforms.create(3500, 350, "ground").setDisplaySize(200, 32).refreshBody();
  
-     // Sandwitch al final del nivel
-      this.sandwich = this.physics.add.sprite(4950, 80, "sandwich").setScale(2);
-      this.sandwich.setBounce(0.2);
+     // sword al final del nivel
+      this.sword = this.physics.add.sprite(4950, 80, "sword").setScale(2);
+      this.sword.setBounce(0.2);
       
     // Fisicas del player
     console.log(this.selectedCharacter);
@@ -143,20 +146,13 @@ class Level1 extends Phaser.Scene {
     });
     this.scoreText.setScrollFactor(0);
 
-    this.livesText = this.add.text(16, 50, "Lives: 3", {
-      fontFamily: '"Press Start 2P", Arial',
-      fontSize: "32px",
-      fill: "#000",
-    });
-    this.livesText.setScrollFactor(0);
-
     this.physics.add.collider(this.player, this.platforms);
     //this.physics.add.collider(this.stars, this.platforms);
     this.physics.add.collider(this.bombs, this.platforms);
-    this.physics.add.collider(this.sandwich, this.platforms);
+    this.physics.add.collider(this.sword, this.platforms);
 
     // this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
-    this.physics.add.overlap(this.player, this.sandwich, () => {
+    this.physics.add.overlap(this.player, this.sword, () => {
       this.registry.set("level", 2);
       this.scene.start('Level2');
       this.scene.stop();
@@ -176,6 +172,20 @@ class Level1 extends Phaser.Scene {
     this.input.keyboard.on('keydown-W', () => {
       this.scene.start('WinScene');
     });
+    this.livesText = this.add.text(16, 50, "Lives:", {
+      fontFamily: '"Press Start 2P", Arial',
+      fontSize: "32px",
+      fill: "#000",
+  });
+  this.livesText.setScrollFactor(0);
+  
+  // Crear los sprites de corazones para representar las vidas
+  this.heartSprites = [];
+  for (let i = 0; i < this.lives; i++) {
+      let heart = this.add.image(16 + 100 + i * 40, 50, "heart").setScrollFactor(0); // Posición y distancia entre los corazones
+      this.heartSprites.push(heart);
+    }
+
   }
 
   update() {
@@ -231,25 +241,30 @@ class Level1 extends Phaser.Scene {
   hitBomb(player, bomb) {
     // Restar una vida
     this.lives--;
-    this.livesText.setText("Lives: " + this.lives);
-
+  
+    // Actualizar los corazones según las vidas restantes
+    if (this.lives >= 0) {
+        this.heartSprites[this.lives]?.setAlpha(0);  // Desactivar el sprite de corazón que representa la vida perdida
+    }
+  
     if (this.lives <= 0) {
       // Si las vidas llegan a 0, termina el juego
       this.physics.pause();
       this.player.setTint(0xff0000);
       this.player.anims.play("turn");
       this.gameOver = true;
-
+  
       this.time.delayedCall(1000, () => {
         this.scene.start('LoseScene');
       });
     } else {
-      // Si aún hay vidas, solo reposicionamos al jugador sin eliminar las bombas
+      // Si aún hay vidas, reposicionamos al jugador sin eliminar las bombas
       this.player.setPosition(100, 450);
       this.player.setVelocity(0, 0); // Detener cualquier movimiento
       this.player.clearTint(); // Quitar el color rojo
     }
-  }
+}
+  
 }
 
 export { Level1 };

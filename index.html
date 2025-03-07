@@ -2,187 +2,56 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <title>Adventure Time</title>
-  <script src="node_modules/phaser/dist/phaser.min.js"></script>
-  <style type="text/css">
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
-    body,
-    h1,
-    p,
-    button {
-      font-family: 'Press Start 2P', cursive;
-    }
-
-    img,
-    canvas {
-      image-rendering: pixelated !important;
-    }
-
-    html {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      /* Esto evita las barras de desplazamiento */
-      width: 100%;
-      height: 100%;
-    }
-
- 
-
-    body {
-      height: 100%;
-      background-image: url('assets/bg.png');
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
-    }
-
-    body.active {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      background-image: none;
-      background-color: #000;
-    }
-
-    .menu {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      border-radius: 10px;
-      margin: auto;
-      margin-top: 100px;
-      gap: 50px;
-    }
-
-    h1 {
-      font-size: 60px;
-      margin: 0;
-    }
-
-    button {
-      margin: 10px;
-      padding: 10px 20px;
-      font-size: 40px;
-      border-radius: 10px;
-      background-color: #0985dd;
-      border: none;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #0d6b9e;
-    }
-
-    button:active {
-      background-color: #0a4f6f;
-    }
-
-    .instrucciones {
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      border-radius: 10px;
-      margin: auto;
-      margin-top: 100px;
-      gap: 20px;
-    }
-
-    .instrucciones p {
-      font-size: 30px;
-    }
-    .selectPJ {
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      border-radius: 10px;
-      margin: auto;
-      margin-top: 100px;
-      gap: 20px;
-    }
-    .Grid_select_pj {
-      display: grid;
-      grid-template-columns: repeat(2, 500px);
-      grid-template-rows: 1fr;
-      margin-top: 100px;
-      gap: 10px;
-      align-content: center;
-      justify-content: space-evenly;
-    }
-    .Grid_select_pj button{
-      background-color: transparent;
-    }
-    .cuadro_personaje {
-      width: 100%;
-      height: 100%;
-      border: 2px solid black;
-      background-color: sandybrown;
-      border-radius: 10px;
-    }
-    .selectPJ button {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0;
-      padding: 0;
-      font-size: 30px;
-      border-radius: 10px;
-      background-color: none;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.3s;
-      width: 500px;
-      height: 500px;
-    }
-    .selectPJ button:hover {
-      transform: scale(1.1);
-    }
-    .cuadro_personaje img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-  </style>
+    <!-- App manifest -->
+    <link rel="manifest" href="./manifest.json">
+    <!-- Meta -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="keywords" content="Adventure Time">
+    <meta name="description" content="Adventure Time">
+    <meta name="author" content="Adventure Time">
+    <title>Adventure Time</title>
+    <!-- Stylesheets -->
+    <link rel="preload" href="/css/normalize.css" as="style">
+    <link rel="preload" href="/css/style.css" as="style">
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- JS -->
+    <link rel="preload" href="https://arielparra.github.io/js/favicon.js" as="script">
+    <link rel="preload" href="node_modules/phaser/dist/phaser.min.js" as="script">
+    <script defer src="https://arielparra.github.io/js/favicon.js"></script>
+    <script defer src="node_modules/phaser/dist/phaser.min.js"></script>
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" href="./img/foto.webp" type="image/webp" sizes="180x180">
 </head>
 
 <body class="body">
   <div class="menu">
-    <h1 style="color: red;">Hora de Aventura</h1>
+    <h1> Adventure time</h1>
     <button id="start">Play</button>
     <button id="ayuda">help</button>
     <button id="creditos">credits</button>
-    <button id="salir">exit</button>
+    <button id="exit">exit</button>
   </div>
-  <div class="instrucciones">
-    <h1>Instrucciones</h1>
-    <p>Usa las flechas del teclado para moverte</p>
-    <p>Presiona D para morirte xd</p>
-    <p>Presiona W para ganar xd</p>
-    <p>Presiona ESC para pausar/salir</p>
-    <button id="salirMenu">Salir al Menu</button>
+  <div class="instructions">
+    <h1>instructions</h1>
+    <p>use the arrow keys to move</p>
+    <p>press the `ESC` key to pause/exit</p>
+    <button id="exitMenu">exit</button>
   </div>
   <div class="selectPJ">
-    <h1>Selecciona tu personaje</h1>
-    
+    <h1>Select your hero</h1>
+
     <div class="Grid_select_pj">
       <button id="finn">
-        <div class="cuadro_personaje">
-          <img src="assets/finn_select.png" alt="Finn" />
+        <div class="hero_square">
+          <img src="assets/finn_select.png" alt="Finn">
         </div>
       </button>
       <button id="jake">
-        <div class="cuadro_personaje">
-          <img src="assets/jake_select.png" alt="Jake" />
+        <div class="hero_square">
+          <img src="assets/jake_select.png" alt="Jake">
         </div>
       </button>
     </div>
@@ -202,28 +71,28 @@
           // Mostrar el menú de selección de personaje
           document.querySelector('.selectPJ').style.display = 'grid';
         });
-      // Obtén el botón de "Instrucciones" y asigna el evento
+      // Obtén el botón de "instructions" y asigna el evento
       document
         .getElementById('ayuda')
         .addEventListener('click', () => {
           // Ocultar el menú
           document.querySelector('.menu').style.display = 'none';
-          // Mostrar las instrucciones
-          document.querySelector('.instrucciones').style.display = 'flex';
+          // Mostrar las instructions
+          document.querySelector('.instructions').style.display = 'flex';
 
         });
-      // Obtén el botón de "SalirMenu" y asigna el evento
+      // Obtén el botón de "exitMenu" y asigna el evento
       document
-        .getElementById('salirMenu')
+        .getElementById('exitMenu')
         .addEventListener('click', () => {
           // Ocultar todos los menus
-          document.querySelector('.instrucciones').style.display = 'none';
+          document.querySelector('.instructions').style.display = 'none';
           //document.querySelector('.creditos').style.display = 'none';
           // Mostrar el menú
           document.querySelector('.menu').style.display = 'flex';
         });
       document.
-      getElementById('finn')
+        getElementById('finn')
         .addEventListener('click', () => {
           // Ocultar el menú
           document.querySelector('.selectPJ').style.display = 'none';
@@ -233,7 +102,7 @@
         });
 
       document.
-      getElementById('jake')
+        getElementById('jake')
         .addEventListener('click', () => {
           // Ocultar el menú
           document.querySelector('.selectPJ').style.display = 'none';

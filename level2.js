@@ -24,7 +24,7 @@ class Level2 extends Phaser.Scene {
   
        // Fondo del mundo
        let background = this.add.image(750, 400, "sky2");
-       background.setDisplaySize(1500, 800);
+       background.setDisplaySize(1920, 1080);
        background.setScrollFactor(0); // Fondo fijo
    
    
@@ -44,9 +44,9 @@ class Level2 extends Phaser.Scene {
        this.platforms.create(2800, 450, "ground").setDisplaySize(200, 32).refreshBody();
        this.platforms.create(3500, 350, "ground").setDisplaySize(200, 32).refreshBody();
    
-       // Sandwitch al final del nivel
-        this.sandwich = this.physics.add.sprite(4950, 80, "sandwich").setScale(2);
-        this.sandwich.setBounce(0.2);
+       // sword al final del nivel
+        this.sword = this.physics.add.sprite(4950, 80, "sword").setScale(2);
+        this.sword.setBounce(0.2);
         
       // Fisicas del player
       console.log(this.selectedCharacter);
@@ -139,10 +139,10 @@ class Level2 extends Phaser.Scene {
       this.physics.add.collider(this.player, this.platforms);
       //this.physics.add.collider(this.stars, this.platforms);
       this.physics.add.collider(this.bombs, this.platforms);
-      this.physics.add.collider(this.sandwich, this.platforms);
+      this.physics.add.collider(this.sword, this.platforms);
   
       // this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
-      this.physics.add.overlap(this.player, this.sandwich, () => {
+      this.physics.add.overlap(this.player, this.sword, () => {
         this.scene.start('WinScene');
         this.scene.stop();
       });

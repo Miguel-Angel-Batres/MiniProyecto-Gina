@@ -1,0 +1,272 @@
+:root {
+  /* Color Palette */
+  --yellow: #ebcb8b;
+  --orange: #d08770;
+  --red: #bf616a;
+  --magenta: #b48ead;
+  --blue: #5e81ac;
+  --cyan: #81a1c1;
+  --aqua: #8fbcbb;
+  --green: #a3be8c;
+  --white: #d8dee9;
+  --black: #242933;
+  --gray1: #323a48;
+  --gray2: #373e4d;
+  --gray3: #3b4252;
+  --gray4: #4c566a;
+  --gray5: #4b5f82;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+@font-face {
+  font-family: 'Press Start 2P';
+  src: url('/fonts/PressStart2P-Regular.ttf') format('woff2'),
+    url('/fonts/PressStart2P-Regular.ttf') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--white);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--blue);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--white);
+}
+
+img,
+canvas {
+  image-rendering: pixelated !important;
+}
+
+body,
+h1,
+p,
+button {
+  font-family: 'Press Start 2P', cursive;
+  color: var(--black);
+}
+html, body {
+  width: 100%;
+  height: 100vh;  /* Usa '100vh' en lugar de '100%' para asegurar que el body ocupe toda la pantalla */
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Evita el desplazamiento */
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--blue) var(--white);
+  background-color: var(--blue);
+  color: var(--black);
+  font-size: 62.5%;
+  box-sizing: border-box;
+  scroll-snap-type: y mandatory;
+}
+
+body {
+  background-image: url('/assets/bgHDnotext.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center top; /* Asegura que la parte superior de la imagen no se corte */
+}
+
+h1 {
+  font-size: 3.8rem;
+}
+h2 {
+  font-size: 2.8rem;
+}
+h3 {
+  font-size: 1.8rem;
+}
+h1,
+h2,
+h3 {
+  text-align: center;
+}
+.center {
+  display: block;
+  margin: auto;
+}
+
+header {
+  background-color: var(--blue);
+  padding: 2rem 0;
+  text-align: center;
+  border-bottom: 2px solid var(--hr);
+}
+
+
+@keyframes fadeInFromBottom {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+input {
+  appearance: none;
+  vertical-align: middle;
+  outline: none;
+  border: 2px solid var(--nav-a-hover_BG);
+  border-radius: 4px;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+input[type="radio"] {
+  border-radius: 50%;
+}
+
+input:checked {
+  background-color: var(--nav-a-hover_BG);
+}
+
+.input-text {
+  background-color: var(--white);
+  resize: none;
+  width: 100%;
+  border: none;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
+
+/**/
+
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 1rem;
+  margin: auto;
+  margin-top: 10rem;
+  gap: 1rem;
+}
+
+h1 {
+  font-size: 60px;
+  margin: 0;
+  margin-bottom: 10rem;
+}
+
+
+button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 40px;
+  cursor: pointer;
+  align-items: center;
+  background-color: var(--blue);
+  border: 2px solid var(--black);
+  color: var(--btn_color);
+  box-shadow: 4px 4px 2px 1px var(--gray1);
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+button:focus {
+  outline: 5px solid var(--white); /* outline when tab is pressed */
+}
+
+button:hover {
+  border: 2px solid var(--white);
+  background-color: var(--cyan);
+  color: var(--black);
+  transition: 200ms;
+}
+
+button:active {
+  background-color: var(--white);
+}
+
+.instructions {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
+  margin: auto;
+  margin-top: 100px;
+  gap: 20px;
+}
+
+.instructions p {
+  font-size: 30px;
+}
+
+.selectPJ {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
+  margin: auto;
+  margin-top: 100px;
+  gap: 20px;
+}
+
+.Grid_select_pj {
+  display: grid;
+  grid-template-columns: repeat(2, 20rem);
+  grid-template-rows: 1fr;
+  margin-top: 1rem;
+  gap: 5rem;
+  align-content: center;
+  justify-content: space-evenly;
+}
+
+.Grid_select_pj button {
+  background-color:red;
+}
+
+.hero_square {
+  width: 100%;
+  height: 100%;
+  border: 2px solid black;
+  background-color: sandybrown;
+  border-radius: 10px;
+}
+
+.selectPJ button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  font-size: 30px;
+  border-radius: 10px;
+  background-color: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.selectPJ button:hover {
+  transform: scale(1.1);
+}
+
+.hero_square img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
