@@ -1,6 +1,6 @@
-class GameScene extends Phaser.Scene {
+class Level1 extends Phaser.Scene {
   constructor() {
-    super({ key: "GameScene" });
+    super({ key: "Level1" });
     this.score = 0;
     this.lives = 3;
   }
@@ -13,10 +13,11 @@ class GameScene extends Phaser.Scene {
 
   }
   preload() {
-    this.load.image("sky", "assets/bg2.png");
+    this.load.image("sky", "assets/bg1.png");
     this.load.image("ground", "assets/platform.png");
     this.load.image("candy", "assets/candy.png");
     this.load.image("bomb", "assets/bomb.png");
+    this.load.image("sandwich", "assets/sandwich.png");
     this.load.spritesheet("finn", "assets/finn.png", {
       frameWidth: 54,
       frameHeight: 83,
@@ -49,7 +50,7 @@ class GameScene extends Phaser.Scene {
      this.platforms.create(2250, 800, "ground").setDisplaySize(1500, 64).refreshBody();
      this.platforms.create(3750, 800, "ground").setDisplaySize(2500, 64).refreshBody();
  
-     // Creando plataformas flotantes
+     // Creando plataformas flotantes 
      this.platforms.create(400, 600, "ground").setDisplaySize(200, 32).refreshBody();
      this.platforms.create(900, 500, "ground").setDisplaySize(200, 32).refreshBody();
      this.platforms.create(1600, 400, "ground").setDisplaySize(200, 32).refreshBody();
@@ -57,7 +58,10 @@ class GameScene extends Phaser.Scene {
      this.platforms.create(2800, 450, "ground").setDisplaySize(200, 32).refreshBody();
      this.platforms.create(3500, 350, "ground").setDisplaySize(200, 32).refreshBody();
  
-
+     // Sandwitch al final del nivel
+      this.sandwich = this.physics.add.sprite(4950, 80, "sandwich").setScale(2);
+      this.sandwich.setBounce(0.2);
+      
     // Fisicas del player
     console.log(this.selectedCharacter);
     if(this.selectedCharacter === 'finn'){
@@ -111,7 +115,7 @@ class GameScene extends Phaser.Scene {
   }
     this.player.setBounce(0.2);
     this.player.setCollideWorldBounds(true);
-    this.player.setGravityY(400);
+    this.player.setGravityY(500);
 
     // Fijando camara al player
     this.cameras.main.setBounds(0, 0, 5000, 800);
@@ -119,16 +123,16 @@ class GameScene extends Phaser.Scene {
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    this.stars = this.physics.add.group({
-      key: "candy",
-      repeat: 11,
-      setXY: { x: 12, y: 0, stepX: 70 },
-    });
+    // this.stars = this.physics.add.group({
+    //   key: "candy",
+    //   repeat: 11,
+    //   setXY: { x: 12, y: 0, stepX: 70 },
+    // });
 
-    this.stars.children.iterate(function (child) {
-      child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-      child.setScale(2);
-    });
+    // this.stars.children.iterate(function (child) {
+    //   child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+    //   child.setScale(2);
+    // });
 
     this.bombs = this.physics.add.group();
 
@@ -147,10 +151,17 @@ class GameScene extends Phaser.Scene {
     this.livesText.setScrollFactor(0);
 
     this.physics.add.collider(this.player, this.platforms);
-    this.physics.add.collider(this.stars, this.platforms);
+    //this.physics.add.collider(this.stars, this.platforms);
     this.physics.add.collider(this.bombs, this.platforms);
+    this.physics.add.collider(this.sandwich, this.platforms);
 
-    this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
+    // this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
+    this.physics.add.overlap(this.player, this.sandwich, () => {
+      this.registry.set("level", 2);
+      this.scene.start('Level2');
+      this.scene.stop();
+      console.log('cambio de nivel');
+    });
     this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
 
     this.input.keyboard.on('keydown-ESC', () => {
@@ -241,4 +252,4 @@ class GameScene extends Phaser.Scene {
   }
 }
 
-export { GameScene };
+export { Level1 };
