@@ -96,7 +96,7 @@
         .addEventListener('click', () => {
           // Ocultar el menú
           document.querySelector('.selectPJ').style.display = 'none';
-          document.body.classList.add('active');
+          document.body.classList.add('inactive');
 
           startGame("finn");
         });
@@ -106,8 +106,23 @@
         .addEventListener('click', () => {
           // Ocultar el menú
           document.querySelector('.selectPJ').style.display = 'none';
-          document.body.classList.add('active');
+          document.body.classList.add('inactive');
           startGame("jake");
+        });
+      document.
+        getElementById('creditos')
+        .addEventListener('click', () => {
+          // Ocultar el menú
+          document.querySelector('.menu').style.display = 'none';
+          // Mostrar las instructions
+          document.querySelector('.creditos').style.display = 'flex';
+
+        });
+      document.
+        getElementById('exit')
+        .addEventListener('click', () => {
+          // cerrar pagina
+          window.close();
         });
     });
 

@@ -83,7 +83,15 @@ body {
   background-image: url('/assets/bgHDnotext.jpg');
   background-size: cover;
   background-repeat: no-repeat;
-  background-position: center top; /* Asegura que la parte superior de la imagen no se corte */
+  background-position: center top;
+}
+body.inactive {
+  background-image: none;
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
 }
 
 h1 {

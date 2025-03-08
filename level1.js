@@ -25,7 +25,7 @@ class Level1 extends Phaser.Scene {
       frameWidth: 55,
       frameHeight: 68,
     });
-    this.load.image("heart", "assets/heart.png"); // Cargar imagen del corazón
+    this.load.image("heart", "assets/heart.png"); 
 
 
     this.load.on("filecomplete", (key) => {
@@ -40,18 +40,18 @@ class Level1 extends Phaser.Scene {
      this.physics.world.setBounds(0, 0, 5000, 800); 
 
      // Fondo del mundo
-     let background = this.add.image(750, 400, "sky");
-     background.setDisplaySize(1920, 1080);
+     let background = this.add.image(800, 400, "sky");
+     background.setDisplaySize(window.innerWidth, window.innerHeight);
      background.setScrollFactor(0); // Fondo fijo
  
  
      // Fisicas de las plataformas
      this.platforms = this.physics.add.staticGroup();
 
-      // Creando plataformas fijas
-     this.platforms.create(750, 800, "ground").setDisplaySize(1500, 64).refreshBody();
-     this.platforms.create(2250, 800, "ground").setDisplaySize(1500, 64).refreshBody();
-     this.platforms.create(3750, 800, "ground").setDisplaySize(2500, 64).refreshBody();
+      // Forsito para crear las plataformas
+      for (let x = 0; x <= 5000; x += 500) {  // Cada plataforma mide 300px
+        this.platforms.create(x, 770, "ground").setDisplaySize(500, 64).refreshBody();
+      }
  
      // Creando plataformas flotantes 
      this.platforms.create(400, 600, "ground").setDisplaySize(200, 32).refreshBody();
@@ -66,7 +66,6 @@ class Level1 extends Phaser.Scene {
       this.sword.setBounce(0.2);
       
     // Fisicas del player
-    console.log(this.selectedCharacter);
     if(this.selectedCharacter === 'finn'){
       console.log('finn');
     this.player = this.physics.add.sprite(100, 450, "finn").setScale(2);
@@ -172,17 +171,17 @@ class Level1 extends Phaser.Scene {
     this.input.keyboard.on('keydown-W', () => {
       this.scene.start('WinScene');
     });
-    this.livesText = this.add.text(16, 50, "Lives:", {
+    this.livesText = this.add.text(16, 60, "Lives:", {
       fontFamily: '"Press Start 2P", Arial',
       fontSize: "32px",
       fill: "#000",
-  });
-  this.livesText.setScrollFactor(0);
+    });
+    this.livesText.setScrollFactor(0);
   
   // Crear los sprites de corazones para representar las vidas
   this.heartSprites = [];
   for (let i = 0; i < this.lives; i++) {
-      let heart = this.add.image(16 + 100 + i * 40, 50, "heart").setScrollFactor(0); // Posición y distancia entre los corazones
+      let heart = this.add.image(140 + 100 + i * 55, 75, "heart").setScrollFactor(0); // Posición y distancia entre los corazones
       this.heartSprites.push(heart);
     }
 
@@ -244,7 +243,7 @@ class Level1 extends Phaser.Scene {
   
     // Actualizar los corazones según las vidas restantes
     if (this.lives >= 0) {
-        this.heartSprites[this.lives]?.setAlpha(0);  // Desactivar el sprite de corazón que representa la vida perdida
+        this.heartSprites[this.lives].setVisible(false);
     }
   
     if (this.lives <= 0) {

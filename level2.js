@@ -31,11 +31,10 @@ class Level2 extends Phaser.Scene {
        // Fisicas de las plataformas
        this.platforms = this.physics.add.staticGroup();
   
-        // Creando plataformas fijas
-       this.platforms.create(750, 800, "ground").setDisplaySize(1500, 64).refreshBody();
-       this.platforms.create(2250, 800, "ground").setDisplaySize(1500, 64).refreshBody();
-       this.platforms.create(3750, 800, "ground").setDisplaySize(2500, 64).refreshBody();
-   
+       // Forsito para crear las plataformas
+        for (let x = 0; x <= 5000; x += 500) {  // Cada plataforma mide 300px
+            this.platforms.create(x, 770, "ground").setDisplaySize(500, 64).refreshBody();
+        }
        // Creando plataformas flotantes 
        this.platforms.create(400, 600, "ground").setDisplaySize(200, 32).refreshBody();
        this.platforms.create(900, 500, "ground").setDisplaySize(200, 32).refreshBody();
@@ -128,13 +127,12 @@ class Level2 extends Phaser.Scene {
         fill: "#000",
       });
       this.scoreText.setScrollFactor(0);
-  
-      this.livesText = this.add.text(16, 50, "Lives: 3", {
+      this.livesText = this.add.text(16, 60, "Lives:", {
         fontFamily: '"Press Start 2P", Arial',
         fontSize: "32px",
         fill: "#000",
-      });
-      this.livesText.setScrollFactor(0);
+        });
+     this.livesText.setScrollFactor(0);
   
       this.physics.add.collider(this.player, this.platforms);
       //this.physics.add.collider(this.stars, this.platforms);
@@ -160,7 +158,15 @@ class Level2 extends Phaser.Scene {
       this.input.keyboard.on('keydown-W', () => {
         this.scene.start('WinScene');
       });
-    }
+       // Crear los sprites de corazones para representar las vidas
+        this.heartSprites = [];
+        for (let i = 0; i < this.lives; i++) {
+            let heart = this.add.image(140 + 100 + i * 55, 75, "heart").setScrollFactor(0); // Posición y distancia entre los corazones
+            this.heartSprites.push(heart);
+            }
+
+        }
+    
   
     update() {
       if (this.gameOver) {
@@ -189,6 +195,7 @@ class Level2 extends Phaser.Scene {
       this.score += 10;
       this.scoreText.setText("Score: " + this.score);
   
+      
       if (this.stars.countActive(true) === 0) {
         this.stars.children.iterate(function (child) {
           child.enableBody(true, child.x, 0, true, true);
@@ -215,8 +222,8 @@ class Level2 extends Phaser.Scene {
     hitBomb(player, bomb) {
       // Restar una vida
       this.lives--;
-      this.livesText.setText("Lives: " + this.lives);
-  
+      this.heartSprites[this.lives].setVisible(false);
+      
       if (this.lives <= 0) {
         // Si las vidas llegan a 0, termina el juego
         this.physics.pause();

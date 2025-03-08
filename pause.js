@@ -35,7 +35,7 @@ class PauseScene extends Phaser.Scene{
             menu.style.display = 'flex';
 
             const body = document.querySelector('body');
-            body.classList.remove('active');
+            body.classList.remove('inactive');
         });
     }
 }

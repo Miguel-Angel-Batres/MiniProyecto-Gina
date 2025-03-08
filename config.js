@@ -6,12 +6,9 @@ import { LoseScene } from './losemenu.js';
 
 const config = {
   type: Phaser.AUTO,
-  width: window.innerWidth,
-  height: window.innerHeight,
-  scale: {
-    mode: Phaser.Scale.RESIZE,  // Ajusta el tamaño automáticamente
-    autoCenter: Phaser.Scale.CENTER_BOTH,  // Centra el juego
-  },
+  width: 1600,
+  height: 800,
+  
   physics: {
     default: 'arcade',
     arcade: {
