@@ -25,7 +25,7 @@ class Level1 extends Phaser.Scene {
       frameWidth: 55,
       frameHeight: 68,
     });
-    this.load.image("heart", "assets/heart.png"); 
+    this.load.image("heart", "assets/heart.png");
 
 
     this.load.on("filecomplete", (key) => {
@@ -35,86 +35,91 @@ class Level1 extends Phaser.Scene {
   }
 
   create() {
-    
-     // Seteando el mundo a 5000px de ancho
-     this.physics.world.setBounds(0, 0, 5000, 800); 
 
-     // Fondo del mundo
-     let background = this.add.image(800, 400, "sky");
-     background.setDisplaySize(window.innerWidth, window.innerHeight);
-     background.setScrollFactor(0); // Fondo fijo
- 
- 
-     // Fisicas de las plataformas
-     this.platforms = this.physics.add.staticGroup();
+    // Seteando el mundo a 5000px de ancho
+    this.physics.world.setBounds(0, 0, 5000, 800);
 
-      // Forsito para crear las plataformas
-      for (let x = 0; x <= 5000; x += 500) {  // Cada plataforma mide 300px
-        this.platforms.create(x, 770, "ground").setDisplaySize(500, 64).refreshBody();
-      }
- 
-     // Creando plataformas flotantes 
-     this.platforms.create(400, 600, "ground").setDisplaySize(200, 32).refreshBody();
-     this.platforms.create(900, 500, "ground").setDisplaySize(200, 32).refreshBody();
-     this.platforms.create(1600, 400, "ground").setDisplaySize(200, 32).refreshBody();
-     this.platforms.create(2200, 550, "ground").setDisplaySize(200, 32).refreshBody();
-     this.platforms.create(2800, 450, "ground").setDisplaySize(200, 32).refreshBody();
-     this.platforms.create(3500, 350, "ground").setDisplaySize(200, 32).refreshBody();
- 
-     // sword al final del nivel
-      this.sword = this.physics.add.sprite(4950, 80, "sword").setScale(2);
-      this.sword.setBounce(0.2);
-      
+    // Fondo del mundo
+    let background = this.add.image(800, 400, "sky");
+    background.setDisplaySize(window.innerWidth, window.innerHeight);
+    background.setScrollFactor(0); // Fondo fijo
+
+
+    // Fisicas de las plataformas
+    this.platforms = this.physics.add.staticGroup();
+
+    // Forsito para crear las plataformas
+    for (let x = 0; x <= 5000; x += 500) {  // Cada plataforma mide 500px
+      let platform = this.platforms.create(x, 770, "ground").setDisplaySize(500, 64).refreshBody();
+
+      // Ajustar el tamaño de la colisión para permitir atravesar el 10% superior
+      platform.body.setSize(500, 58); // Hacer la plataforma más corta en la altura
+      platform.body.setOffset(0, 20); // Desplazar la colisión hacia abajo para permitir el paso por la parte superior
+    }
+
+
+    // Creando plataformas flotantes 
+    this.platforms.create(400, 600, "ground").setDisplaySize(200, 32).refreshBody();
+    this.platforms.create(900, 500, "ground").setDisplaySize(200, 32).refreshBody();
+    this.platforms.create(1600, 400, "ground").setDisplaySize(200, 32).refreshBody();
+    this.platforms.create(2200, 550, "ground").setDisplaySize(200, 32).refreshBody();
+    this.platforms.create(2800, 450, "ground").setDisplaySize(200, 32).refreshBody();
+    this.platforms.create(3500, 350, "ground").setDisplaySize(200, 32).refreshBody();
+
+    // sword al final del nivel
+    this.sword = this.physics.add.sprite(4950, 80, "sword").setScale(2);
+    this.sword.setBounce(0.2);
+
     // Fisicas del player
-    if(this.selectedCharacter === 'finn'){
+    if (this.selectedCharacter === 'finn') {
       console.log('finn');
-    this.player = this.physics.add.sprite(100, 450, "finn").setScale(2);
- 
-    this.anims.create({
-      key: "left",
-      frames: this.anims.generateFrameNumbers("finn", { start: 0, end: 7 }),
-      frameRate: 8,
-      repeat: -1,
-    });
+      this.player = this.physics.add.sprite(100, 450, "finn").setScale(2);
 
-    
-    this.anims.create({
-      key: "turn",
-      frames: [{ key: "finn", frame: 8 }],
-      frameRate: 12,
-    });
+      this.anims.create({
+        key: "left",
+        frames: this.anims.generateFrameNumbers("finn", { start: 0, end: 7 }),
+        frameRate: 8,
+        repeat: -1,
+      });
 
-    this.anims.create({
-      key: "right",
-      frames: this.anims.generateFrameNumbers("finn", { start: 9, end: 16 }),
-      frameRate: 8,
-      repeat: -1,
-    });
-  }
-  if(this.selectedCharacter === 'jake'){
-    this.player = this.physics.add.sprite(100, 450, "jake").setScale(2);
-    console.log('jake');
-    this.anims.create({
-      key: "left",
-      frames: this.anims.generateFrameNumbers("jake", { start: 0, end: 7 }),
-      frameRate: 8,
-      repeat: -1,
-    });
 
-    this.anims.create({
-      key: "turn",
-      frames: [{ key: "jake", frame: 8 }],
-      frameRate: 12,
-    });
+      this.anims.create({
+        key: "turn",
+        frames: [{ key: "finn", frame: 8 }],
+        frameRate: 12,
+      });
 
-    this.anims.create({
-      key: "right",
-      frames: this.anims.generateFrameNumbers("jake", { start: 9, end: 16 }),
-      frameRate: 8,
-      repeat: -1,
-    });
-  
-  }
+      this.anims.create({
+        key: "right",
+        frames: this.anims.generateFrameNumbers("finn", { start: 9, end: 16 }),
+        frameRate: 8,
+        repeat: -1,
+      });
+    }
+    if (this.selectedCharacter === 'jake') {
+      this.player = this.physics.add.sprite(100, 450, "jake").setScale(2);
+      console.log('jake');
+      this.anims.create({
+        key: "left",
+        frames: this.anims.generateFrameNumbers("jake", { start: 0, end: 7 }),
+        frameRate: 8,
+        repeat: -1,
+      });
+
+      this.anims.create({
+        key: "turn",
+        frames: [{ key: "jake", frame: 8 }],
+        frameRate: 12,
+      });
+
+      this.anims.create({
+        key: "right",
+        frames: this.anims.generateFrameNumbers("jake", { start: 9, end: 16 }),
+        frameRate: 8,
+        repeat: -1,
+      });
+
+    }
     this.player.setBounce(0.2);
     this.player.setCollideWorldBounds(true);
     this.player.setGravityY(500);
@@ -177,10 +182,10 @@ class Level1 extends Phaser.Scene {
       fill: "#000",
     });
     this.livesText.setScrollFactor(0);
-  
-  // Crear los sprites de corazones para representar las vidas
-  this.heartSprites = [];
-  for (let i = 0; i < this.lives; i++) {
+
+    // Crear los sprites de corazones para representar las vidas
+    this.heartSprites = [];
+    for (let i = 0; i < this.lives; i++) {
       let heart = this.add.image(140 + 100 + i * 55, 75, "heart").setScrollFactor(0); // Posición y distancia entre los corazones
       this.heartSprites.push(heart);
     }
@@ -240,19 +245,19 @@ class Level1 extends Phaser.Scene {
   hitBomb(player, bomb) {
     // Restar una vida
     this.lives--;
-  
+
     // Actualizar los corazones según las vidas restantes
     if (this.lives >= 0) {
-        this.heartSprites[this.lives].setVisible(false);
+      this.heartSprites[this.lives].setVisible(false);
     }
-  
+
     if (this.lives <= 0) {
       // Si las vidas llegan a 0, termina el juego
       this.physics.pause();
       this.player.setTint(0xff0000);
       this.player.anims.play("turn");
       this.gameOver = true;
-  
+
       this.time.delayedCall(1000, () => {
         this.scene.start('LoseScene');
       });
@@ -262,8 +267,8 @@ class Level1 extends Phaser.Scene {
       this.player.setVelocity(0, 0); // Detener cualquier movimiento
       this.player.clearTint(); // Quitar el color rojo
     }
-}
-  
+  }
+
 }
 
 export { Level1 };
