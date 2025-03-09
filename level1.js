@@ -17,6 +17,7 @@ class Level1 extends Phaser.Scene {
     this.load.image("bomb", "assets/bomb.png");
     this.load.image("sandwich", "assets/sandwich.png");
     this.load.image("sword", "assets/sword.png");
+    this.load.image("worm", "assets/worm.png");
     this.load.spritesheet("finn", "assets/finn.png", {
       frameWidth: 54,
       frameHeight: 83,
@@ -35,7 +36,6 @@ class Level1 extends Phaser.Scene {
   }
 
   create() {
-
     // Seteando el mundo a 5000px de ancho
     this.physics.world.setBounds(0, 0, 5000, 800);
 
@@ -65,6 +65,22 @@ class Level1 extends Phaser.Scene {
     this.platforms.create(2200, 550, "ground").setDisplaySize(200, 32).refreshBody();
     this.platforms.create(2800, 450, "ground").setDisplaySize(200, 32).refreshBody();
     this.platforms.create(3500, 350, "ground").setDisplaySize(200, 32).refreshBody();
+
+        //Crear grupo de gusanos
+    this.worms = this.physics.add.group();
+
+    for (let i = 0; i < 7; i++) { // Ajusta la cantidad de gusanos
+      let x = Phaser.Math.Between(100, 4900); // Posición aleatoria en el suelo
+      let worm = this.worms.create(x, 720, "worm").setScale(2.5);
+      worm.setBounce(0.2);
+      worm.setCollideWorldBounds(true);
+    }
+
+    this.worms.children.iterate((worm) => {
+      worm.setVelocityX(Phaser.Math.Between(100, 300)); // Movimiento aleatorio
+      worm.setBounce(1); // Rebote al chocar con el mundo
+    });
+
 
     // sword al final del nivel
     this.sword = this.physics.add.sprite(4950, 80, "sword").setScale(2);
@@ -154,6 +170,8 @@ class Level1 extends Phaser.Scene {
     //this.physics.add.collider(this.stars, this.platforms);
     this.physics.add.collider(this.bombs, this.platforms);
     this.physics.add.collider(this.sword, this.platforms);
+    this.physics.add.collider(this.worms, this.platforms);
+
 
     // this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
     this.physics.add.overlap(this.player, this.sword, () => {
@@ -162,7 +180,11 @@ class Level1 extends Phaser.Scene {
       this.scene.stop();
       console.log('cambio de nivel');
     });
-    this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
+    this.physics.add.collider(this.player, this.bombs, this.removeLive, null, this);
+    this.physics.add.collider(this.worms, this.platforms); // Permitir colisión con el suelo
+    this.physics.add.collider(this.player, this.worms, this.removeLive, null, this); // Reducir vida si toca un gusano
+
+
 
     this.input.keyboard.on('keydown-ESC', () => {
       this.scene.launch('PauseScene');
@@ -170,7 +192,7 @@ class Level1 extends Phaser.Scene {
     });
 
     this.input.keyboard.on('keydown-D', () => {
-      this.hitBomb();
+      this.removeLive();
     });
 
     this.input.keyboard.on('keydown-W', () => {
@@ -242,32 +264,33 @@ class Level1 extends Phaser.Scene {
     }
   }
 
-  hitBomb(player, bomb) {
+  removeLive(player, enemy) { 
     // Restar una vida
     this.lives--;
-
+  
     // Actualizar los corazones según las vidas restantes
     if (this.lives >= 0) {
       this.heartSprites[this.lives].setVisible(false);
     }
-
+  
     if (this.lives <= 0) {
       // Si las vidas llegan a 0, termina el juego
       this.physics.pause();
       this.player.setTint(0xff0000);
       this.player.anims.play("turn");
       this.gameOver = true;
-
+  
       this.time.delayedCall(1000, () => {
         this.scene.start('LoseScene');
       });
     } else {
-      // Si aún hay vidas, reposicionamos al jugador sin eliminar las bombas
+      // Si aún hay vidas, reposicionamos al jugador sin eliminar los gusanos
       this.player.setPosition(100, 450);
       this.player.setVelocity(0, 0); // Detener cualquier movimiento
       this.player.clearTint(); // Quitar el color rojo
     }
   }
+  
 
 }
 
