@@ -150,6 +150,7 @@ class Level2 extends Phaser.Scene {
   
       // this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
       this.physics.add.overlap(this.player, this.sword, () => {
+        this.grabarscore();
         this.scene.start('WinScene');
         this.scene.stop();
       });
@@ -165,6 +166,7 @@ class Level2 extends Phaser.Scene {
       });
   
       this.input.keyboard.on('keydown-W', () => {
+        this.grabarscore();
         this.scene.start('WinScene');
       });
        // Crear los sprites de corazones para representar las vidas
@@ -240,7 +242,7 @@ class Level2 extends Phaser.Scene {
         this.player.setTint(0xff0000);
         this.player.anims.play("turn");
         this.gameOver = true;
-  
+        this.grabarscore();
         this.time.delayedCall(1000, () => {
           this.scene.start('LoseScene');
         });
@@ -249,6 +251,22 @@ class Level2 extends Phaser.Scene {
         this.player.setPosition(100, 450);
         this.player.setVelocity(0, 0); // Detener cualquier movimiento
         this.player.clearTint(); // Quitar el color rojo
+      }
+    }
+    grabarscore(){
+      // Comprobar nickname en scores de localstorage
+      let scores = JSON.parse(localStorage.getItem('scores'));
+      let nickname = localStorage.getItem('nickname');
+      let nickfinded = scores.find(score => score.nickname === nickname);
+      
+      if(nickfinded){
+        if(this.score > nickfinded.score){
+          nickfinded.score = this.score;
+          localStorage.setItem('scores', JSON.stringify(scores));
+        }
+      }else{
+        scores.push({nickname: nickname, score: this.score, time: new Date().toLocaleString(), character: this.selectedCharacter});
+        localStorage.setItem('scores', JSON.stringify(scores));
       }
     }
   }
