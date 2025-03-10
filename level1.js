@@ -86,6 +86,11 @@ class Level1 extends Phaser.Scene {
         frameRate: 8,
         repeat: -1,
       });
+      this.anims.create({
+        key: "worm_idle",
+        frames: [{ key: "worm", frame: 9 }],
+        frameRate: 1,
+      });
       
       this.anims.create({
         key: "worm_right",
@@ -108,6 +113,7 @@ class Level1 extends Phaser.Scene {
       let direction = i % 2 === 0 ? 1 : -1; // Alternar dirección (1 = derecha, -1 = izquierda)
 
       let worm = this.worms.create(x, 500, "worm").setScale(4);
+      worm.anims.play("worm_left");
       worm.setBounce(0.5);
       worm.setCollideWorldBounds(true);
       worm.setVelocityX(wormSpeed * direction); // Asignar velocidad positiva o negativa
@@ -279,13 +285,17 @@ class Level1 extends Phaser.Scene {
 this.worms.children.iterate((worm) => {
   if (worm.body.blocked.right) {
     worm.setVelocityX(-150);
-    worm.setFlipX(true);
-    worm.anims.play("worm_right", true);
+    // worm.setFlipX(true);
+    worm.anims.play("worm_left", true);
   } else if (worm.body.blocked.left) {
     worm.setVelocityX(150);
-    worm.setFlipX(false);
-    worm.anims.play("worm_left", true);
+    // worm.setFlipX(false);
+    worm.anims.play("worm_right", true);
+  } else if (worm.body.velocity.x === 0) {
+    // Si no se está moviendo, vuelve a la animación idle
+    worm.anims.play("worm_idle", true);
   }
+
 });
 
   }
