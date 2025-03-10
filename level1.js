@@ -34,6 +34,10 @@ class Level1 extends Phaser.Scene {
       frameWidth: 55,
       frameHeight: 68,
     });
+    this.load.spritesheet("worm", "assets/worm.png", {
+      frameWidth: 46,
+      frameHeight: 27,
+    });
     this.load.image("heart", "assets/heart.png");
 
 
@@ -73,6 +77,23 @@ class Level1 extends Phaser.Scene {
     this.platforms.create(2000, 450, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
     this.platforms.create(2500, 550, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
     this.platforms.create(3000, 350, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
+
+
+      // Crear la animación del gusano
+      this.anims.create({
+        key: "worm_left",
+        frames: this.anims.generateFrameNumbers("worm", { start: 0, end: 8 }),
+        frameRate: 8,
+        repeat: -1,
+      });
+      
+      this.anims.create({
+        key: "worm_right",
+        frames: this.anims.generateFrameNumbers("worm", { start: 10, end: 19 }),
+        frameRate: 8,
+        repeat: -1,
+      });
+      
 
     // Crear grupo de gusanos
     this.worms = this.physics.add.group();
@@ -254,16 +275,19 @@ class Level1 extends Phaser.Scene {
       this.player.setVelocityY(-700);
     }
 
-    // Controlar la velocidad de los gusanos
-    this.worms.children.iterate((worm) => {
-      if (worm.body.blocked.right) {
-        worm.setVelocityX(-150);
-        worm.setFlipX(true);
-      } else if (worm.body.blocked.left) {
-        worm.setVelocityX(150);
-        worm.setFlipX(false);
-      }
-    });
+// Controlar la velocidad y animación de los gusanos
+this.worms.children.iterate((worm) => {
+  if (worm.body.blocked.right) {
+    worm.setVelocityX(-150);
+    worm.setFlipX(true);
+    worm.anims.play("worm_right", true);
+  } else if (worm.body.blocked.left) {
+    worm.setVelocityX(150);
+    worm.setFlipX(false);
+    worm.anims.play("worm_left", true);
+  }
+});
+
   }
 
   collectStar(player, candy) {
