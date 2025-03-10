@@ -76,7 +76,8 @@
       </button>
     </div>
   </div>
-
+  <audio id="bgMusic" src="sounds/background_music_1.mp3" preload="none" loop style="display: none;"></audio>
+  <audio id="bossMusic" src="sounds/bossmusic.mp3" preload="none" loop style="display: none;"></audio>
   <script type="module">
     import { startGame } from './config.js'; // Asegúrate de tener la función startGame exportada correctamente
 
@@ -129,9 +130,7 @@
         .addEventListener('click', () => {
           // Ocultar todos los menus
           document.querySelector('.instructions').style.display = 'none';
-          document.querySelector('.scores').style.display = 'none';
-          //document.querySelector('.creditos').style.display = 'none';
-          // Mostrar el menú
+         
           document.querySelector('.menu').style.display = 'flex';
         });
       document.

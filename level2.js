@@ -31,9 +31,13 @@ class Level2 extends Phaser.Scene {
        // Fisicas de las plataformas
        this.platforms = this.physics.add.staticGroup();
   
-       // Forsito para crear las plataformas
-        for (let x = 0; x <= 5000; x += 500) {  // Cada plataforma mide 300px
-            this.platforms.create(x, 770, "ground").setDisplaySize(500, 64).refreshBody();
+        // Forsito para crear las plataformas
+        for (let x = 0; x <= 5000; x += 500) {  // Cada plataforma mide 500px
+          let platform = this.platforms.create(x, 770, "ground").setDisplaySize(500, 64).refreshBody();
+
+          // Ajustar el tamaño de la colisión para permitir atravesar el 10% superior ()
+          platform.body.setSize(500, 58); // Hacer la plataforma más corta en la altura
+          platform.body.setOffset(0, 20); // Desplazar la colisión hacia abajo para permitir el paso por la parte superior
         }
       
       // Creando plataformas flotantes 
@@ -107,7 +111,7 @@ class Level2 extends Phaser.Scene {
       });
     
     }
-      this.player.setBounce(0.2);
+      this.player.setBounce(0);
       this.player.setCollideWorldBounds(true);
       this.player.setGravityY(500);
   
@@ -151,12 +155,15 @@ class Level2 extends Phaser.Scene {
       // this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
       this.physics.add.overlap(this.player, this.sword, () => {
         this.grabarscore();
+        this.bossmusic.pause();
+        this.bossmusic.currentTime = 0;
         this.scene.start('WinScene');
         this.scene.stop();
       });
       this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
   
       this.input.keyboard.on('keydown-ESC', () => {
+        this.bossmusic.pause();
         this.scene.launch('PauseScene');
         this.scene.pause();
       });
@@ -175,6 +182,12 @@ class Level2 extends Phaser.Scene {
             let heart = this.add.image(140 + 100 + i * 55, 75, "heart").setScrollFactor(0); // Posición y distancia entre los corazones
             this.heartSprites.push(heart);
             }
+
+        this.bossmusic = document.getElementById("bossMusic");
+        this.events.on('resume', () => {
+          this.bossmusic.play();
+        });
+        this.bossmusic.play();
 
         }
     
@@ -244,6 +257,8 @@ class Level2 extends Phaser.Scene {
         this.gameOver = true;
         this.grabarscore();
         this.time.delayedCall(1000, () => {
+          this.bossmusic.pause();
+          this.bossmusic.currentTime = 0;
           this.scene.start('LoseScene');
         });
       } else {

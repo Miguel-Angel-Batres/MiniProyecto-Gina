@@ -23,6 +23,7 @@ class Level1 extends Phaser.Scene {
     this.load.audio('jakeDeath1', 'sounds/Jake/jake_death_01.mp3');
     this.load.audio('jakeDeath2', 'sounds/Jake/jake_death_02.mp3');
     this.load.audio('jakeDeath3', 'sounds/Jake/jake_death_03.mp3');
+    
 
     this.load.spritesheet("finn", "assets/finn.png", {
       frameWidth: 54,
@@ -48,6 +49,9 @@ class Level1 extends Phaser.Scene {
   create() {
     // Seteando el mundo a 5000px de ancho
     this.physics.world.setBounds(0, 0, 5000, 800);
+
+    // Musica de fondo
+    this.bgmusic1 = document.getElementById("bgMusic");
 
     // Fondo del mundo
     let background = this.add.image(800, 400, "sky");
@@ -87,7 +91,7 @@ class Level1 extends Phaser.Scene {
 
       this.anims.create({
         key: "worm_right",
-        frames: this.anims.generateFrameNumbers("worm", { start: 10, end: 18 }),
+        frames: this.anims.generateFrameNumbers("worm", { start: 9, end: 17 }),
         frameRate: 8,
         repeat: -1,
       });
@@ -105,7 +109,7 @@ class Level1 extends Phaser.Scene {
       let x = startX + i * spacing; // Posición calculada para cada gusano
       let direction = i & 1 === 1 ? 1 : -1; // Alternar dirección (1 = derecha, -1 = izquierda)
 
-      let worm = this.worms.create(x, 500, "worm_idle").setScale(4);
+      let worm = this.worms.create(x, 700, "worm_idle").setScale(4);
       worm.anims.play("worm_right");
       worm.setBounce(0.5);
       worm.body.setSize(46, 14);  // Ajusta el tamaño del cuerpo
@@ -179,9 +183,9 @@ class Level1 extends Phaser.Scene {
       });
 
     }
-    this.player.setBounce(0.2);
+    this.player.setBounce(0);
     this.player.setCollideWorldBounds(true);
-    this.player.setGravityY(500);
+    this.player.setGravityY(1000);
 
     // Fijando camara al player
     this.cameras.main.setBounds(0, 0, 5000, 800);
@@ -214,9 +218,10 @@ class Level1 extends Phaser.Scene {
 
     // this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
     this.physics.add.overlap(this.player, this.sword, () => {
+      this.bgmusic1.pause();
+      this.bgmusic1.currentTime = 0;
       this.registry.set("level", 2);
       this.scene.start('Level2');
-      this.scene.stop();
       console.log('cambio de nivel');
     });
 
@@ -225,6 +230,7 @@ class Level1 extends Phaser.Scene {
 
 
     this.input.keyboard.on('keydown-ESC', () => {
+      this.bgmusic1.pause();
       this.scene.launch('PauseScene');
       this.scene.pause();
     });
@@ -251,6 +257,13 @@ class Level1 extends Phaser.Scene {
       this.heartSprites.push(heart);
     }
 
+    // // Sonido de inicio
+    // this.backgroundsound = this.sound.add("music1");
+    // this.backgroundsound.play({volume: 1,loop:true});
+    this.events.on("resume",() => {
+      this.bgmusic1.play();
+    });
+    this.bgmusic1.play();
   }
 
   update() {
@@ -270,20 +283,25 @@ class Level1 extends Phaser.Scene {
     }
 
     if (this.cursors.up.isDown && this.player.body.touching.down || this.cursors.space.isDown && this.player.body.touching.down) {
-      this.player.setVelocityY(-700);
+      this.player.setVelocityY(-900);
     }
-
-// Controlar la direccion y animación de los gusanos
-this.worms.children.iterate((worm) => {
-  if (worm.body.blocked.right) {
-    worm.setVelocityX(-150);
-    worm.anims.play("worm_left", true);
-  } else if (worm.body.blocked.left) {
-    worm.setVelocityX(150);
-    worm.anims.play("worm_right", true);
+    if (this.player.body.velocity.y > 0) { 
+      this.player.setGravityY(2000); // Aumenta la gravedad en la caída
+  } else {
+      this.player.setGravityY(1000); // Mantiene gravedad normal en el salto
   }
 
-});
+  // Controlar la direccion y animación de los gusanos
+  this.worms.children.iterate((worm) => {
+    if (worm.body.blocked.right) {
+      worm.setVelocityX(-150);
+      worm.anims.play("worm_left", true);
+    } else if (worm.body.blocked.left) {
+      worm.setVelocityX(150);
+      worm.anims.play("worm_right", true);
+    }
+
+  });
 
   }
 
@@ -352,6 +370,8 @@ this.worms.children.iterate((worm) => {
       this.gameOver = true;
       this.grabarscore();
       this.time.delayedCall(1000, () => {
+        this.bgmusic1.pause();
+        this.bgmusic1.currentTime = 0;  
         this.scene.start('LoseScene');
       });
     } else {

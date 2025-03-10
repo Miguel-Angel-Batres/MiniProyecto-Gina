@@ -345,7 +345,7 @@ button:active {
 
 /* Estilo para filas pares */
 .tabla-scores tr:nth-child(even) {
-  background-color:var(--gray5); 
+  background-color:#7e8eb4; 
 }
 
 .tabla-scores td {

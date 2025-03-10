@@ -6,7 +6,7 @@ class PauseScene extends Phaser.Scene{
         this.load.image('sky', 'assets/sky.png');
     }
     create(){
-    
+        this.bgmusic1 = document.getElementById("bgMusic");
         this.add.text(420, 400, 'Press SPACE to resume', {
             fontFamily: '"Press Start 2P", Arial',
              fontSize: '32px', fill: '#000' 
@@ -17,18 +17,23 @@ class PauseScene extends Phaser.Scene{
          });
 
         this.input.keyboard.on('keydown-SPACE', () => {
-            if(this.registry.get('level') == 1)
+            if(this.registry.get('level') == 1){
                 this.scene.resume('Level1');
-            else
+            }else{
                 this.scene.resume('Level2');
+            }
             this.scene.stop();
           
         });
         this.input.keyboard.on('keydown-ESC', () => {
-            if(this.registry.get('level') == 1)
+            if(this.registry.get('level') == 1){
+                this.bgmusic1.currentTime = 0;
                 this.scene.stop('Level1');
-            else
+            }
+            else{
+                this.bgmusic1.currentTime = 0;
                 this.scene.stop('Level2');
+            }
             this.game.destroy(true); 
 
             const menu = document.querySelector('.menu');
