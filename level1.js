@@ -254,7 +254,7 @@ class Level1 extends Phaser.Scene {
       this.player.setVelocityY(-700);
     }
 
-    // Controlar la velocidad de los gusanos
+    // Controlar la direccion de los gusanos
     this.worms.children.iterate((worm) => {
       if (worm.body.blocked.right) {
         worm.setVelocityX(-150);
@@ -304,49 +304,45 @@ class Level1 extends Phaser.Scene {
     if (this.lives >= 0) {
       this.heartSprites[this.lives].setVisible(false);
     }
-  
+    // Sonido de muerte
+    if(this.selectedCharacter === 'finn') {
+      var random3 = Phaser.Math.Between(1, 3);
+      switch(random3){
+        case 1:
+          this.sound.play('finnDeath1');
+          break;
+        case 2:
+          this.sound.play('finnDeath2');
+          break;
+        case 3:
+          this.sound.play('finnDeath3');
+          break;
+      }
+    }
+    if(this.selectedCharacter === 'jake') {
+      var random3 = Phaser.Math.Between(1, 3);
+      switch(random3){
+        case 1:
+          this.sound.play('jakeDeath1');
+          break;
+        case 2:
+          this.sound.play('jakeDeath2');
+          break;
+        case 3:
+          this.sound.play('jakeDeath3');
+          break;
+      }
+    }
     if (this.lives <= 0) {
       // Si las vidas llegan a 0, termina el juego
       this.physics.pause();
       this.player.setTint(0xff0000);
       this.player.anims.play("turn");
       this.gameOver = true;
-  
       this.time.delayedCall(1000, () => {
         this.scene.start('LoseScene');
       });
     } else {
-      // Sonido de muerte
-      if(this.selectedCharacter === 'finn') {
-        var random3 = Phaser.Math.Between(1, 3);
-        switch(random3){
-          case 1:
-            this.sound.play('finnDeath1');
-            break;
-          case 2:
-            this.sound.play('finnDeath2');
-            break;
-          case 3:
-            this.sound.play('finnDeath3');
-            break;
-        }
-      }
-      if(this.selectedCharacter === 'jake') {
-        var random3 = Phaser.Math.Between(1, 3);
-        switch(random3){
-          case 1:
-            this.sound.play('jakeDeath1');
-            break;
-          case 2:
-            this.sound.play('jakeDeath2');
-            break;
-          case 3:
-            this.sound.play('jakeDeath3');
-            break;
-        }
-      }
- 
-
       // Si aún hay vidas, reposicionamos al jugador sin eliminar los gusanos
       this.player.setPosition(100, 450);
       this.player.setVelocity(0, 0); 

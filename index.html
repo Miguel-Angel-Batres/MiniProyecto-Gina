@@ -30,15 +30,22 @@
   <div class="menu">
     <h1> Adventure time</h1>
     <button id="start">Play</button>
-    <button id="ayuda">help</button>
-    <button id="creditos">credits</button>
+    <button id="ayuda">Help</button>
+    <button id="creditos">Credits</button>
+    <button id="scores">Scores</button>
     <button id="exit">exit</button>
   </div>
   <div class="instructions">
-    <h1>instructions</h1>
+    <h1>Instructions</h1>
     <p>use the arrow keys to move</p>
     <p>press the `ESC` key to pause/exit</p>
     <button id="exitMenu">exit</button>
+  </div>
+  <div class="nickname">
+    <h1>Enter your nickname</h1>
+    <input type="text" id="nickname" placeholder="Nickname">
+    <p>You Must Enter Your Nickname</p>
+    <button id="startGame">Start</button>
   </div>
   <div class="selectPJ">
     <h1>Select your hero</h1>
@@ -64,12 +71,31 @@
     document.addEventListener('DOMContentLoaded', () => {
       // Obtén el botón de "Jugar" y asigna el evento
       document
+        .getElementById('startGame')
+        .addEventListener('click', () => {
+          if (document.getElementById('nickname').value === '') {
+            // si no hay nombre, mostrar mensaje de error
+            document.querySelector('.nickname p').style.display = 'block';
+            setTimeout(() => {
+              document.querySelector('.nickname p').style.display = 'none';
+            }, 3000);           
+           return;
+          }else{
+          // Ocultar el menú
+          document.querySelector('.nickname').style.display = 'none';
+          // Mostrar el menú de selección de personaje
+          document.querySelector('.selectPJ').style.display = 'grid';
+          }
+          
+        });
+      // Obtén el botón de "start" y asigna el evento
+      document
         .getElementById('start')
         .addEventListener('click', () => {
           // Ocultar el menú
           document.querySelector('.menu').style.display = 'none';
           // Mostrar el menú de selección de personaje
-          document.querySelector('.selectPJ').style.display = 'grid';
+          document.querySelector('.nickname').style.display = 'flex';
         });
       // Obtén el botón de "instructions" y asigna el evento
       document
@@ -115,6 +141,30 @@
         .addEventListener('click', () => {
           // cerrar pagina
           window.close();
+        });
+
+        //escape
+        document
+        .addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            if(document.querySelector('.nickname').style.display === 'flex'){
+              document.querySelector('.nickname').style.display = 'none';
+              document.querySelector('.menu').style.display = 'flex';
+            }
+            if(document.querySelector('.selectPJ').style.display === 'grid'){
+              document.querySelector('.selectPJ').style.display = 'none';
+              document.querySelector('.nickname').style.display = 'flex';
+            }
+            if(document.querySelector('.instructions').style.display === 'flex'){
+              document.querySelector('.instructions').style.display = 'none';
+              document.querySelector('.menu').style.display = 'flex';
+            }
+            if(document.querySelector('.creditos').style.display === 'flex'){
+              document.querySelector('.creditos').style.display = 'none';
+              document.querySelector('.menu').style.display = 'flex';
+            }
+
+          }
         });
     });
 
