@@ -14,10 +14,8 @@ class Level1 extends Phaser.Scene {
     this.load.image("sky", "assets/bg1.png");
     this.load.image("ground", "assets/platform.png");
     this.load.image("candy", "assets/candy.png");
-    this.load.image("bomb", "assets/bomb.png");
     this.load.image("sandwich", "assets/sandwich.png");
     this.load.image("sword", "assets/sword.png");
-    this.load.image("worm", "assets/worm.png");
 
     this.load.audio('finnDeath1', 'sounds/Finn/finn_death_01.mp3');
     this.load.audio('finnDeath2', 'sounds/Finn/finn_death_02.mp3');
@@ -36,7 +34,7 @@ class Level1 extends Phaser.Scene {
     });
     this.load.spritesheet("worm", "assets/worm.png", {
       frameWidth: 46,
-      frameHeight: 27,
+      frameHeight: 16,
     });
     this.load.image("heart", "assets/heart.png");
 
@@ -64,7 +62,7 @@ class Level1 extends Phaser.Scene {
     for (let x = 0; x <= 5000; x += 500) {  // Cada plataforma mide 500px
       let platform = this.platforms.create(x, 770, "ground").setDisplaySize(500, 64).refreshBody();
 
-      // Ajustar el tamaño de la colisión para permitir atravesar el 10% superior
+      // Ajustar el tamaño de la colisión para permitir atravesar el 10% superior ()
       platform.body.setSize(500, 58); // Hacer la plataforma más corta en la altura
       platform.body.setOffset(0, 20); // Desplazar la colisión hacia abajo para permitir el paso por la parte superior
     }
@@ -86,15 +84,10 @@ class Level1 extends Phaser.Scene {
         frameRate: 8,
         repeat: -1,
       });
-      this.anims.create({
-        key: "worm_idle",
-        frames: [{ key: "worm", frame: 9 }],
-        frameRate: 1,
-      });
-      
+
       this.anims.create({
         key: "worm_right",
-        frames: this.anims.generateFrameNumbers("worm", { start: 10, end: 19 }),
+        frames: this.anims.generateFrameNumbers("worm", { start: 10, end: 18 }),
         frameRate: 8,
         repeat: -1,
       });
@@ -110,16 +103,17 @@ class Level1 extends Phaser.Scene {
     
     for (let i = 0; i < numWorms; i++) {
       let x = startX + i * spacing; // Posición calculada para cada gusano
-      let direction = i % 2 === 0 ? 1 : -1; // Alternar dirección (1 = derecha, -1 = izquierda)
+      let direction = i & 1 === 1 ? 1 : -1; // Alternar dirección (1 = derecha, -1 = izquierda)
 
-      let worm = this.worms.create(x, 500, "worm").setScale(4);
-      worm.anims.play("worm_left");
+      let worm = this.worms.create(x, 500, "worm_idle").setScale(4);
+      worm.anims.play("worm_right");
       worm.setBounce(0.5);
+      worm.body.setSize(46, 14);  // Ajusta el tamaño del cuerpo
       worm.setCollideWorldBounds(true);
       worm.setVelocityX(wormSpeed * direction); // Asignar velocidad positiva o negativa
 
       if (direction === -1) {
-        worm.setFlipX(true); // Voltear los gusanos que inician moviéndose a la izquierda
+        worm.anims.play("worm_left");
       }
     }
    
@@ -206,8 +200,6 @@ class Level1 extends Phaser.Scene {
     //   child.setScale(2);
     // });
 
-    this.bombs = this.physics.add.group();
-
     this.scoreText = this.add.text(16, 16, "Score: 0", {
       fontFamily: '"Press Start 2P", Arial',
       fontSize: "32px",
@@ -216,7 +208,6 @@ class Level1 extends Phaser.Scene {
     this.scoreText.setScrollFactor(0);
 
     this.physics.add.collider(this.player, this.platforms);
-    this.physics.add.collider(this.bombs, this.platforms);
     this.physics.add.collider(this.sword, this.platforms);
     this.physics.add.collider(this.worms, this.platforms);
 
@@ -285,15 +276,10 @@ class Level1 extends Phaser.Scene {
 this.worms.children.iterate((worm) => {
   if (worm.body.blocked.right) {
     worm.setVelocityX(-150);
-    // worm.setFlipX(true);
     worm.anims.play("worm_left", true);
   } else if (worm.body.blocked.left) {
     worm.setVelocityX(150);
-    // worm.setFlipX(false);
     worm.anims.play("worm_right", true);
-  } else if (worm.body.velocity.x === 0) {
-    // Si no se está moviendo, vuelve a la animación idle
-    worm.anims.play("worm_idle", true);
   }
 
 });
@@ -316,16 +302,6 @@ this.worms.children.iterate((worm) => {
           ? Phaser.Math.Between(400, 800)
           : Phaser.Math.Between(0, 400);
 
-      var bomb = this.bombs.create(x, 16, "bomb");
-      bomb.setScale(2);
-      bomb.setBounce(1);
-      bomb.setCollideWorldBounds(true);
-      bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-      bomb.allowGravity = false;
-
-      if (this.bombs.countActive(true) === 2) {
-        this.scene.start('WinScene');
-      }
     }
   }
 
