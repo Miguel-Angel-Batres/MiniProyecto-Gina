@@ -14,7 +14,6 @@ class Level1 extends Phaser.Scene {
     this.load.image("sky", "assets/bg1.png");
     this.load.image("ground", "assets/platform.png");
     this.load.image("candy", "assets/candy.png");
-    this.load.image("bomb", "assets/bomb.png");
     this.load.image("sandwich", "assets/sandwich.png");
     this.load.image("sword", "assets/sword.png");
     this.load.image("worm", "assets/worm.png");
@@ -216,6 +215,7 @@ class Level1 extends Phaser.Scene {
     });
 
     this.input.keyboard.on('keydown-W', () => {
+      this.grabarscore();
       this.scene.start('WinScene');
     });
     this.livesText = this.add.text(16, 60, "Lives:", {
@@ -339,6 +339,7 @@ class Level1 extends Phaser.Scene {
       this.player.setTint(0xff0000);
       this.player.anims.play("turn");
       this.gameOver = true;
+      this.grabarscore();
       this.time.delayedCall(1000, () => {
         this.scene.start('LoseScene');
       });
@@ -360,7 +361,36 @@ class Level1 extends Phaser.Scene {
       
     }
   }
-  
+  grabarscore(){
+     // Comprobar nickname en scores de localstorage
+     let scores = JSON.parse(localStorage.getItem('scores'));
+     // Crear scores si no existe
+      if(!scores){
+        scores = [];
+      }
+
+     let nickname = localStorage.getItem('nickname');
+     let nickfinded = scores.find(score => score.nickname === nickname);
+     
+     if(nickfinded){
+       if(this.score >= nickfinded.score){
+          nickfinded.score = this.score;
+          nickfinded.character = this.selectedCharacter;
+            // fecha de hoy
+          let today = new Date();
+          let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+          nickfinded.time = date;
+          localStorage.setItem('scores', JSON.stringify(scores));
+        }
+     }else{
+       // fecha de hoy
+       let today = new Date();
+       let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+       scores.push({nickname: nickname, score: this.score, time: date, character: this.selectedCharacter});
+       localStorage.setItem('scores', JSON.stringify(scores));
+     }
+     
+  }
 
 }
 

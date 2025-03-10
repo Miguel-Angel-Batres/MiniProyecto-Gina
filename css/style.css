@@ -302,3 +302,55 @@ button:active {
   background-color: var(--black);
   border-radius: 15px;
 }
+.menuscores{
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 100px;
+  gap: 20px;
+}
+/* Hacer tabla */
+/* Estilos para la tabla */
+.tabla-scores {
+  gap: 1rem;
+  width: 80%;
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 2px solid var(--black);
+  border-radius: 10px;
+  height: 80%;
+  overflow-y: auto;
+}
+
+.tabla-scores table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.tabla-scores th {
+  background-color: var(--black);
+  color: var(--white);
+  padding: 1rem;
+  text-align: center;
+}
+
+/* Estilo para filas impares */
+.tabla-scores tr:nth-child(odd) {
+  background-color: var(--white); 
+}
+
+/* Estilo para filas pares */
+.tabla-scores tr:nth-child(even) {
+  background-color:var(--gray5); 
+}
+
+.tabla-scores td {
+  color: var(--black);
+  padding: 1rem;
+  text-align: center;
+}
+

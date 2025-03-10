@@ -47,6 +47,19 @@
     <p>You Must Enter Your Nickname</p>
     <button id="startGame">Start</button>
   </div>
+  <div class="menuscores">
+    <h1>Top Scores</h1>
+    <!-- Tabla de scores -->
+    <table class="tabla-scores">
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Score</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
   <div class="selectPJ">
     <h1>Select your hero</h1>
 
@@ -85,6 +98,8 @@
           document.querySelector('.nickname').style.display = 'none';
           // Mostrar el menú de selección de personaje
           document.querySelector('.selectPJ').style.display = 'grid';
+          
+          let nickname = localStorage.setItem('nickname', document.getElementById('nickname').value);
           }
           
         });
@@ -96,6 +111,7 @@
           document.querySelector('.menu').style.display = 'none';
           // Mostrar el menú de selección de personaje
           document.querySelector('.nickname').style.display = 'flex';
+
         });
       // Obtén el botón de "instructions" y asigna el evento
       document
@@ -113,6 +129,7 @@
         .addEventListener('click', () => {
           // Ocultar todos los menus
           document.querySelector('.instructions').style.display = 'none';
+          document.querySelector('.scores').style.display = 'none';
           //document.querySelector('.creditos').style.display = 'none';
           // Mostrar el menú
           document.querySelector('.menu').style.display = 'flex';
@@ -142,7 +159,45 @@
           // cerrar pagina
           window.close();
         });
+      document 
+        .getElementById('scores')
+        .addEventListener('click', () => {
+          // Ocultar el menú
+          document.querySelector('.menu').style.display = 'none';
+          // Mostrar el menú de selección de personaje
+          document.querySelector('.menuscores').style.display = 'flex';
 
+          // Obtener los scores
+          let scores = JSON.parse(localStorage.getItem('scores')) || [];
+          scores.sort((a, b) => b.score - a.score);
+          let tabla = document.querySelector('.tabla-scores');
+          tabla.innerHTML = '<thead><tr><th>Player</th><th>Score</th><th>Time</th><th>Character</th></tr></thead>';
+          let numfila;
+          scores.forEach((score, index) => {
+          
+            // Crear una fila
+            let tr = document.createElement('tr');
+            // Crear las celdas
+            let td1 = document.createElement('td');
+            let td2 = document.createElement('td');
+            let td3 = document.createElement('td');
+            let td4 = document.createElement('td');
+  
+            // Asignar el contenido
+            td1.textContent = score.nickname;
+            td2.textContent = score.score;
+            td3.textContent = score.time;
+            console.log(score.time);
+            td4.textContent = score.character;
+            // Agregar las celdas a la fila
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tr.appendChild(td3);
+            tr.appendChild(td4);
+            // Agregar la fila a la tabla
+            tabla.appendChild(tr);
+          });
+        });
         //escape
         document
         .addEventListener('keydown', (e) => {
@@ -159,8 +214,10 @@
               document.querySelector('.instructions').style.display = 'none';
               document.querySelector('.menu').style.display = 'flex';
             }
-            if(document.querySelector('.creditos').style.display === 'flex'){
-              document.querySelector('.creditos').style.display = 'none';
+           
+            console.log(document.querySelector('.menuscores').style.display);
+            if(document.querySelector('.menuscores').style.display === 'flex'){
+              document.querySelector('.menuscores').style.display = 'none';
               document.querySelector('.menu').style.display = 'flex';
             }
 
