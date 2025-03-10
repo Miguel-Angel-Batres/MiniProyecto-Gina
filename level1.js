@@ -69,17 +69,17 @@ class Level1 extends Phaser.Scene {
     // Crear grupo de gusanos
     this.worms = this.physics.add.group();
 
-    let numWorms = 10;
-    let startX = 500;
-    let spacing = 600;
+    let numWorms = 5;
+    let startX = 1000;
+    let spacing = 300;
     let wormSpeed = 150;
     
     for (let i = 0; i < numWorms; i++) {
       let x = startX + i * spacing; // Posición calculada para cada gusano
       let direction = i % 2 === 0 ? 1 : -1; // Alternar dirección (1 = derecha, -1 = izquierda)
 
-      let worm = this.worms.create(x, 720, "worm").setScale(2.5);
-      worm.setBounce(1);
+      let worm = this.worms.create(x, 500, "worm").setScale(4);
+      worm.setBounce(0.5);
       worm.setCollideWorldBounds(true);
       worm.setVelocityX(wormSpeed * direction); // Asignar velocidad positiva o negativa
 
@@ -87,56 +87,6 @@ class Level1 extends Phaser.Scene {
         worm.setFlipX(true); // Voltear los gusanos que inician moviéndose a la izquierda
       }
     }
-
-    // Cambiar la lógica para no desaparecer y permitir que los gusanos vuelvan al otro lado
-    this.physics.world.on("worldbounds", (body) => {
-      if (body.gameObject && body.gameObject.texture.key === "worm") {
-        let worm = body.gameObject;
-        let worldWidth = this.physics.world.bounds.width;
-
-        // Si el gusano pasa por el borde derecho
-        if (worm.x > worldWidth) {
-          worm.setX(0);  // Lo reposicionamos al principio
-        } else if (worm.x < 0) {  // Si el gusano pasa por el borde izquierdo
-          worm.setX(worldWidth);  // Lo reposicionamos al final
-        }
-
-        worm.setVelocityX(-worm.body.velocity.x); // Invertir dirección
-        worm.setFlipX(worm.body.velocity.x < 0); // Si la velocidad es negativa, voltear el sprite
-      }
-    });
-
-    // Permitir que los gusanos reboten en los límites del mundo
-    this.physics.add.collider(this.worms, this.platforms);
-
-    // Configurar gusanos con colisión en los límites
-    this.worms.children.iterate((worm) => {
-      worm.setCollideWorldBounds(true);
-      worm.setBounce(0.5); // Reduce el rebote para un comportamiento más controlado
-      worm.setVelocityX(worm.body.velocity.x); // Mantén la velocidad X inicial
-      worm.body.onWorldBounds = true;
-    });
-
-    // Cambiar la lógica para que los gusanos reboten correctamente
-this.physics.world.on("worldbounds", (body) => {
-  if (body.gameObject && body.gameObject.texture.key === "worm") {
-    let worm = body.gameObject;
-    let worldWidth = this.physics.world.bounds.width;
-
-    // Invertir la dirección inmediatamente cuando el gusano golpea el borde
-    worm.setVelocityX(-worm.body.velocity.x);
-
-    // Si el gusano golpea el borde derecho
-    if (worm.x > worldWidth) {
-      worm.setX(0); // Reposicionar al principio
-    } else if (worm.x < 0) { // Si el gusano golpea el borde izquierdo
-      worm.setX(worldWidth); // Reposicionar al final
-    }
-
-    worm.setFlipX(worm.body.velocity.x < 0); // Voltear el sprite al cambiar la dirección
-  }
-});
-
 
     // sword al final del nivel
     this.sword = this.physics.add.sprite(4950, 80, "sword").setScale(2);
@@ -236,9 +186,8 @@ this.physics.world.on("worldbounds", (body) => {
       this.scene.stop();
       console.log('cambio de nivel');
     });
-    this.physics.add.collider(this.player, this.bombs, this.removeLive, null, this);
-    this.physics.add.collider(this.worms, this.platforms); // Permitir colisión con el suelo
-    this.physics.add.collider(this.player, this.worms, this.removeLive, null, this); // Reducir vida si toca un gusano
+
+    this.physics.add.overlap(this.player, this.worms, this.removeLive, null, this); 
 
 
 
@@ -289,6 +238,17 @@ this.physics.world.on("worldbounds", (body) => {
     if (this.cursors.up.isDown && this.player.body.touching.down) {
       this.player.setVelocityY(-600);
     }
+
+    // Controlar la velocidad de los gusanos
+    this.worms.children.iterate((worm) => {
+      if (worm.body.blocked.right) {
+        worm.setVelocityX(-150);
+        worm.setFlipX(true);
+      } else if (worm.body.blocked.left) {
+        worm.setVelocityX(150);
+        worm.setFlipX(false);
+      }
+    });
   }
 
   collectStar(player, candy) {
@@ -320,7 +280,8 @@ this.physics.world.on("worldbounds", (body) => {
     }
   }
 
-  removeLive(player, enemy) { 
+  removeLive() { 
+    
     // Restar una vida
     this.lives--;
   
@@ -344,6 +305,7 @@ this.physics.world.on("worldbounds", (body) => {
       this.player.setPosition(100, 450);
       this.player.setVelocity(0, 0); // Detener cualquier movimiento
       this.player.clearTint(); // Quitar el color rojo
+      
     }
   }
   
