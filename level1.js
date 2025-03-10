@@ -16,7 +16,6 @@ class Level1 extends Phaser.Scene {
     this.load.image("candy", "assets/candy.png");
     this.load.image("sandwich", "assets/sandwich.png");
     this.load.image("sword", "assets/sword.png");
-    this.load.image("worm", "assets/worm.png");
 
     this.load.audio('finnDeath1', 'sounds/Finn/finn_death_01.mp3');
     this.load.audio('finnDeath2', 'sounds/Finn/finn_death_02.mp3');
