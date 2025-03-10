@@ -33,6 +33,10 @@ class Level1 extends Phaser.Scene {
       frameWidth: 55,
       frameHeight: 68,
     });
+    this.load.spritesheet("worm", "assets/worm.png", {
+      frameWidth: 46,
+      frameHeight: 27,
+    });
     this.load.image("heart", "assets/heart.png");
 
 
@@ -73,6 +77,28 @@ class Level1 extends Phaser.Scene {
     this.platforms.create(2500, 550, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
     this.platforms.create(3000, 350, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
 
+
+      // Crear la animación del gusano
+      this.anims.create({
+        key: "worm_left",
+        frames: this.anims.generateFrameNumbers("worm", { start: 0, end: 8 }),
+        frameRate: 8,
+        repeat: -1,
+      });
+      this.anims.create({
+        key: "worm_idle",
+        frames: [{ key: "worm", frame: 9 }],
+        frameRate: 1,
+      });
+      
+      this.anims.create({
+        key: "worm_right",
+        frames: this.anims.generateFrameNumbers("worm", { start: 10, end: 19 }),
+        frameRate: 8,
+        repeat: -1,
+      });
+      
+
     // Crear grupo de gusanos
     this.worms = this.physics.add.group();
 
@@ -86,6 +112,7 @@ class Level1 extends Phaser.Scene {
       let direction = i % 2 === 0 ? 1 : -1; // Alternar dirección (1 = derecha, -1 = izquierda)
 
       let worm = this.worms.create(x, 500, "worm").setScale(4);
+      worm.anims.play("worm_left");
       worm.setBounce(0.5);
       worm.setCollideWorldBounds(true);
       worm.setVelocityX(wormSpeed * direction); // Asignar velocidad positiva o negativa
@@ -254,16 +281,23 @@ class Level1 extends Phaser.Scene {
       this.player.setVelocityY(-700);
     }
 
-    // Controlar la direccion de los gusanos
-    this.worms.children.iterate((worm) => {
-      if (worm.body.blocked.right) {
-        worm.setVelocityX(-150);
-        worm.setFlipX(true);
-      } else if (worm.body.blocked.left) {
-        worm.setVelocityX(150);
-        worm.setFlipX(false);
-      }
-    });
+// Controlar la direccion y animación de los gusanos
+this.worms.children.iterate((worm) => {
+  if (worm.body.blocked.right) {
+    worm.setVelocityX(-150);
+    // worm.setFlipX(true);
+    worm.anims.play("worm_left", true);
+  } else if (worm.body.blocked.left) {
+    worm.setVelocityX(150);
+    // worm.setFlipX(false);
+    worm.anims.play("worm_right", true);
+  } else if (worm.body.velocity.x === 0) {
+    // Si no se está moviendo, vuelve a la animación idle
+    worm.anims.play("worm_idle", true);
+  }
+
+});
+
   }
 
   collectStar(player, candy) {
