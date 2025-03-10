@@ -18,6 +18,14 @@ class Level1 extends Phaser.Scene {
     this.load.image("sandwich", "assets/sandwich.png");
     this.load.image("sword", "assets/sword.png");
     this.load.image("worm", "assets/worm.png");
+
+    this.load.audio('finnDeath1', 'sounds/Finn/finn_death_01.mp3');
+    this.load.audio('finnDeath2', 'sounds/Finn/finn_death_02.mp3');
+    this.load.audio('finnDeath3', 'sounds/Finn/finn_death_03.mp3');
+    this.load.audio('jakeDeath1', 'sounds/Jake/jake_death_01.mp3');
+    this.load.audio('jakeDeath2', 'sounds/Jake/jake_death_02.mp3');
+    this.load.audio('jakeDeath3', 'sounds/Jake/jake_death_03.mp3');
+
     this.load.spritesheet("finn", "assets/finn.png", {
       frameWidth: 54,
       frameHeight: 83,
@@ -59,12 +67,12 @@ class Level1 extends Phaser.Scene {
 
 
     // Creando plataformas flotantes 
-    this.platforms.create(400, 600, "ground").setDisplaySize(200, 32).refreshBody();
-    this.platforms.create(900, 500, "ground").setDisplaySize(200, 32).refreshBody();
-    this.platforms.create(1600, 400, "ground").setDisplaySize(200, 32).refreshBody();
-    this.platforms.create(2200, 550, "ground").setDisplaySize(200, 32).refreshBody();
-    this.platforms.create(2800, 450, "ground").setDisplaySize(200, 32).refreshBody();
-    this.platforms.create(3500, 350, "ground").setDisplaySize(200, 32).refreshBody();
+    this.platforms.create(400, 500, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
+    this.platforms.create(900, 400, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
+    this.platforms.create(1400, 300, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
+    this.platforms.create(2000, 450, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
+    this.platforms.create(2500, 550, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
+    this.platforms.create(3000, 350, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
 
     // Crear grupo de gusanos
     this.worms = this.physics.add.group();
@@ -87,10 +95,18 @@ class Level1 extends Phaser.Scene {
         worm.setFlipX(true); // Voltear los gusanos que inician moviéndose a la izquierda
       }
     }
+   
+    if(this.selectedCharacter === 'finn'){
+      // sword al final del nivel
+       this.sword = this.physics.add.sprite(4950, 80, "sword").setScale(2);
+       this.sword.setBounce(0.2);
+     }
+     if(this.selectedCharacter === 'jake'){
+       // sandwich al final del nivel
+       this.sword = this.physics.add.sprite(4950, 80, "sandwich").setScale(2);
+       this.sword.setBounce(0.2);
+     }
 
-    // sword al final del nivel
-    this.sword = this.physics.add.sprite(4950, 80, "sword").setScale(2);
-    this.sword.setBounce(0.2);
 
     // Fisicas del player
     if (this.selectedCharacter === 'finn') {
@@ -173,7 +189,6 @@ class Level1 extends Phaser.Scene {
     this.scoreText.setScrollFactor(0);
 
     this.physics.add.collider(this.player, this.platforms);
-    //this.physics.add.collider(this.stars, this.platforms);
     this.physics.add.collider(this.bombs, this.platforms);
     this.physics.add.collider(this.sword, this.platforms);
     this.physics.add.collider(this.worms, this.platforms);
@@ -187,7 +202,7 @@ class Level1 extends Phaser.Scene {
       console.log('cambio de nivel');
     });
 
-    this.physics.add.overlap(this.player, this.worms, this.removeLive, null, this); 
+    this.colisiongusanil =  this.physics.add.overlap(this.player, this.worms, this.removeLive, null, this); 
 
 
 
@@ -235,8 +250,8 @@ class Level1 extends Phaser.Scene {
       this.player.anims.play("turn");
     }
 
-    if (this.cursors.up.isDown && this.player.body.touching.down) {
-      this.player.setVelocityY(-600);
+    if (this.cursors.up.isDown && this.player.body.touching.down || this.cursors.space.isDown && this.player.body.touching.down) {
+      this.player.setVelocityY(-700);
     }
 
     // Controlar la velocidad de los gusanos
@@ -301,10 +316,51 @@ class Level1 extends Phaser.Scene {
         this.scene.start('LoseScene');
       });
     } else {
+      // Sonido de muerte
+      if(this.selectedCharacter === 'finn') {
+        var random3 = Phaser.Math.Between(1, 3);
+        switch(random3){
+          case 1:
+            this.sound.play('finnDeath1');
+            break;
+          case 2:
+            this.sound.play('finnDeath2');
+            break;
+          case 3:
+            this.sound.play('finnDeath3');
+            break;
+        }
+      }
+      if(this.selectedCharacter === 'jake') {
+        var random3 = Phaser.Math.Between(1, 3);
+        switch(random3){
+          case 1:
+            this.sound.play('jakeDeath1');
+            break;
+          case 2:
+            this.sound.play('jakeDeath2');
+            break;
+          case 3:
+            this.sound.play('jakeDeath3');
+            break;
+        }
+      }
+ 
+
       // Si aún hay vidas, reposicionamos al jugador sin eliminar los gusanos
       this.player.setPosition(100, 450);
-      this.player.setVelocity(0, 0); // Detener cualquier movimiento
-      this.player.clearTint(); // Quitar el color rojo
+      this.player.setVelocity(0, 0); 
+      this.player.clearTint(); 
+
+      // Damos efecto de opacidad al player por 2 segundos
+      this.player.setAlpha(0.5);
+      this.colisiongusanil.active = false;
+      this.time.delayedCall(3000, () => {
+        this.player.setAlpha(1);
+        this.colisiongusanil.active = true;
+      });
+      
+
       
     }
   }

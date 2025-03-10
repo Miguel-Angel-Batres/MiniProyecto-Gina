@@ -35,17 +35,26 @@ class Level2 extends Phaser.Scene {
         for (let x = 0; x <= 5000; x += 500) {  // Cada plataforma mide 300px
             this.platforms.create(x, 770, "ground").setDisplaySize(500, 64).refreshBody();
         }
-       // Creando plataformas flotantes 
-       this.platforms.create(400, 600, "ground").setDisplaySize(200, 32).refreshBody();
-       this.platforms.create(900, 500, "ground").setDisplaySize(200, 32).refreshBody();
-       this.platforms.create(1600, 400, "ground").setDisplaySize(200, 32).refreshBody();
-       this.platforms.create(2200, 550, "ground").setDisplaySize(200, 32).refreshBody();
-       this.platforms.create(2800, 450, "ground").setDisplaySize(200, 32).refreshBody();
-       this.platforms.create(3500, 350, "ground").setDisplaySize(200, 32).refreshBody();
+      
+      // Creando plataformas flotantes 
+      this.platforms.create(400, 500, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
+      this.platforms.create(900, 400, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
+      this.platforms.create(1400, 300, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
+      this.platforms.create(2000, 450, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
+      this.platforms.create(2500, 550, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
+      this.platforms.create(3000, 350, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
    
+      if(this.selectedCharacter === 'finn'){
        // sword al final del nivel
         this.sword = this.physics.add.sprite(4950, 80, "sword").setScale(2);
         this.sword.setBounce(0.2);
+      }
+      if(this.selectedCharacter === 'jake'){
+        // sandwich al final del nivel
+        this.sword = this.physics.add.sprite(4950, 80, "sandwich").setScale(2);
+        this.sword.setBounce(0.2);
+      }
+
         
       // Fisicas del player
       console.log(this.selectedCharacter);
@@ -184,9 +193,10 @@ class Level2 extends Phaser.Scene {
         this.player.anims.play("turn");
       }
   
-      if (this.cursors.up.isDown && this.player.body.touching.down) {
-        this.player.setVelocityY(-600);
+      if (this.cursors.up.isDown && this.player.body.touching.down || this.cursors.space.isDown && this.player.body.touching.down) {
+        this.player.setVelocityY(-700);
       }
+  
     }
   
     collectStar(player, candy) {
