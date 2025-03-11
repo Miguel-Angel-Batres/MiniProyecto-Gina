@@ -3,43 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drag and Drop con Fondo</title>
+    <title>Drag and Drop Independiente</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             height: 100vh;
-            background: url('assets/BottomDrawNDrop_FINN.png') no-repeat center center fixed;
+            margin: 0;
+            /* background: url('assets/BottomDrawNDrop_FINN.png') no-repeat center center fixed; */
+            background: url('assets/BottomDrawNDrop_JAKE.png') no-repeat center center fixed;
             background-size: 75%;
         }
 
-        .container {
-            display: flex;
-            gap: 20px;
-        }
-
         .box {
-            width: 200px;
-            height: 200px;
+             /* finn */
+            /* width: 200px;
+            height: 500px; */
+
+            /* jake */
+            width: 250px;
+            height: 220px;
+
+            
             border: 2px dashed #555;
             display: flex;
             align-items: center;
             justify-content: center;
             background: rgba(255, 255, 255, 0.5);
-            position: relative;
+            position: absolute;
         }
+
+        /* finn */
+        /* #box1 {
+            top: 15%;
+            left: 76%;
+        }
+
+        #box2 {
+            top: 23%;
+            left: 44%;
+        } */
+
+        /* jake */
+        #box1 {
+            top: 16%;
+            left: 73%;
+        }
+
+        #box2 {
+            top: 63%;
+            left: 27%;
+        }
+
+
 
         .box.dragover {
             background: rgba(200, 200, 200, 0.5);
         }
 
         .image {
-            width: 150px;
+            width: 200px;
             height: auto;
-            max-height: 150px;
+            max-height: 500px;
             object-fit: contain;
             cursor: grab;
         }
@@ -49,30 +73,39 @@
         }
 
         .status {
-            margin-top: 20px;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             font-weight: bold;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
         }
 
         h1 {
             text-align: center;
-            margin-bottom: 20px;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
-    <h1>Drag and Drop con Fondo</h1>
-    <div class="container" id="background">
-        <div id="box1" class="box">
-            <img id="image" src="assets/SwordDragNDrop_FINN.png" draggable="true" class="image">
-        </div>
-        <div id="box2" class="box"></div>
+    <h1>Drag and Drop Independiente</h1>
+    <div id="box1" class="box">
+        <!-- Para el Finn -->
+        <!-- <img id="image" src="assets/SwordDragNDrop_FINN.png" draggable="true" class="image">  -->
+
+         <!-- Para el Jake -->
+        <img id="image" src="assets/SanwisDragNDrop_JAKE.png" draggable="true" class="image">
     </div>
+    <div id="box2" class="box"></div>
+
     <div id="status" class="status">Estado: Esperando acción</div>
 
     <script>
         const image = document.getElementById("image");
-        const box1 = document.getElementById("box1");
-        const box2 = document.getElementById("box2");
+        const boxes = document.querySelectorAll(".box");
         const status = document.getElementById("status");
 
         image.addEventListener("dragstart", (e) => {
@@ -86,7 +119,7 @@
             status.textContent = "Estado: Arrastre finalizado";
         });
 
-        [box1, box2].forEach(box => {
+        boxes.forEach(box => {
             box.addEventListener("dragover", (e) => {
                 e.preventDefault();
             });
