@@ -163,6 +163,7 @@ class Level2 extends Phaser.Scene {
       this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
   
       this.input.keyboard.on('keydown-ESC', () => {
+        document.getElementById("pause").play();
         this.bossmusic.pause();
         this.scene.launch('PauseScene');
         this.scene.pause();

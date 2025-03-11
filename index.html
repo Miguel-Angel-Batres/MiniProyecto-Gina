@@ -21,9 +21,10 @@
     <link rel="preload" href="https://arielparra.github.io/js/favicon.js" as="script">
     <link rel="preload" href="node_modules/phaser/dist/phaser.min.js" as="script">
     <script defer src="https://arielparra.github.io/js/favicon.js"></script>
-    <script defer src="node_modules/phaser/dist/phaser.min.js"></script>
+    <script defer src="node_modules/phaser/dist/phaser.min.js"></script>    
+
     <!-- Favicons -->
-    <link rel="apple-touch-icon" href="./img/foto.webp" type="image/webp" sizes="180x180">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/page_icon.png2">
 </head>
 
 <body class="body">
@@ -78,6 +79,16 @@
   </div>
   <audio id="bgMusic" src="sounds/background_music_1.mp3" preload="none" loop style="display: none;"></audio>
   <audio id="bossMusic" src="sounds/bossmusic.mp3" preload="none" loop style="display: none;"></audio>
+  <audio id="buttonsound" preload="none" style="display: none;" controls>
+    <source src="sounds/buttons.ogg" type="audio/ogg">
+  </audio>
+  <audio id="buttonsoundexit" preload="none" style="display: none;" controls>
+    <source src="sounds/buttonsexit.ogg" type="audio/ogg">
+  </audio>
+  <!-- pause audio -->
+  <audio id="pause" preload="none" style="display: none;" controls>
+    <source src="sounds/pause.ogg" type="audio/ogg">
+  </audio>
   <script type="module">
     import { startGame } from './config.js'; // Asegúrate de tener la función startGame exportada correctamente
 
@@ -87,7 +98,10 @@
       document
         .getElementById('startGame')
         .addEventListener('click', () => {
+
           if (document.getElementById('nickname').value === '') {
+            // sonido del boton
+            document.getElementById('buttonsoundexit').play();
             // si no hay nombre, mostrar mensaje de error
             document.querySelector('.nickname p').style.display = 'block';
             setTimeout(() => {
@@ -95,6 +109,8 @@
             }, 3000);           
            return;
           }else{
+            // Sonido del boton
+          document.getElementById('buttonsound').play();
           // Ocultar el menú
           document.querySelector('.nickname').style.display = 'none';
           // Mostrar el menú de selección de personaje
@@ -108,6 +124,8 @@
       document
         .getElementById('start')
         .addEventListener('click', () => {
+          // Sonido del boton
+          document.getElementById('buttonsound').play();
           // Ocultar el menú
           document.querySelector('.menu').style.display = 'none';
           // Mostrar el menú de selección de personaje
@@ -118,6 +136,8 @@
       document
         .getElementById('ayuda')
         .addEventListener('click', () => {
+          // Sonido del boton
+          document.getElementById('buttonsound').play();
           // Ocultar el menú
           document.querySelector('.menu').style.display = 'none';
           // Mostrar las instructions
@@ -128,6 +148,8 @@
       document
         .getElementById('exitMenu')
         .addEventListener('click', () => {
+          // Sonido del boton
+          document.getElementById('buttonsoundexit').play();
           // Ocultar todos los menus
           document.querySelector('.instructions').style.display = 'none';
          
@@ -136,6 +158,8 @@
       document.
         getElementById('finn')
         .addEventListener('click', () => {
+          // Sonido del boton
+          document.getElementById('buttonsound').play();
           // Ocultar el menú
           document.querySelector('.selectPJ').style.display = 'none';
           document.body.classList.add('inactive');
@@ -146,6 +170,8 @@
       document.
         getElementById('jake')
         .addEventListener('click', () => {
+          // Sonido del boton
+          document.getElementById('buttonsound').play();
           // Ocultar el menú
           document.querySelector('.selectPJ').style.display = 'none';
           document.body.classList.add('inactive');
@@ -161,6 +187,8 @@
       document 
         .getElementById('scores')
         .addEventListener('click', () => {
+          // Sonido del boton
+          document.getElementById('buttonsound').play();
           // Ocultar el menú
           document.querySelector('.menu').style.display = 'none';
           // Mostrar el menú de selección de personaje
@@ -204,24 +232,38 @@
             if(document.querySelector('.nickname').style.display === 'flex'){
               document.querySelector('.nickname').style.display = 'none';
               document.querySelector('.menu').style.display = 'flex';
+
+              // Sonido del boton
+              document.getElementById('buttonsoundexit').play();
             }
+
             if(document.querySelector('.selectPJ').style.display === 'grid'){
               document.querySelector('.selectPJ').style.display = 'none';
               document.querySelector('.nickname').style.display = 'flex';
+
+              // Sonido del boton
+              document.getElementById('buttonsoundexit').play();
             }
             if(document.querySelector('.instructions').style.display === 'flex'){
               document.querySelector('.instructions').style.display = 'none';
               document.querySelector('.menu').style.display = 'flex';
+
+              // Sonido del boton
+              document.getElementById('buttonsoundexit').play();
             }
            
-            console.log(document.querySelector('.menuscores').style.display);
             if(document.querySelector('.menuscores').style.display === 'flex'){
               document.querySelector('.menuscores').style.display = 'none';
               document.querySelector('.menu').style.display = 'flex';
+
+              // Sonido del boton
+              document.getElementById('buttonsoundexit').play();
             }
 
           }
+          
         });
+
     });
 
   </script>

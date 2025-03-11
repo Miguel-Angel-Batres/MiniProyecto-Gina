@@ -230,6 +230,7 @@ class Level1 extends Phaser.Scene {
 
 
     this.input.keyboard.on('keydown-ESC', () => {
+      document.getElementById("pause").play();
       this.bgmusic1.pause();
       this.scene.launch('PauseScene');
       this.scene.pause();
