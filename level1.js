@@ -17,6 +17,7 @@ class Level1 extends Phaser.Scene {
     this.load.image("sandwich", "assets/sandwich.png");
     this.load.image("sword", "assets/sword.png");
 
+
     this.load.audio('finnDeath1', 'sounds/Finn/finn_death_01.mp3');
     this.load.audio('finnDeath2', 'sounds/Finn/finn_death_02.mp3');
     this.load.audio('finnDeath3', 'sounds/Finn/finn_death_03.mp3');
@@ -37,6 +38,7 @@ class Level1 extends Phaser.Scene {
       frameWidth: 46,
       frameHeight: 16,
     });
+   
     this.load.image("heart", "assets/heart.png");
 
 
@@ -158,6 +160,7 @@ class Level1 extends Phaser.Scene {
         frameRate: 8,
         repeat: -1,
       });
+    
     }
     if (this.selectedCharacter === 'jake') {
       this.player = this.physics.add.sprite(100, 450, "jake").setScale(2);
@@ -210,6 +213,17 @@ class Level1 extends Phaser.Scene {
       fill: "#000",
     });
     this.scoreText.setScrollFactor(0);
+
+    // fecha en la partee dereecha superior
+    let fecha = new Date();
+    // solo en numeros
+    fecha = fecha.getFullYear()+'-'+(fecha.getMonth()+1)+'-'+fecha.getDate();
+    this.dateText = this.add.text(1100, 16, "Date: " + fecha, {
+      fontFamily: '"Press Start 2P", Arial',
+      fontSize: "32px",
+      fill: "#000",
+    });
+    this.dateText.setScrollFactor(0);
 
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.sword, this.platforms);
@@ -282,7 +296,7 @@ class Level1 extends Phaser.Scene {
       this.player.setVelocityX(0);
       this.player.anims.play("turn");
     }
-
+    
     if (this.cursors.up.isDown && this.player.body.touching.down || this.cursors.space.isDown && this.player.body.touching.down) {
       this.player.setVelocityY(-900);
     }

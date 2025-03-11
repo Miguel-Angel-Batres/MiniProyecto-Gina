@@ -23,24 +23,35 @@
     <script defer src="https://arielparra.github.io/js/favicon.js"></script>
     <script defer src="node_modules/phaser/dist/phaser.min.js"></script>    
 
-    <!-- Favicons -->
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/page_icon.png2">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/page_icon.png">
 </head>
 
 <body class="body">
   <div class="menu">
-    <h1> Adventure time</h1>
+    <h1> Adventure Time</h1>
     <button id="start">Play</button>
     <button id="ayuda">Help</button>
     <button id="creditos">Credits</button>
     <button id="scores">Scores</button>
-    <button id="exit">exit</button>
+    <button id="exit">Exit</button>
   </div>
   <div class="instructions">
     <h1>Instructions</h1>
     <p>use the arrow keys to move</p>
     <p>press the `ESC` key to pause/exit</p>
-    <button id="exitMenu">exit</button>
+    <button id="exitInstructions">exit</button>
+  </div>
+  <div class="creditos">
+    <h1>Game Developed By</h1>
+    <div >
+      <p>Ariel Emilio Parra Martinez</p>
+      <p>Miguel Angel Batres Luna</p>
+      <p>Martin Alfonso Romo Martinez</p>
+    </div>
+    <p>Signature: Web Technologies</p>
+    <p>2025/03/10</p>
+
+    <button id="exitCreditos">exit</button>
   </div>
   <div class="nickname">
     <h1>Enter your nickname</h1>
@@ -60,6 +71,7 @@
         </tr>
       </thead>
     </table>
+    <button id="exitScores">exit</button>
   </div>
   <div class="selectPJ">
     <h1>Select your hero</h1>
@@ -77,7 +89,9 @@
       </button>
     </div>
   </div>
-  <audio id="bgMusic" src="sounds/background_music_1.mp3" preload="none" loop style="display: none;"></audio>
+  <audio id="bgMusic"  preload="auto" loop style="display: none;">
+    <source src="sounds/background_music_1.mp3" type="audio/mpeg">
+  </audio>
   <audio id="bossMusic" src="sounds/bossmusic.mp3" preload="none" loop style="display: none;"></audio>
   <audio id="buttonsound" preload="none" style="display: none;" controls>
     <source src="sounds/buttons.ogg" type="audio/ogg">
@@ -90,11 +104,9 @@
     <source src="sounds/pause.ogg" type="audio/ogg">
   </audio>
   <script type="module">
-    import { startGame } from './config.js'; // Asegúrate de tener la función startGame exportada correctamente
-
+    import { startGame } from './config.js'; 
     // Esperamos que el DOM esté completamente cargado antes de manipular elementos
     document.addEventListener('DOMContentLoaded', () => {
-      // Obtén el botón de "Jugar" y asigna el evento
       document
         .getElementById('startGame')
         .addEventListener('click', () => {
@@ -120,7 +132,6 @@
           }
           
         });
-      // Obtén el botón de "start" y asigna el evento
       document
         .getElementById('start')
         .addEventListener('click', () => {
@@ -132,7 +143,6 @@
           document.querySelector('.nickname').style.display = 'flex';
 
         });
-      // Obtén el botón de "instructions" y asigna el evento
       document
         .getElementById('ayuda')
         .addEventListener('click', () => {
@@ -144,9 +154,8 @@
           document.querySelector('.instructions').style.display = 'flex';
 
         });
-      // Obtén el botón de "exitMenu" y asigna el evento
       document
-        .getElementById('exitMenu')
+        .getElementById('exitInstructions')
         .addEventListener('click', () => {
           // Sonido del boton
           document.getElementById('buttonsoundexit').play();
@@ -154,6 +163,42 @@
           document.querySelector('.instructions').style.display = 'none';
          
           document.querySelector('.menu').style.display = 'flex';
+        });
+      // Exit Credits
+      document
+        .getElementById('exitCreditos')
+        .addEventListener('click', () => {
+          // Sonido del boton
+          document.getElementById('buttonsoundexit').play();
+          // Ocultar los creditos
+          document.querySelector('.creditos').style.display = 'none';
+          // Mostrar el menú
+          document.querySelector('.menu').style.display = 'flex';
+
+        });
+      // Exit Scores
+      document
+        .getElementById('exitScores')
+        .addEventListener('click', () => {
+          // Sonido del boton
+          document.getElementById('buttonsoundexit').play();
+          // Ocultar los scores
+          document.querySelector('.menuscores').style.display = 'none';
+          // Mostrar el menú
+          document.querySelector('.menu').style.display = 'flex';
+
+        });
+      
+      document
+        .getElementById('creditos')
+        .addEventListener('click', () => {
+          // Sonido del boton
+          document.getElementById('buttonsound').play();
+          // Ocultar el menú
+          document.querySelector('.menu').style.display = 'none';
+          // Mostrar los creditos
+          document.querySelector('.creditos').style.display = 'flex';
+
         });
       document.
         getElementById('finn')
