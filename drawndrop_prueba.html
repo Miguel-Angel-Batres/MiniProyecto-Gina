@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop con Fondo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: url('assets/BottomDrawNDrop_FINN.png') no-repeat center center fixed;
+            background-size: 75%;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .box {
+            width: 200px;
+            height: 200px;
+            border: 2px dashed #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.5);
+            position: relative;
+        }
+
+        .box.dragover {
+            background: rgba(200, 200, 200, 0.5);
+        }
+
+        .image {
+            width: 150px;
+            height: auto;
+            max-height: 150px;
+            object-fit: contain;
+            cursor: grab;
+        }
+
+        .dragging {
+            opacity: 0.5;
+        }
+
+        .status {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Drag and Drop con Fondo</h1>
+    <div class="container" id="background">
+        <div id="box1" class="box">
+            <img id="image" src="assets/SwordDragNDrop_FINN.png" draggable="true" class="image">
+        </div>
+        <div id="box2" class="box"></div>
+    </div>
+    <div id="status" class="status">Estado: Esperando acción</div>
+
+    <script>
+        const image = document.getElementById("image");
+        const box1 = document.getElementById("box1");
+        const box2 = document.getElementById("box2");
+        const status = document.getElementById("status");
+
+        image.addEventListener("dragstart", (e) => {
+            e.dataTransfer.setData("text/plain", e.target.id);
+            e.target.classList.add("dragging");
+            status.textContent = "Estado: Arrastrando la imagen";
+        });
+
+        image.addEventListener("dragend", (e) => {
+            e.target.classList.remove("dragging");
+            status.textContent = "Estado: Arrastre finalizado";
+        });
+
+        [box1, box2].forEach(box => {
+            box.addEventListener("dragover", (e) => {
+                e.preventDefault();
+            });
+
+            box.addEventListener("dragenter", () => {
+                box.classList.add("dragover");
+                status.textContent = "Estado: Entrando en un recuadro";
+            });
+
+            box.addEventListener("dragleave", () => {
+                box.classList.remove("dragover");
+                status.textContent = "Estado: Saliendo de un recuadro";
+            });
+
+            box.addEventListener("drop", (e) => {
+                e.preventDefault();
+                const imgId = e.dataTransfer.getData("text/plain");
+                const img = document.getElementById(imgId);
+                if (!box.contains(img)) {
+                    box.appendChild(img);
+                }
+                box.classList.remove("dragover");
+                status.textContent = `Estado: La imagen está en el ${box.id}`;
+            });
+        });
+    </script>
+</body>
+</html>
