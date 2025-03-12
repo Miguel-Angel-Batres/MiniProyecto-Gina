@@ -17,6 +17,7 @@ class PauseScene extends Phaser.Scene{
          });
 
         this.input.keyboard.on('keydown-SPACE', () => {
+            document.getElementById("buttonsound").play();
             if(this.registry.get('level') == 1){
                 this.scene.resume('Level1');
             }else{
@@ -26,6 +27,7 @@ class PauseScene extends Phaser.Scene{
           
         });
         this.input.keyboard.on('keydown-ESC', () => {
+            document.getElementById("buttonsoundexit").play();
             if(this.registry.get('level') == 1){
                 this.bgmusic1.currentTime = 0;
                 this.scene.stop('Level1');

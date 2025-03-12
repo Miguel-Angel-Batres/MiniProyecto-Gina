@@ -354,3 +354,21 @@ button:active {
   text-align: center;
 }
 
+.creditos {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 100px;
+}
+
+.creditos p{
+  font-size: 20px;
+  background-color: var(--black);
+  padding: 2rem;
+  border-radius: 10px;
+  color: var(--white);
+  text-align: center;
+}
