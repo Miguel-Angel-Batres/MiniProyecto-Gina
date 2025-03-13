@@ -24,6 +24,9 @@ class Level1 extends Phaser.Scene {
     this.load.audio('jakeDeath1', 'sounds/Jake/jake_death_01.mp3');
     this.load.audio('jakeDeath2', 'sounds/Jake/jake_death_02.mp3');
     this.load.audio('jakeDeath3', 'sounds/Jake/jake_death_03.mp3');
+    this.load.audio('finn_attack1', 'sounds/Finn/finn_attack1_03.mp3');
+    this.load.audio('finn_attack2', 'sounds/Finn/finn_attack2_03.mp3');
+    this.load.audio('finn_attack3', 'sounds/Finn/finn_attack2_01.mp3');
     
 
     this.load.spritesheet("finn", "assets/finn.png", {
@@ -38,7 +41,10 @@ class Level1 extends Phaser.Scene {
       frameWidth: 46,
       frameHeight: 16,
     });
-   
+    this.load.spritesheet("finn_attack", "assets/finn_attack.png", {
+      frameWidth: 132,
+      frameHeight: 119,
+    });
     this.load.image("heart", "assets/heart.png");
 
 
@@ -63,25 +69,35 @@ class Level1 extends Phaser.Scene {
 
     // Fisicas de las plataformas
     this.platforms = this.physics.add.staticGroup();
-
+    this.platforms_worms = this.physics.add.staticGroup();
     // Forsito para crear las plataformas
-    for (let x = 0; x <= 5000; x += 500) {  // Cada plataforma mide 500px
+    for (let x = 0; x <= 5000; x += 490) {  
       let platform = this.platforms.create(x, 770, "ground").setDisplaySize(500, 64).refreshBody();
 
-      // Ajustar el tamaño de la colisión para permitir atravesar el 10% superior ()
-      platform.body.setSize(500, 58); // Hacer la plataforma más corta en la altura
-      platform.body.setOffset(0, 20); // Desplazar la colisión hacia abajo para permitir el paso por la parte superior
-    }
+      platform.body.setSize(500, 58); 
+      platform.body.setOffset(0, 20); 
+     }
 
-
-    // Creando plataformas flotantes 
-    this.platforms.create(400, 500, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
-    this.platforms.create(900, 400, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
-    this.platforms.create(1400, 300, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
-    this.platforms.create(2000, 450, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
-    this.platforms.create(2500, 550, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
-    this.platforms.create(3000, 350, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
-
+    const platformPositions = [
+      { x: 400, y: 500 },
+      { x: 900, y: 400 },
+      { x: 1400, y: 450 },
+      { x: 2000, y: 450 },
+      { x: 2500, y: 550 },
+      { x: 3000, y: 350 }
+    ];
+     
+    // Creando plataformas flotantes
+    platformPositions.forEach((pos) => {
+      this.platforms.create(pos.x, pos.y, "ground").setDisplaySize(350, 50).refreshBody();
+      
+      // Creandole paredes a cada lado
+      let leftwal =this.platforms_worms.create(pos.x - 250, pos.y-50).setDisplaySize(10, 100).refreshBody().setScale(1.3);
+      leftwal.setVisible(false);
+      let rightwal = this.platforms_worms.create(pos.x + 250, pos.y-50,).setDisplaySize(10, 100).refreshBody().setScale(1.3);
+      rightwal.setVisible(false);
+    });
+    
 
       // Crear la animación del gusano
       this.anims.create({
@@ -107,14 +123,14 @@ class Level1 extends Phaser.Scene {
     let spacing = 300;
     let wormSpeed = 150;
     
-    for (let i = 0; i < numWorms; i++) {
+   for (let i = 0; i < numWorms; i++) {
       let x = startX + i * spacing; // Posición calculada para cada gusano
       let direction = i & 1 === 1 ? 1 : -1; // Alternar dirección (1 = derecha, -1 = izquierda)
 
       let worm = this.worms.create(x, 700, "worm_idle").setScale(4);
       worm.anims.play("worm_right");
       worm.setBounce(0.5);
-      worm.body.setSize(46, 14);  // Ajusta el tamaño del cuerpo
+      worm.body.setSize(46, 16);  // Ajusta el tamaño del cuerpo
       worm.setCollideWorldBounds(true);
       worm.setVelocityX(wormSpeed * direction); // Asignar velocidad positiva o negativa
 
@@ -122,6 +138,17 @@ class Level1 extends Phaser.Scene {
         worm.anims.play("worm_left");
       }
     }
+    // Crear gusanos en plataformas flotantes
+    platformPositions.forEach((pos) => {
+      let worm = this.worms.create(pos.x,pos.y -50, "worm_idle").setScale(2);
+      worm.anims.play("worm_right");
+      worm.setBounce(0.5);
+      worm.body.setSize(46, 16);  // Ajusta el tamaño del cuerpo
+      worm.setCollideWorldBounds(true);
+      worm.setVelocityX(wormSpeed); // Asignar velocidad positiva o negativa
+
+  });
+
    
     if(this.selectedCharacter === 'finn'){
       // sword al final del nivel
@@ -137,7 +164,6 @@ class Level1 extends Phaser.Scene {
 
     // Fisicas del player
     if (this.selectedCharacter === 'finn') {
-      console.log('finn');
       this.player = this.physics.add.sprite(100, 450, "finn").setScale(2);
 
       this.anims.create({
@@ -160,11 +186,21 @@ class Level1 extends Phaser.Scene {
         frameRate: 8,
         repeat: -1,
       });
-    
+      this.anims.create({
+        key: "attack_left",
+        frames: this.anims.generateFrameNumbers("finn_attack", { start: 0, end: 6 }),
+        frameRate: 15,
+        repeat: 0,
+      });
+      this.anims.create({
+        key: "attack_right",
+        frames: this.anims.generateFrameNumbers("finn_attack", { start: 7, end: 13 }),
+        frameRate: 15,
+        repeat: 0,
+      });
     }
     if (this.selectedCharacter === 'jake') {
       this.player = this.physics.add.sprite(100, 450, "jake").setScale(2);
-      console.log('jake');
       this.anims.create({
         key: "left",
         frames: this.anims.generateFrameNumbers("jake", { start: 0, end: 7 }),
@@ -184,11 +220,12 @@ class Level1 extends Phaser.Scene {
         frameRate: 8,
         repeat: -1,
       });
+     
 
     }
     this.player.setBounce(0);
     this.player.setCollideWorldBounds(true);
-    this.player.setGravityY(1000);
+    this.player.setGravityY(2500);
 
     // Fijando camara al player
     this.cameras.main.setBounds(0, 0, 5000, 800);
@@ -228,6 +265,7 @@ class Level1 extends Phaser.Scene {
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.sword, this.platforms);
     this.physics.add.collider(this.worms, this.platforms);
+    this.physics.add.collider(this.worms,this.platforms_worms);
 
 
     // this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
@@ -279,31 +317,89 @@ class Level1 extends Phaser.Scene {
       this.bgmusic1.play();
     });
     this.bgmusic1.play();
-  }
+
+    // crear zkey
+    this.zkey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
+
+    // al acabar animacion de ataque se desactiva
+    this.player.on('animationcomplete', (anim) => {
+      if(anim.key === 'attack_right'){
+        this.attacking = false;
+        this.player.body.setSize(54, 83);
+        this.player.body.setOffset(0, 0);
+
+      }
+      if(anim.key === 'attack_left'){
+        this.attacking = false;
+        this.player.body.setSize(54, 83);
+        this.player.body.setOffset(0, 0);
+      }
+    });
+   this.player.on('animationstart', (anim) => {
+    if(anim.key === 'attack_right' || anim.key === 'attack_left'){
+      var random3 = Phaser.Math.Between(1, 3);
+      switch(random3){
+        case 1:
+        this.sound.play('finn_attack1');
+        break;
+        case 2:
+        this.sound.play('finn_attack2');
+        break;
+        case 3:
+        this.sound.play('finn_attack3');
+        break;
+      }
+    }
+    });
+  } 
 
   update() {
     if (this.gameOver) {
       return;
     }
 
-    if (this.cursors.left.isDown) {
+    if (this.cursors.left.isDown){
+      if(!this.attacking){
+        this.player.anims.play("left", true);
+      }
+      this.goingleft = true;
       this.player.setVelocityX(-320);
-      this.player.anims.play("left", true);
     } else if (this.cursors.right.isDown) {
+      if(!this.attacking){
+        this.player.anims.play("right", true);
+      }
+      this.goingleft = false;
       this.player.setVelocityX(320);
-      this.player.anims.play("right", true);
     } else {
+      if(!this.attacking){
+        this.player.anims.play("turn");
+      }
       this.player.setVelocityX(0);
-      this.player.anims.play("turn");
+      this.player.body.setSize(54, 83);
+    }
+
+    if(this.zkey.isDown){
+      if(this.goingleft){
+        this.player.anims.play("attack_left", true);
+        this.attacking = true;
+        this.player.body.setSize(132, 83);
+
+      }
+      else{        
+        this.player.anims.play("attack_right", true);
+        this.attacking = true;
+        this.player.body.setSize(132, 83);
+      }
     }
     
+
     if (this.cursors.up.isDown && this.player.body.touching.down || this.cursors.space.isDown && this.player.body.touching.down) {
-      this.player.setVelocityY(-900);
+      this.player.setVelocityY(-1300);
     }
     if (this.player.body.velocity.y > 0) { 
-      this.player.setGravityY(2000); // Aumenta la gravedad en la caída
+      this.player.setGravityY(3000); // Aumenta la gravedad en la caída
   } else {
-      this.player.setGravityY(1000); // Mantiene gravedad normal en el salto
+      this.player.setGravityY(2500); // Mantiene gravedad normal en el salto
   }
 
   // Controlar la direccion y animación de los gusanos
@@ -341,6 +437,17 @@ class Level1 extends Phaser.Scene {
 
   removeLive() { 
     
+    if(this.attacking){
+    // eliminar gusano
+    this.worms.children.iterate((worm) => {
+      if (worm.body.touching.up) {
+        worm.disableBody(true, true);
+        this.score += 10;
+        this.scoreText.setText("Score: " + this.score);
+      }
+    });
+   
+    }else{
     // Restar una vida
     this.lives--;
   
@@ -401,11 +508,9 @@ class Level1 extends Phaser.Scene {
       this.time.delayedCall(3000, () => {
         this.player.setAlpha(1);
         this.colisiongusanil.active = true;
-      });
-      
-
-      
+      });      
     }
+  }
   }
   grabarscore(){
      // Comprobar nickname en scores de localstorage

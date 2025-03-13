@@ -159,6 +159,9 @@ class Level2 extends Phaser.Scene {
         this.bossmusic.currentTime = 0;
         this.scene.start('WinScene');
         this.scene.stop();
+
+       
+
       });
       this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
   
