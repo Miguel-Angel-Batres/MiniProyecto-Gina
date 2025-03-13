@@ -3,6 +3,15 @@ class Level1 extends Phaser.Scene {
     super({ key: "Level1" });
     this.score = 0;
     this.lives = 3;
+    const platformPositions = [
+      { x: 400, y: 500 },
+      { x: 900, y: 400 },
+      { x: 1400, y: 450 },
+      { x: 2000, y: 450 },
+      { x: 2500, y: 550 },
+      { x: 3000, y: 350 },
+    ];
+    this.platformPositions = platformPositions;
   }
   init() {
     this.score = 0;
@@ -11,24 +20,35 @@ class Level1 extends Phaser.Scene {
     this.selectedCharacter = this.game.registry.get("selectedCharacter");
   }
   preload() {
+    this.LoadImages();
+    this.LoadSounds();
+    this.LoadSprites();
+
+    // Filtro para que las imagenes no se vean borrosas
+    this.load.on("filecomplete", (key) => {
+      this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST);
+    });
+  }
+  LoadImages() {
     this.load.image("sky", "assets/bg1.png");
     this.load.image("ground", "assets/platform.png");
     this.load.image("candy", "assets/candy.png");
     this.load.image("sandwich", "assets/sandwich.png");
     this.load.image("sword", "assets/sword.png");
-
-
-    this.load.audio('finnDeath1', 'sounds/Finn/finn_death_01.mp3');
-    this.load.audio('finnDeath2', 'sounds/Finn/finn_death_02.mp3');
-    this.load.audio('finnDeath3', 'sounds/Finn/finn_death_03.mp3');
-    this.load.audio('jakeDeath1', 'sounds/Jake/jake_death_01.mp3');
-    this.load.audio('jakeDeath2', 'sounds/Jake/jake_death_02.mp3');
-    this.load.audio('jakeDeath3', 'sounds/Jake/jake_death_03.mp3');
-    this.load.audio('finn_attack1', 'sounds/Finn/finn_attack1_03.mp3');
-    this.load.audio('finn_attack2', 'sounds/Finn/finn_attack2_03.mp3');
-    this.load.audio('finn_attack3', 'sounds/Finn/finn_attack2_01.mp3');
-    
-
+    this.load.image("heart", "assets/heart.png");
+  }
+  LoadSounds() {
+    this.load.audio("finnDeath1", "sounds/Finn/finn_death_01.mp3");
+    this.load.audio("finnDeath2", "sounds/Finn/finn_death_02.mp3");
+    this.load.audio("finnDeath3", "sounds/Finn/finn_death_03.mp3");
+    this.load.audio("jakeDeath1", "sounds/Jake/jake_death_01.mp3");
+    this.load.audio("jakeDeath2", "sounds/Jake/jake_death_02.mp3");
+    this.load.audio("jakeDeath3", "sounds/Jake/jake_death_03.mp3");
+    this.load.audio("finn_attack1", "sounds/Finn/finn_attack1_03.mp3");
+    this.load.audio("finn_attack2", "sounds/Finn/finn_attack2_03.mp3");
+    this.load.audio("finn_attack3", "sounds/Finn/finn_attack2_01.mp3");
+  }
+  LoadSprites() {
     this.load.spritesheet("finn", "assets/finn.png", {
       frameWidth: 54,
       frameHeight: 83,
@@ -45,127 +65,182 @@ class Level1 extends Phaser.Scene {
       frameWidth: 132,
       frameHeight: 119,
     });
-    this.load.image("heart", "assets/heart.png");
+  }
+  create() {
+    this.setupWorld();
+    this.setupMusic();
+    this.setupBackground();
+    this.CrearPlataformas();
+    this.CrearAnimaciones();
+    this.CrearGusanos();
+    this.setupGoalItem();
+    this.setupPlayerPhysics();
+    this.setupCamera();
+    this.setupUI();
+    this.setupCollisions();
+    this.setupInputHandlers();
+    this.setupHearts();
+    this.setupEvents();
+    this.setupAttackAnimationEvents();
 
-
-    this.load.on("filecomplete", (key) => {
-      this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST);
-    });
-
+    // Reproducir música de fondo
+    this.bgmusic1.play();
   }
 
-  create() {
-    // Seteando el mundo a 5000px de ancho
+  setupWorld() {
     this.physics.world.setBounds(0, 0, 5000, 800);
+  }
 
-    // Musica de fondo
+  setupMusic() {
     this.bgmusic1 = document.getElementById("bgMusic");
+  }
 
-    // Fondo del mundo
+  setupBackground() {
     let background = this.add.image(800, 400, "sky");
     background.setDisplaySize(window.innerWidth, window.innerHeight);
-    background.setScrollFactor(0); // Fondo fijo
+    background.setScrollFactor(0);
+  }
 
+  setupGoalItem() {
+    const goalItems = { finn: "sword", jake: "sandwich" };
+    const positions = { finn: { x: 200, y: 80 }, jake: { x: 4950, y: 80 } };
 
-    // Fisicas de las plataformas
-    this.platforms = this.physics.add.staticGroup();
-    this.platforms_worms = this.physics.add.staticGroup();
+    this.sword = this.physics.add
+      .sprite(
+        positions[this.selectedCharacter].x,
+        positions[this.selectedCharacter].y,
+        goalItems[this.selectedCharacter]
+      )
+      .setScale(2);
+    this.sword.setBounce(0.2);
+  }
 
+  setupPlayerPhysics() {
+    this.player.setBounce(0);
+    this.player.setCollideWorldBounds(true);
+    this.player.setGravityY(2500);
+  }
 
-    // Forsito para crear las plataformas
-    for (let x = 0; x <= 5000; x += 490) {  
-      let platform = this.platforms.create(x, 770, "ground").setDisplaySize(500, 64).refreshBody();
+  setupCamera() {
+    this.cameras.main.setBounds(0, 0, 5000, 800);
+    this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
+  }
 
-      platform.body.setSize(500, 58); 
-      platform.body.setOffset(0, 20); 
-     }
+  setupUI() {
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.scoreText = this.add
+      .text(16, 16, "Score: 0", {
+        fontFamily: '"Press Start 2P", Arial',
+        fontSize: "32px",
+        fill: "#000",
+      })
+      .setScrollFactor(0);
 
-    const platformPositions = [
-      { x: 400, y: 500 },
-      { x: 900, y: 400 },
-      { x: 1400, y: 450 },
-      { x: 2000, y: 450 },
-      { x: 2500, y: 550 },
-      { x: 3000, y: 350 }
-    ];
-     
-    // Creando plataformas flotantes
-    platformPositions.forEach((pos) => {
-      this.platforms.create(pos.x, pos.y, "ground").setDisplaySize(350, 60).refreshBody();
-      
-      // Creandole paredes a cada lado
-      let leftwal =this.platforms_worms.create(pos.x - 250, pos.y-50).setDisplaySize(10, 100).refreshBody().setScale(1.3);
-      leftwal.setVisible(false);
-      let rightwal = this.platforms_worms.create(pos.x + 250, pos.y-50,).setDisplaySize(10, 100).refreshBody().setScale(1.3);
-      rightwal.setVisible(false);
+    let fecha = new Date();
+    fecha = `${fecha.getFullYear()}-${fecha.getMonth() + 1}-${fecha.getDate()}`;
+    this.dateText = this.add
+      .text(1100, 16, "Date: " + fecha, {
+        fontFamily: '"Press Start 2P", Arial',
+        fontSize: "32px",
+        fill: "#000",
+      })
+      .setScrollFactor(0);
+  }
+
+  setupCollisions() {
+    this.physics.add.collider(this.player, this.platforms);
+    this.physics.add.collider(this.sword, this.platforms);
+    this.physics.add.collider(this.worms, this.platforms);
+    this.physics.add.collider(this.worms, this.platforms_worms);
+
+    this.physics.add.overlap(
+      this.player,
+      this.sword,
+      this.nextLevel,
+      null,
+      this
+    );
+    this.colisiongusanil = this.physics.add.overlap(
+      this.player,
+      this.worms,
+      this.removeLive,
+      null,
+      this
+    );
+  }
+
+  nextLevel() {
+    this.bgmusic1.pause();
+    this.bgmusic1.currentTime = 0;
+    this.registry.set("level", 2);
+    this.scene.start("Level2");
+    console.log("cambio de nivel");
+  }
+
+  setupInputHandlers() {
+    this.input.keyboard.on("keydown-ESC", () => {
+      document.getElementById("pause").play();
+      this.bgmusic1.pause();
+      this.scene.launch("PauseScene");
+      this.scene.pause();
     });
-    
 
-      // Crear la animación del gusano
-      this.anims.create({
-        key: "worm_left",
-        frames: this.anims.generateFrameNumbers("worm", { start: 0, end: 8 }),
-        frameRate: 8,
-        repeat: -1,
-      });
+    this.input.keyboard.on("keydown-D", () => {
+      this.removeLive();
+    });
 
-      this.anims.create({
-        key: "worm_right",
-        frames: this.anims.generateFrameNumbers("worm", { start: 9, end: 17 }),
-        frameRate: 8,
-        repeat: -1,
-      });
-      
+    this.input.keyboard.on("keydown-W", () => {
+      this.grabarscore();
+      this.scene.start("WinScene");
+    });
 
-    // Crear grupo de gusanos
-    this.worms = this.physics.add.group();
+    this.zkey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
+  }
 
-    let numWorms = 5;
-    let startX = 1000;
-    let spacing = 300;
-    let wormSpeed = 150;
-    
-   for (let i = 0; i < numWorms; i++) {
-      let x = startX + i * spacing; // Posición calculada para cada gusano
-      let direction = i & 1 === 1 ? 1 : -1; // Alternar dirección (1 = derecha, -1 = izquierda)
+  setupHearts() {
+    this.livesText = this.add
+      .text(16, 60, "Lives:", {
+        fontFamily: '"Press Start 2P", Arial',
+        fontSize: "32px",
+        fill: "#000",
+      })
+      .setScrollFactor(0);
 
-      let worm = this.worms.create(x, 700, "worm_idle").setScale(4);
-      worm.anims.play("worm_right");
-      worm.setBounce(0.5);
-      worm.body.setSize(46, 16);  // Ajusta el tamaño del cuerpo
-      worm.setCollideWorldBounds(true);
-      worm.setVelocityX(wormSpeed * direction); // Asignar velocidad positiva o negativa
-
-      if (direction === -1) {
-        worm.anims.play("worm_left");
-      }
+    this.heartSprites = [];
+    for (let i = 0; i < this.lives; i++) {
+      let heart = this.add
+        .image(140 + 100 + i * 55, 75, "heart")
+        .setScrollFactor(0);
+      this.heartSprites.push(heart);
     }
-    // Crear gusanos en plataformas flotantes
-    platformPositions.forEach((pos) => {
-      let worm = this.worms.create(pos.x,pos.y -50, "worm_idle").setScale(2);
-      worm.anims.play("worm_right");
-      worm.setBounce(0.5);
-      worm.body.setSize(46, 16);  // Ajusta el tamaño del cuerpo
-      worm.setCollideWorldBounds(true);
-      worm.setVelocityX(wormSpeed); // Asignar velocidad positiva o negativa
+  }
 
-  });
+  setupEvents() {
+    this.events.on("resume", () => {
+      this.bgmusic1.play();
+    });
+  }
 
-   
-    if(this.selectedCharacter === 'finn'){
-      // sword al final del nivel
-       this.sword = this.physics.add.sprite(200, 80, "sword").setScale(2);
-       this.sword.setBounce(0.2);
-     }
-     if(this.selectedCharacter === 'jake'){
-       // sandwich al final del nivel
-       this.sword = this.physics.add.sprite(4950, 80, "sandwich").setScale(2);
-       this.sword.setBounce(0.2);
-     }
+  setupAttackAnimationEvents() {
+    this.player.on("animationcomplete", (anim) => {
+      if (anim.key === "attack_right" || anim.key === "attack_left") {
+        this.attacking = false;
+        this.player.body.setSize(54, 83);
+        this.player.body.setOffset(0, 0);
+      }
+    });
 
+    this.player.on("animationstart", (anim) => {
+      if (anim.key === "attack_right" || anim.key === "attack_left") {
+        let soundKey = `finn_attack${Phaser.Math.Between(1, 3)}`;
+        this.sound.play(soundKey);
+      }
+    });
+  }
 
-    // Fisicas del player
-    if (this.selectedCharacter === 'finn') {
+  CrearAnimaciones() {
+    // Animacion del player
+    if (this.selectedCharacter === "finn") {
       this.player = this.physics.add.sprite(100, 450, "finn").setScale(2);
 
       this.anims.create({
@@ -174,14 +249,11 @@ class Level1 extends Phaser.Scene {
         frameRate: 8,
         repeat: -1,
       });
-
-
       this.anims.create({
         key: "turn",
         frames: [{ key: "finn", frame: 8 }],
         frameRate: 12,
       });
-
       this.anims.create({
         key: "right",
         frames: this.anims.generateFrameNumbers("finn", { start: 9, end: 16 }),
@@ -190,18 +262,24 @@ class Level1 extends Phaser.Scene {
       });
       this.anims.create({
         key: "attack_left",
-        frames: this.anims.generateFrameNumbers("finn_attack", { start: 0, end: 6 }),
+        frames: this.anims.generateFrameNumbers("finn_attack", {
+          start: 0,
+          end: 6,
+        }),
         frameRate: 15,
         repeat: 0,
       });
       this.anims.create({
         key: "attack_right",
-        frames: this.anims.generateFrameNumbers("finn_attack", { start: 7, end: 13 }),
+        frames: this.anims.generateFrameNumbers("finn_attack", {
+          start: 7,
+          end: 13,
+        }),
         frameRate: 15,
         repeat: 0,
       });
     }
-    if (this.selectedCharacter === 'jake') {
+    if (this.selectedCharacter === "jake") {
       this.player = this.physics.add.sprite(100, 450, "jake").setScale(2);
       this.anims.create({
         key: "left",
@@ -209,313 +287,258 @@ class Level1 extends Phaser.Scene {
         frameRate: 8,
         repeat: -1,
       });
-
       this.anims.create({
         key: "turn",
         frames: [{ key: "jake", frame: 8 }],
         frameRate: 12,
       });
-
       this.anims.create({
         key: "right",
         frames: this.anims.generateFrameNumbers("jake", { start: 9, end: 16 }),
         frameRate: 8,
         repeat: -1,
       });
-     
-
     }
-    this.player.setBounce(0);
-    this.player.setCollideWorldBounds(true);
-    this.player.setGravityY(2500);
-
-    // Fijando camara al player
-    this.cameras.main.setBounds(0, 0, 5000, 800);
-    this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
-
-    this.cursors = this.input.keyboard.createCursorKeys();
-
-    this.scoreText = this.add.text(16, 16, "Score: 0", {
-      fontFamily: '"Press Start 2P", Arial',
-      fontSize: "32px",
-      fill: "#000",
-    });
-    this.scoreText.setScrollFactor(0);
-
-    // fecha en la partee dereecha superior
-    let fecha = new Date();
-    // solo en numeros
-    fecha = fecha.getFullYear()+'-'+(fecha.getMonth()+1)+'-'+fecha.getDate();
-    this.dateText = this.add.text(1100, 16, "Date: " + fecha, {
-      fontFamily: '"Press Start 2P", Arial',
-      fontSize: "32px",
-      fill: "#000",
-    });
-    this.dateText.setScrollFactor(0);
-
-    this.physics.add.collider(this.player, this.platforms);
-    this.physics.add.collider(this.sword, this.platforms);
-    this.physics.add.collider(this.worms, this.platforms);
-    this.physics.add.collider(this.worms,this.platforms_worms);
-
-
-    // this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
-    this.physics.add.overlap(this.player, this.sword, () => {
-      this.bgmusic1.pause();
-      this.bgmusic1.currentTime = 0;
-      this.registry.set("level", 2);
-      this.scene.start('Level2');
-      console.log('cambio de nivel');
+    // Animación del gusano
+    this.anims.create({
+      key: "worm_left",
+      frames: this.anims.generateFrameNumbers("worm", { start: 0, end: 8 }),
+      frameRate: 8,
+      repeat: -1,
     });
 
-    this.colisiongusanil =  this.physics.add.overlap(this.player, this.worms, this.removeLive, null, this); 
-
-
-
-    this.input.keyboard.on('keydown-ESC', () => {
-      document.getElementById("pause").play();
-      this.bgmusic1.pause();
-      this.scene.launch('PauseScene');
-      this.scene.pause();
+    this.anims.create({
+      key: "worm_right",
+      frames: this.anims.generateFrameNumbers("worm", { start: 9, end: 17 }),
+      frameRate: 8,
+      repeat: -1,
     });
+  }
+  CrearPlataformas() {
+    // Fisicas de las plataformas
+    this.platforms = this.physics.add.staticGroup();
+    this.platforms_worms = this.physics.add.staticGroup();
 
-    this.input.keyboard.on('keydown-D', () => {
-      this.removeLive();
-    });
+    // Forsito para crear las plataformas
+    for (let x = 0; x <= 5000; x += 490) {
+      let platform = this.platforms
+        .create(x, 770, "ground")
+        .setDisplaySize(500, 64)
+        .refreshBody();
 
-    this.input.keyboard.on('keydown-W', () => {
-      this.grabarscore();
-      this.scene.start('WinScene');
-    });
-    this.livesText = this.add.text(16, 60, "Lives:", {
-      fontFamily: '"Press Start 2P", Arial',
-      fontSize: "32px",
-      fill: "#000",
-    });
-    this.livesText.setScrollFactor(0);
-
-    // Crear los sprites de corazones para representar las vidas
-    this.heartSprites = [];
-    for (let i = 0; i < this.lives; i++) {
-      let heart = this.add.image(140 + 100 + i * 55, 75, "heart").setScrollFactor(0); // Posición y distancia entre los corazones
-      this.heartSprites.push(heart);
+      platform.body.setSize(500, 58);
+      platform.body.setOffset(0, 20);
     }
 
-    // // Sonido de inicio
-    // this.backgroundsound = this.sound.add("music1");
-    // this.backgroundsound.play({volume: 1,loop:true});
-    this.events.on("resume",() => {
-      this.bgmusic1.play();
+    // Plataformas flotantes
+    this.platformPositions.forEach((pos) => {
+      this.platforms
+        .create(pos.x, pos.y, "ground")
+        .setDisplaySize(350, 60)
+        .refreshBody();
+
+      // Paredes a cada lado
+      let leftwal = this.platforms_worms
+        .create(pos.x - 250, pos.y - 50)
+        .setDisplaySize(10, 100)
+        .refreshBody()
+        .setScale(1.3);
+      leftwal.setVisible(false);
+      let rightwal = this.platforms_worms
+        .create(pos.x + 250, pos.y - 50)
+        .setDisplaySize(10, 100)
+        .refreshBody()
+        .setScale(1.3);
+      rightwal.setVisible(false);
     });
-    this.bgmusic1.play();
+  }
+  CrearGusanos() {
+    // Grupo de gusanos
+    this.worms = this.physics.add.group();
 
-    // crear zkey
-    this.zkey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
+    let numWorms = 5;
+    let startX = 1000;
+    let spacing = 300;
+    let wormSpeed = 150;
 
-    // al acabar animacion de ataque se desactiva
-    this.player.on('animationcomplete', (anim) => {
-      if(anim.key === 'attack_right'){
-        this.attacking = false;
-        this.player.body.setSize(54, 83);
-        this.player.body.setOffset(0, 0);
+    for (let i = 0; i < numWorms; i++) {
+      let x = startX + i * spacing;
+      let direction = i & (1 === 1) ? 1 : -1;
 
-      }
-      if(anim.key === 'attack_left'){
-        this.attacking = false;
-        this.player.body.setSize(54, 83);
-        this.player.body.setOffset(0, 0);
-      }
-    });
-   this.player.on('animationstart', (anim) => {
-    if(anim.key === 'attack_right' || anim.key === 'attack_left'){
-      var random3 = Phaser.Math.Between(1, 3);
-      switch(random3){
-        case 1:
-        this.sound.play('finn_attack1');
-        break;
-        case 2:
-        this.sound.play('finn_attack2');
-        break;
-        case 3:
-        this.sound.play('finn_attack3');
-        break;
+      let worm = this.worms.create(x, 700, "worm_idle").setScale(4);
+      worm.anims.play("worm_right");
+      worm.setBounce(0.5);
+      worm.body.setSize(46, 16);
+      worm.setCollideWorldBounds(true);
+      worm.setVelocityX(wormSpeed * direction);
+      if (direction === -1) {
+        worm.anims.play("worm_left");
       }
     }
+    // Gusanos en plataformas flotantes
+    this.platformPositions.forEach((pos) => {
+      let worm = this.worms.create(pos.x, pos.y - 50, "worm_idle").setScale(2);
+      worm.anims.play("worm_right");
+      worm.setBounce(0.5);
+      worm.body.setSize(46, 16);
+      worm.setCollideWorldBounds(true);
+      worm.setVelocityX(wormSpeed);
     });
-  } 
-
+  }
   update() {
-    if (this.gameOver) {
-      return;
-    }
+    if (this.gameOver) return;
+    this.handlePlayerMovement();
+    this.handlePlayerAttack();
+    this.handlePlayerJump();
+    this.applyGravity();
+    this.updateWorms();
+  }
 
-    if (this.cursors.left.isDown){
-      if(!this.attacking){
-        this.player.anims.play("left", true);
-      }
-      this.goingleft = true;
-      this.player.setVelocityX(-320);
+  handlePlayerMovement() {
+    if (this.cursors.left.isDown) {
+      this.setPlayerMovement("left", -320, true);
     } else if (this.cursors.right.isDown) {
-      if(!this.attacking){
-        this.player.anims.play("right", true);
-      }
-      this.goingleft = false;
-      this.player.setVelocityX(320);
+      this.setPlayerMovement("right", 320, false);
     } else {
-      if(!this.attacking){
-        this.player.anims.play("turn");
-      }
-      this.player.setVelocityX(0);
-      this.player.body.setSize(54, 83);
+      this.stopPlayer();
     }
+  }
 
-    if(this.zkey.isDown){
-      if(this.goingleft){
-        this.player.anims.play("attack_left", true);
-        this.attacking = true;
-        this.player.body.setSize(132, 83);
+  setPlayerMovement(direction, velocity, goingLeft) {
+    if (!this.attacking) this.player.anims.play(direction, true);
+    this.goingleft = goingLeft;
+    this.player.setVelocityX(velocity);
+  }
 
-      }
-      else{        
-        this.player.anims.play("attack_right", true);
-        this.attacking = true;
-        this.player.body.setSize(132, 83);
-      }
+  stopPlayer() {
+    if (!this.attacking) this.player.anims.play("turn");
+    this.player.setVelocityX(0);
+    this.player.body.setSize(54, 83);
+  }
+
+  handlePlayerAttack() {
+    if (this.zkey.isDown) {
+      const attackAnim = this.goingleft ? "attack_left" : "attack_right";
+      this.player.anims.play(attackAnim, true);
+      this.attacking = true;
+      this.player.body.setSize(132, 83);
     }
-    
+  }
 
-    if (this.cursors.up.isDown && this.player.body.touching.down || this.cursors.space.isDown && this.player.body.touching.down) {
+  handlePlayerJump() {
+    if (
+      (this.cursors.up.isDown || this.cursors.space.isDown) &&
+      this.player.body.touching.down
+    ) {
       this.player.setVelocityY(-1300);
     }
-    if (this.player.body.velocity.y > 0) { 
-      this.player.setGravityY(3000); // Aumenta la gravedad en la caída
-  } else {
-      this.player.setGravityY(2500); // Mantiene gravedad normal en el salto
   }
 
-  // Controlar la direccion y animación de los gusanos
-  this.worms.children.iterate((worm) => {
-    if (worm.body.blocked.right) {
-      worm.setVelocityX(-150);
-      worm.anims.play("worm_left", true);
-    } else if (worm.body.blocked.left) {
-      worm.setVelocityX(150);
-      worm.anims.play("worm_right", true);
+  applyGravity() {
+    this.player.setGravityY(this.player.body.velocity.y > 0 ? 3000 : 2500);
+  }
+
+  updateWorms() {
+    this.worms.children.iterate((worm) => {
+      if (worm.body.blocked.right) {
+        worm.setVelocityX(-150);
+        worm.anims.play("worm_left", true);
+      } else if (worm.body.blocked.left) {
+        worm.setVelocityX(150);
+        worm.anims.play("worm_right", true);
+      }
+    });
+  }
+
+  removeLive() {
+    if (this.attacking) {
+      this.removeWorms();
+    } else {
+      this.reduceLife();
     }
-
-  });
-
   }
 
- 
-  removeLive() { 
-    
-    if(this.attacking){
-    // eliminar gusano
+  removeWorms() {
     this.worms.children.iterate((worm) => {
       if (worm.body.touching.up) {
         worm.disableBody(true, true);
-        this.score += 10;
-        this.scoreText.setText("Score: " + this.score);
+        this.updateScore(10);
       }
     });
-   
-    }else{
-    // Restar una vida
+  }
+
+  reduceLife() {
     this.lives--;
-  
-    // Actualizar los corazones según las vidas restantes
-    if (this.lives >= 0) {
-      this.heartSprites[this.lives].setVisible(false);
-    }
-    // Sonido de muerte
-    if(this.selectedCharacter === 'finn') {
-      var random3 = Phaser.Math.Between(1, 3);
-      switch(random3){
-        case 1:
-          this.sound.play('finnDeath1');
-          break;
-        case 2:
-          this.sound.play('finnDeath2');
-          break;
-        case 3:
-          this.sound.play('finnDeath3');
-          break;
-      }
-    }
-    if(this.selectedCharacter === 'jake') {
-      var random3 = Phaser.Math.Between(1, 3);
-      switch(random3){
-        case 1:
-          this.sound.play('jakeDeath1');
-          break;
-        case 2:
-          this.sound.play('jakeDeath2');
-          break;
-        case 3:
-          this.sound.play('jakeDeath3');
-          break;
-      }
-    }
+    if (this.lives >= 0) this.heartSprites[this.lives].setVisible(false);
+    this.playDeathSound();
     if (this.lives <= 0) {
-      // Si las vidas llegan a 0, termina el juego
-      this.physics.pause();
-      this.player.setTint(0xff0000);
-      this.player.anims.play("turn");
-      this.gameOver = true;
-      this.grabarscore();
-      this.time.delayedCall(1000, () => {
-        this.bgmusic1.pause();
-        this.bgmusic1.currentTime = 0;  
-        this.scene.start('LoseScene');
-      });
+      this.endGame();
     } else {
-      // Si aún hay vidas, reposicionamos al jugador sin eliminar los gusanos
-      this.player.setPosition(100, 450);
-      this.player.setVelocity(0, 0); 
-      this.player.clearTint(); 
-
-      // Damos efecto de opacidad al player por 2 segundos
-      this.player.setAlpha(0.5);
-      this.colisiongusanil.active = false;
-      this.time.delayedCall(3000, () => {
-        this.player.setAlpha(1);
-        this.colisiongusanil.active = true;
-      });      
+      this.respawnPlayer();
     }
   }
+
+  playDeathSound() {
+    const sounds = ["Death1", "Death2", "Death3"].map(
+      (s) => `${this.selectedCharacter.toLowerCase()}${s}`
+    );
+    this.sound.play(sounds[Phaser.Math.Between(0, 2)]);
   }
-  grabarscore(){
-     // Comprobar nickname en scores de localstorage
-     let scores = JSON.parse(localStorage.getItem('scores'));
-     // Crear scores si no existe
-      if(!scores){
-        scores = [];
+
+  endGame() {
+    this.physics.pause();
+    this.player.setTint(0xff0000);
+    this.player.anims.play("turn");
+    this.gameOver = true;
+    this.grabarscore();
+    this.time.delayedCall(1000, () => {
+      this.bgmusic1.pause();
+      this.bgmusic1.currentTime = 0;
+      this.scene.start("LoseScene");
+    });
+  }
+
+  respawnPlayer() {
+    this.player.setPosition(100, 450);
+    this.player.setVelocity(0, 0);
+    this.player.clearTint();
+    this.player.setAlpha(0.5);
+    this.colisiongusanil.active = false;
+    this.time.delayedCall(3000, () => {
+      this.player.setAlpha(1);
+      this.colisiongusanil.active = true;
+    });
+  }
+
+  updateScore(points) {
+    this.score += points;
+    this.scoreText.setText("Score: " + this.score);
+  }
+
+  grabarscore() {
+    let scores = JSON.parse(localStorage.getItem("scores")) || [];
+    let nickname = localStorage.getItem("nickname");
+    let nickfinded = scores.find((score) => score.nickname === nickname);
+    let date = new Date().toISOString().split("T")[0];
+
+    if (nickfinded) {
+      if (this.score >= nickfinded.score) {
+        Object.assign(nickfinded, {
+          score: this.score,
+          character: this.selectedCharacter,
+          time: date,
+        });
       }
-
-     let nickname = localStorage.getItem('nickname');
-     let nickfinded = scores.find(score => score.nickname === nickname);
-     
-     if(nickfinded){
-       if(this.score >= nickfinded.score){
-          nickfinded.score = this.score;
-          nickfinded.character = this.selectedCharacter;
-            // fecha de hoy
-          let today = new Date();
-          let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-          nickfinded.time = date;
-          localStorage.setItem('scores', JSON.stringify(scores));
-        }
-     }else{
-       // fecha de hoy
-       let today = new Date();
-       let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-       scores.push({nickname: nickname, score: this.score, time: date, character: this.selectedCharacter});
-       localStorage.setItem('scores', JSON.stringify(scores));
-     }
-     
+    } else {
+      scores.push({
+        nickname,
+        score: this.score,
+        time: date,
+        character: this.selectedCharacter,
+      });
+    }
+    localStorage.setItem("scores", JSON.stringify(scores));
   }
-
 }
 
 export { Level1 };
