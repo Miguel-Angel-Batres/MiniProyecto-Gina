@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop Independiente</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            margin: 0;
+            /* background: url('assets/BottomDrawNDrop_FINN.png') no-repeat center center fixed; */
+            background: url('assets/BottomDrawNDrop_JAKE.png') no-repeat center center fixed;
+            background-size: 75%;
+        }
+
+        .box {
+             /* finn */
+            /* width: 200px;
+            height: 500px; */
+
+            /* jake */
+            width: 250px;
+            height: 220px;
+
+            
+            border: 2px dashed #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.5);
+            position: absolute;
+        }
+
+        /* finn */
+        /* #box1 {
+            top: 15%;
+            left: 76%;
+        }
+
+        #box2 {
+            top: 23%;
+            left: 44%;
+        } */
+
+        /* jake */
+        #box1 {
+            top: 16%;
+            left: 73%;
+        }
+
+        #box2 {
+            top: 63%;
+            left: 27%;
+        }
+
+
+
+        .box.dragover {
+            background: rgba(200, 200, 200, 0.5);
+        }
+
+        .image {
+            width: 200px;
+            height: auto;
+            max-height: 500px;
+            object-fit: contain;
+            cursor: grab;
+        }
+
+        .dragging {
+            opacity: 0.5;
+        }
+
+        .status {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Drag and Drop Independiente</h1>
+    <div id="box1" class="box">
+        <!-- Para el Finn -->
+        <!-- <img id="image" src="assets/SwordDragNDrop_FINN.png" draggable="true" class="image">  -->
+
+         <!-- Para el Jake -->
+        <img id="image" src="assets/SanwisDragNDrop_JAKE.png" draggable="true" class="image">
+    </div>
+    <div id="box2" class="box"></div>
+
+    <div id="status" class="status">Estado: Esperando acción</div>
+
+    <script>
+        const image = document.getElementById("image");
+        const boxes = document.querySelectorAll(".box");
+        const status = document.getElementById("status");
+
+        image.addEventListener("dragstart", (e) => {
+            e.dataTransfer.setData("text/plain", e.target.id);
+            e.target.classList.add("dragging");
+            status.textContent = "Estado: Arrastrando la imagen";
+        });
+
+        image.addEventListener("dragend", (e) => {
+            e.target.classList.remove("dragging");
+            status.textContent = "Estado: Arrastre finalizado";
+        });
+
+        boxes.forEach(box => {
+            box.addEventListener("dragover", (e) => {
+                e.preventDefault();
+            });
+
+            box.addEventListener("dragenter", () => {
+                box.classList.add("dragover");
+                status.textContent = "Estado: Entrando en un recuadro";
+            });
+
+            box.addEventListener("dragleave", () => {
+                box.classList.remove("dragover");
+                status.textContent = "Estado: Saliendo de un recuadro";
+            });
+
+            box.addEventListener("drop", (e) => {
+                e.preventDefault();
+                const imgId = e.dataTransfer.getData("text/plain");
+                const img = document.getElementById(imgId);
+                if (!box.contains(img)) {
+                    box.appendChild(img);
+                }
+                box.classList.remove("dragover");
+                status.textContent = `Estado: La imagen está en el ${box.id}`;
+            });
+        });
+    </script>
+</body>
+</html>
