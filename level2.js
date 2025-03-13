@@ -12,6 +12,20 @@ class Level2 extends Phaser.Scene {
     }
     preload() {
       this.load.image("sky2", "assets/bg2.png");
+      this.load.image("iceground", "assets/platform_ice.png");
+      this.load.image("heart", "assets/heart.png");
+
+
+      this.load.spritesheet("penguin", "assets/gunter.png", {
+        frameWidth: 56,
+        frameHeight: 61,
+      });
+      this.load.spritesheet("penguin_idle", "assets/gunter_idle.png", {
+        frameWidth: 56,
+        frameHeight: 61,
+      });
+
+
       this.load.on("filecomplete", (key) => {
         this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST);
       });
@@ -30,24 +44,88 @@ class Level2 extends Phaser.Scene {
    
        // Fisicas de las plataformas
        this.platforms = this.physics.add.staticGroup();
+        this.platforms_penguins = this.physics.add.staticGroup();
   
         // Forsito para crear las plataformas
-        for (let x = 0; x <= 5000; x += 500) {  // Cada plataforma mide 500px
-          let platform = this.platforms.create(x, 770, "ground").setDisplaySize(500, 64).refreshBody();
-
-          // Ajustar el tamaño de la colisión para permitir atravesar el 10% superior ()
-          platform.body.setSize(500, 58); // Hacer la plataforma más corta en la altura
-          platform.body.setOffset(0, 20); // Desplazar la colisión hacia abajo para permitir el paso por la parte superior
+        for (let x = 0; x <= 5000; x += 490) {  
+          let platform = this.platforms.create(x, 770, "iceground").setDisplaySize(500, 64).refreshBody();
+          platform.body.setSize(500, 58); 
+          platform.body.setOffset(0, 20); 
         }
       
-      // Creando plataformas flotantes 
-      this.platforms.create(400, 500, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
-      this.platforms.create(900, 400, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
-      this.platforms.create(1400, 300, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
-      this.platforms.create(2000, 450, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
-      this.platforms.create(2500, 550, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
-      this.platforms.create(3000, 350, "ground").setDisplaySize(300, 32).refreshBody().setScale(2);
-   
+        
+      const platformPositions = [
+        { x: 400, y: 500 },
+        { x: 900, y: 400 },
+        { x: 1400, y: 450 },
+        { x: 2000, y: 450 },
+        { x: 2500, y: 550 },
+        { x: 3000, y: 350 }
+      ];
+      
+      // Creando plataformas flotantes
+      platformPositions.forEach((pos) => {
+        this.platforms.create(pos.x, pos.y, "iceground").setDisplaySize(350, 60).refreshBody();
+        
+        // Creandole paredes a cada lado
+        let leftwal =this.platforms_penguins.create(pos.x - 250, pos.y-50).setDisplaySize(10, 100).refreshBody().setScale(1.3);
+        leftwal.setVisible(false);
+        let rightwal = this.platforms_penguins.create(pos.x + 250, pos.y-50,).setDisplaySize(10, 100).refreshBody().setScale(1.3);
+        rightwal.setVisible(false);
+      });
+
+        // animacion de pinguinos
+        this.anims.create({
+          key: "penguin_left",
+          frames: this.anims.generateFrameNumbers("penguin", { start: 0, end: 7 }),
+          frameRate: 10,
+          repeat: -1,
+        });
+        this.anims.create({
+          key: "penguin_right",
+          frames: this.anims.generateFrameNumbers("penguin", { start: 8, end: 15 }),
+          frameRate: 10,
+          repeat: -1,
+        });
+        this.anims.create({
+          key: "penguin_idle",
+          frames: [{ key: "penguin_idle", frame: 0 }],
+          frameRate: 10,
+          repeat: -1,
+        });
+
+
+
+        this.penguins = this.physics.add.group();
+
+        let numpenguins = 5;
+        let startX = 1000;
+        let spacing = 300;
+        let penguinspeed = 150;
+        
+      for (let i = 0; i < numpenguins; i++) {
+          let x = startX + i * spacing; 
+          let direction = i & 1 === 1 ? 1 : -1;
+
+          let penguin = this.penguins.create(x, 700, "penguin_idle").setScale(2);
+          penguin.anims.play("penguin_right");
+          penguin.setBounce(0.5);
+          penguin.setCollideWorldBounds(true);
+          penguin.setVelocityX(penguinspeed * direction);
+          if (direction === -1) {
+            penguin.anims.play("penguin_left");
+          }
+        }
+        platformPositions.forEach((pos) => {
+          let penguin = this.penguins.create(pos.x,pos.y -80, "penguin_idle").setScale(2);
+          penguin.anims.play("penguin_right");
+          penguin.setBounce(0.5);
+          penguin.setCollideWorldBounds(true);
+          penguin.setVelocityX(penguinspeed); 
+
+      });
+
+
       if(this.selectedCharacter === 'finn'){
        // sword al final del nivel
         this.sword = this.physics.add.sprite(4950, 80, "sword").setScale(2);
@@ -86,6 +164,18 @@ class Level2 extends Phaser.Scene {
         frameRate: 8,
         repeat: -1,
       });
+      this.anims.create({
+        key: "attack_left",
+        frames: this.anims.generateFrameNumbers("finn_attack", { start: 0, end: 6 }),
+        frameRate: 15,
+        repeat: 0,
+      });
+      this.anims.create({
+        key: "attack_right",
+        frames: this.anims.generateFrameNumbers("finn_attack", { start: 7, end: 13 }),
+        frameRate: 15,
+        repeat: 0,
+      });
     }
     if(this.selectedCharacter === 'jake'){
       this.player = this.physics.add.sprite(100, 450, "jake").setScale(2);
@@ -113,7 +203,7 @@ class Level2 extends Phaser.Scene {
     }
       this.player.setBounce(0);
       this.player.setCollideWorldBounds(true);
-      this.player.setGravityY(500);
+      this.player.setGravityY(2500);
   
       // Fijando camara al player
       this.cameras.main.setBounds(0, 0, 5000, 800);
@@ -146,10 +236,15 @@ class Level2 extends Phaser.Scene {
         fill: "#000",
         });
      this.livesText.setScrollFactor(0);
+    this.heartSprites = [];
+    for (let i = 0; i < this.lives; i++) {
+      let heart = this.add.image(140 + 100 + i * 55, 75, "heart").setScrollFactor(0); // Posición y distancia entre los corazones
+      this.heartSprites.push(heart);
+    }
   
       this.physics.add.collider(this.player, this.platforms);
-      //this.physics.add.collider(this.stars, this.platforms);
-      this.physics.add.collider(this.bombs, this.platforms);
+      this.physics.add.collider(this.penguins, this.platforms_penguins);
+      this.physics.add.collider(this.penguins, this.platforms);
       this.physics.add.collider(this.sword, this.platforms);
   
       // this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
@@ -160,11 +255,9 @@ class Level2 extends Phaser.Scene {
         this.scene.start('WinScene');
         this.scene.stop();
 
-       
-
       });
-      this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
-  
+      this.colisionpenguinil = this.physics.add.overlap(this.player, this.penguins, this.RemoveLive, null, this);
+      
       this.input.keyboard.on('keydown-ESC', () => {
         document.getElementById("pause").play();
         this.bossmusic.pause();
@@ -193,6 +286,41 @@ class Level2 extends Phaser.Scene {
         });
         this.bossmusic.play();
 
+
+        // crear zkey
+    this.zkey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
+
+    // al acabar animacion de ataque se desactiva
+    this.player.on('animationcomplete', (anim) => {
+      if(anim.key === 'attack_right'){
+        this.attacking = false;
+        this.player.body.setSize(54, 83);
+        this.player.body.setOffset(0, 0);
+
+      }
+      if(anim.key === 'attack_left'){
+        this.attacking = false;
+        this.player.body.setSize(54, 83);
+        this.player.body.setOffset(0, 0);
+      }
+    });
+   this.player.on('animationstart', (anim) => {
+    if(anim.key === 'attack_right' || anim.key === 'attack_left'){
+      var random3 = Phaser.Math.Between(1, 3);
+      switch(random3){
+        case 1:
+        this.sound.play('finn_attack1');
+        break;
+        case 2:
+        this.sound.play('finn_attack2');
+        break;
+        case 3:
+        this.sound.play('finn_attack3');
+        break;
+      }
+    }
+    });
+
         }
     
   
@@ -200,59 +328,118 @@ class Level2 extends Phaser.Scene {
       if (this.gameOver) {
         return;
       }
-  
-      if (this.cursors.left.isDown) {
+      if (this.cursors.left.isDown){
+        if(!this.attacking){
+          this.player.anims.play("left", true);
+        }
+        this.goingleft = true;
         this.player.setVelocityX(-320);
-        this.player.anims.play("left", true);
       } else if (this.cursors.right.isDown) {
+        if(!this.attacking){
+          this.player.anims.play("right", true);
+        }
+        this.goingleft = false;
         this.player.setVelocityX(320);
-        this.player.anims.play("right", true);
       } else {
+        if(!this.attacking){
+          this.player.anims.play("turn");
+        }
         this.player.setVelocityX(0);
-        this.player.anims.play("turn");
+        this.player.body.setSize(54, 83);
+      }
+  
+      if(this.zkey.isDown){
+        if(this.goingleft){
+          this.player.anims.play("attack_left", true);
+          this.attacking = true;
+          this.player.body.setSize(132, 83);
+  
+        }
+        else{        
+          this.player.anims.play("attack_right", true);
+          this.attacking = true;
+          this.player.body.setSize(132, 83);
+        }
       }
   
       if (this.cursors.up.isDown && this.player.body.touching.down || this.cursors.space.isDown && this.player.body.touching.down) {
-        this.player.setVelocityY(-700);
+        this.player.setVelocityY(-1300);
       }
-  
-    }
-  
-    collectStar(player, candy) {
-      candy.disableBody(true, true);
-  
-      this.score += 10;
-      this.scoreText.setText("Score: " + this.score);
-  
-      
-      if (this.stars.countActive(true) === 0) {
-        this.stars.children.iterate(function (child) {
-          child.enableBody(true, child.x, 0, true, true);
-        });
-  
-        var x =
-          this.player.x < 400
-            ? Phaser.Math.Between(400, 800)
-            : Phaser.Math.Between(0, 400);
-  
-        var bomb = this.bombs.create(x, 16, "bomb");
-        bomb.setScale(2);
-        bomb.setBounce(1);
-        bomb.setCollideWorldBounds(true);
-        bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-        bomb.allowGravity = false;
-  
-        if (this.bombs.countActive(true) === 2) {
-          this.scene.start('WinScene');
+      if (this.player.body.velocity.y > 0) { 
+        this.player.setGravityY(3000); // Aumenta la gravedad en la caída
+      } else {
+          this.player.setGravityY(2500); // Mantiene gravedad normal en el salto
+      }
+      // Controlar la direccion de los pinguinos
+      this.penguins.children.iterate((penguin) => {
+        if (penguin.body.blocked.right) {
+          penguin.setVelocityX(-150);
+          penguin.anims.play("penguin_left");
+        }
+        if (penguin.body.blocked.left) {
+          penguin.setVelocityX(150);
+          penguin.anims.play("penguin_right");
+        }
+      });
+      let cameraEnd = this.cameras.main.scrollX + this.cameras.main.width; // Posición final de la cámara
+     
+      if (cameraEnd >= 5000 && this.player.x >= 4350) {  
+          this.cameras.main.stopFollow(); 
+          this.cameralocked = true;
+      }
+      if(this.cameralocked){
+        const maxX = 5050 - this.cameras.main.width;
+        if(this.player.x <= maxX){
+          this.player.x = maxX;
         }
       }
     }
   
-    hitBomb(player, bomb) {
+    
+    RemoveLive() {
+
+      if(this.attacking){
+        this.penguins.children.iterate((penguin) => {
+          if (penguin.body.touching.up) {
+            penguin.disableBody(true, true);
+            this.score += 10;
+            this.scoreText.setText("Score: " + this.score);
+          }
+
+        });
+      }else{
       // Restar una vida
       this.lives--;
       this.heartSprites[this.lives].setVisible(false);
-      
+      // Sonido de muerte
+      if(this.selectedCharacter === 'finn') {
+        var random3 = Phaser.Math.Between(1, 3);
+        switch(random3){
+          case 1:
+            this.sound.play('finnDeath1');
+            break;
+          case 2:
+            this.sound.play('finnDeath2');
+            break;
+          case 3:
+            this.sound.play('finnDeath3');
+            break;
+        }
+      }
+      if(this.selectedCharacter === 'jake') {
+        var random3 = Phaser.Math.Between(1, 3);
+        switch(random3){
+          case 1:
+            this.sound.play('jakeDeath1');
+            break;
+          case 2:
+            this.sound.play('jakeDeath2');
+            break;
+          case 3:
+            this.sound.play('jakeDeath3');
+            break;
+        }
+      }
       if (this.lives <= 0) {
         // Si las vidas llegan a 0, termina el juego
         this.physics.pause();
@@ -270,6 +457,15 @@ class Level2 extends Phaser.Scene {
         this.player.setPosition(100, 450);
         this.player.setVelocity(0, 0); // Detener cualquier movimiento
         this.player.clearTint(); // Quitar el color rojo
+
+         // Damos efecto de opacidad al player por 2 segundos
+        this.player.setAlpha(0.5);
+        this.colisionpenguinil.active = false;
+        this.time.delayedCall(3000, () => {
+        this.player.setAlpha(1);
+        this.colisionpenguinil.active = true;
+      });      
+      }
       }
     }
     grabarscore(){

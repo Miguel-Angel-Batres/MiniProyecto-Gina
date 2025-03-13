@@ -70,6 +70,8 @@ class Level1 extends Phaser.Scene {
     // Fisicas de las plataformas
     this.platforms = this.physics.add.staticGroup();
     this.platforms_worms = this.physics.add.staticGroup();
+
+
     // Forsito para crear las plataformas
     for (let x = 0; x <= 5000; x += 490) {  
       let platform = this.platforms.create(x, 770, "ground").setDisplaySize(500, 64).refreshBody();
@@ -89,7 +91,7 @@ class Level1 extends Phaser.Scene {
      
     // Creando plataformas flotantes
     platformPositions.forEach((pos) => {
-      this.platforms.create(pos.x, pos.y, "ground").setDisplaySize(350, 50).refreshBody();
+      this.platforms.create(pos.x, pos.y, "ground").setDisplaySize(350, 60).refreshBody();
       
       // Creandole paredes a cada lado
       let leftwal =this.platforms_worms.create(pos.x - 250, pos.y-50).setDisplaySize(10, 100).refreshBody().setScale(1.3);
@@ -152,7 +154,7 @@ class Level1 extends Phaser.Scene {
    
     if(this.selectedCharacter === 'finn'){
       // sword al final del nivel
-       this.sword = this.physics.add.sprite(4950, 80, "sword").setScale(2);
+       this.sword = this.physics.add.sprite(200, 80, "sword").setScale(2);
        this.sword.setBounce(0.2);
      }
      if(this.selectedCharacter === 'jake'){
@@ -232,17 +234,6 @@ class Level1 extends Phaser.Scene {
     this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
 
     this.cursors = this.input.keyboard.createCursorKeys();
-
-    // this.stars = this.physics.add.group({
-    //   key: "candy",
-    //   repeat: 11,
-    //   setXY: { x: 12, y: 0, stepX: 70 },
-    // });
-
-    // this.stars.children.iterate(function (child) {
-    //   child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-    //   child.setScale(2);
-    // });
 
     this.scoreText = this.add.text(16, 16, "Score: 0", {
       fontFamily: '"Press Start 2P", Arial',
@@ -416,25 +407,7 @@ class Level1 extends Phaser.Scene {
 
   }
 
-  collectStar(player, candy) {
-    candy.disableBody(true, true);
-
-    this.score += 10;
-    this.scoreText.setText("Score: " + this.score);
-
-    if (this.stars.countActive(true) === 0) {
-      this.stars.children.iterate(function (child) {
-        child.enableBody(true, child.x, 0, true, true);
-      });
-
-      var x =
-        this.player.x < 400
-          ? Phaser.Math.Between(400, 800)
-          : Phaser.Math.Between(0, 400);
-
-    }
-  }
-
+ 
   removeLive() { 
     
     if(this.attacking){
