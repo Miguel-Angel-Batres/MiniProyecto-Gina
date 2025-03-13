@@ -24,6 +24,11 @@ class Level2 extends Phaser.Scene {
         frameWidth: 56,
         frameHeight: 61,
       });
+      this.load.spritesheet("iceking", "assets/iceking.png", {
+        frameWidth: 104,
+        frameHeight: 103,
+      });
+      
 
 
       this.load.on("filecomplete", (key) => {
