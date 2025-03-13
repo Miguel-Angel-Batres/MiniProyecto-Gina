@@ -173,7 +173,7 @@ class Level1 extends Phaser.Scene {
     this.bgmusic1.pause();
     this.bgmusic1.currentTime = 0;
     this.registry.set("level", 2);
-    this.scene.start("Level2");
+    window.location.href = "dragNdrop.html";
     console.log("cambio de nivel");
   }
 
