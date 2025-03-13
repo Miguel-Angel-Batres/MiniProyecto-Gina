@@ -27,6 +27,13 @@
 </head>
 
 <body class="body">
+  <div id="dragNdrop">
+    <img id="dragNdrop_background" src="" alt="">
+    <div id="box1" class="box">
+        <img id="image_dragNdrop" draggable="true" alt="">
+    </div>
+    <div id="box2" class="box"></div>
+  </div>
   <div class="menu">
     <h1> Adventure Time</h1>
     <button id="start">Play</button>
@@ -317,15 +324,8 @@
         });
 
     });
-document.addEventListener("DOMContentLoaded", () => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("next") === "Level2") {
-        startGame("finn"); // O usa el personaje seleccionado
-        setTimeout(() => {
-            game.scene.start("Level2");
-        }, 1000);
-    }
-});
+
+
 
   </script>
 </body>
