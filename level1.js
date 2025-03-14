@@ -2,7 +2,7 @@ class Level1 extends Phaser.Scene {
   constructor() {
     super({ key: "Level1" });
     this.score = 0;
-    this.lives = 3;
+    this.lives = 5;
     const platformPositions = [
       { x: 400, y: 500 },
       { x: 900, y: 400 },
@@ -14,8 +14,6 @@ class Level1 extends Phaser.Scene {
     this.platformPositions = platformPositions;
   }
   init() {
-    this.score = 0;
-    this.lives = 3;
     this.gameOver = false;
     this.selectedCharacter = this.game.registry.get("selectedCharacter");
   }
@@ -47,6 +45,10 @@ class Level1 extends Phaser.Scene {
     this.load.audio("finn_attack1", "sounds/Finn/finn_attack1_03.mp3");
     this.load.audio("finn_attack2", "sounds/Finn/finn_attack2_03.mp3");
     this.load.audio("finn_attack3", "sounds/Finn/finn_attack2_01.mp3");
+    this.load.audio("jake_attack1", "sounds/Jake/jake_attack1_03.mp3");
+      this.load.audio("jake_attack2", "sounds/Jake/jake_attack2_03.mp3");
+      this.load.audio("jake_attack3", "sounds/Jake/jake_attack3_03.mp3");
+    
   }
   LoadSprites() {
     this.load.spritesheet("finn", "assets/finn.png", {
@@ -65,6 +67,11 @@ class Level1 extends Phaser.Scene {
       frameWidth: 132,
       frameHeight: 119,
     });
+    this.load.spritesheet("jake_attack", "assets/jake_attack.png", {
+      frameWidth: 140,
+      frameHeight: 68,
+    });
+    
   }
   create() {
     this.setupWorld();
@@ -89,6 +96,7 @@ class Level1 extends Phaser.Scene {
 
   setupWorld() {
     this.physics.world.setBounds(0, 0, 5000, 800);
+   
   }
 
   setupMusic() {
@@ -103,7 +111,7 @@ class Level1 extends Phaser.Scene {
 
   setupGoalItem() {
     const goalItems = { finn: "sword", jake: "sandwich" };
-    const positions = { finn: { x: 200, y: 80 }, jake: { x: 4950, y: 80 } };
+    const positions = { finn: { x: 200, y: 80 }, jake: { x: 200, y: 80 } };
 
     this.sword = this.physics.add
       .sprite(
@@ -163,7 +171,7 @@ class Level1 extends Phaser.Scene {
     this.colisiongusanil = this.physics.add.overlap(
       this.player,
       this.worms,
-      this.removeLive,
+      this.handleLives,
       null,
       this
     );
@@ -250,6 +258,11 @@ class Level1 extends Phaser.Scene {
     // this.registry.set("level", 2);
     // this.scene.start("Level2"); 
 
+    this.registry.set("level", 2);
+    this.registry.set("score", this.score);
+    this.registry.set("lives", this.lives);
+    this.scene.start("Level2");
+    console.log("cambio de nivel");
   }
 
   setupInputHandlers() {
@@ -261,7 +274,7 @@ class Level1 extends Phaser.Scene {
     });
 
     this.input.keyboard.on("keydown-D", () => {
-      this.removeLive();
+      this.handleLives();
     });
 
     this.input.keyboard.on("keydown-W", () => {
@@ -300,15 +313,24 @@ class Level1 extends Phaser.Scene {
     this.player.on("animationcomplete", (anim) => {
       if (anim.key === "attack_right" || anim.key === "attack_left") {
         this.attacking = false;
-        this.player.body.setSize(54, 83);
+        if(this.selectedCharacter === "finn"){
+          this.player.body.setSize(54, 83);
+        }else{
+          this.player.body.setSize(55, 68);
+        }
         this.player.body.setOffset(0, 0);
       }
     });
 
     this.player.on("animationstart", (anim) => {
       if (anim.key === "attack_right" || anim.key === "attack_left") {
-        let soundKey = `finn_attack${Phaser.Math.Between(1, 3)}`;
-        this.sound.play(soundKey);
+        if(this.selectedCharacter === "finn"){
+          let soundKey = `finn_attack${Phaser.Math.Between(1, 3)}`;
+          this.sound.play(soundKey);
+        }else{
+          let soundKey = `jake_attack${Phaser.Math.Between(1, 3)}`;
+          this.sound.play(soundKey);
+        }
       }
     });
   }
@@ -372,6 +394,18 @@ class Level1 extends Phaser.Scene {
         frames: this.anims.generateFrameNumbers("jake", { start: 9, end: 16 }),
         frameRate: 8,
         repeat: -1,
+      });
+      this.anims.create({
+        key: "attack_left",
+        frames: this.anims.generateFrameNumbers("jake_attack", { start: 0, end: 7 }),
+        frameRate: 15,
+        repeat: 0,
+      });
+      this.anims.create({
+        key: "attack_right",
+        frames: this.anims.generateFrameNumbers("jake_attack", { start: 7, end: 13 }),
+        frameRate: 15,
+        repeat: 0,
       });
     }
     // Animación del gusano
@@ -471,9 +505,9 @@ class Level1 extends Phaser.Scene {
 
   handlePlayerMovement() {
     if (this.cursors.left.isDown) {
-      this.setPlayerMovement("left", -320, true);
+      this.setPlayerMovement("left", -500, true);
     } else if (this.cursors.right.isDown) {
-      this.setPlayerMovement("right", 320, false);
+      this.setPlayerMovement("right", 500, false);
     } else {
       this.stopPlayer();
     }
@@ -488,15 +522,41 @@ class Level1 extends Phaser.Scene {
   stopPlayer() {
     if (!this.attacking) this.player.anims.play("turn");
     this.player.setVelocityX(0);
-    this.player.body.setSize(54, 83);
   }
 
   handlePlayerAttack() {
-    if (this.zkey.isDown) {
-      const attackAnim = this.goingleft ? "attack_left" : "attack_right";
-      this.player.anims.play(attackAnim, true);
-      this.attacking = true;
-      this.player.body.setSize(132, 83);
+    if (this.zkey.isDown && !this.attackCooldown) {
+      if (this.goingleft) {
+        this.player.anims.play("attack_left", true);
+        this.attacking = true;
+        this.attackCooldown = true;
+        if (this.selectedCharacter === "finn") {
+          this.player.body.setSize(132, 83);
+        } else {
+          this.player.body.setSize(132, 68);
+        }
+        this.time.addEvent({
+          delay: 300, // Tiempo de cooldown en milisegundos (0.5s)
+          callback: () => {
+            this.attackCooldown = false;
+          },
+        });
+      } else {
+        this.player.anims.play("attack_right", true);
+        this.attacking = true;
+        this.attackCooldown = true;
+        if (this.selectedCharacter === "finn") {
+          this.player.body.setSize(132, 83);
+        } else {
+          this.player.body.setSize(132, 68);
+        }
+        this.time.addEvent({
+          delay: 300, // Tiempo de cooldown en milisegundos (0.5s)
+          callback: () => {
+            this.attackCooldown = false;
+          },
+        });
+      }
     }
   }
 
@@ -525,11 +585,11 @@ class Level1 extends Phaser.Scene {
     });
   }
 
-  removeLive() {
+  handleLives() {
     if (this.attacking) {
       this.removeWorms();
     } else {
-      this.reduceLife();
+      this.reduceLives();
     }
   }
 
@@ -542,15 +602,15 @@ class Level1 extends Phaser.Scene {
     });
   }
 
-  reduceLife() {
+  reduceLives() {
     this.lives--;
-    if (this.lives >= 0) this.heartSprites[this.lives].setVisible(false);
-    this.playDeathSound();
-    if (this.lives <= 0) {
-      this.endGame();
-    } else {
-      this.respawnPlayer();
-    }
+      if (this.lives >= 0) this.heartSprites[this.lives].setVisible(false);
+      this.playDeathSound();
+      if (this.lives <= 0) {
+        this.endGame();
+      } else {
+        this.respawnPlayer();
+      }
   }
 
   playDeathSound() {
