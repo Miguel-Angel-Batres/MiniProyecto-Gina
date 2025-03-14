@@ -182,14 +182,86 @@ class Level1 extends Phaser.Scene {
     );
   }
 
+  dragNdrop(){
+
+    const dragNdrop_div = document.getElementById('dragNdrop');// nivel intermedio para cambiar al nivel 2
+    const box1 = document.getElementById('box1');
+    const box2 = document.getElementById('box2');
+    const dragNdrop_background = document.getElementById('dragNdrop_background')
+    const image_dragNdrop = document.getElementById("image_dragNdrop");
+
+    if (!box1.contains(image_dragNdrop)) {
+      box1.appendChild(image_dragNdrop); // Mueve la imagen de vuelta a box1
+    }
+    image_dragNdrop.style.display = 'none';
+    dragNdrop_background.style.display = 'none';  
+
+    let hero = this.game.registry.get("selectedCharacter");
+
+    if (hero == "finn") {
+      dragNdrop_background.src = "assets/BottomDragNDrop_FINN.png";
+      image_dragNdrop.src = "assets/SwordDragNDrop_FINN.png";
+    } else {
+      dragNdrop_background.src = "assets/BottomDragNDrop_JAKE.png";
+      image_dragNdrop.src = "assets/SanwisDragNDrop_JAKE.png";
+    }
+    dragNdrop_div.style.display = 'flex';
+    box1.style.display = box2.style.display ='flex';
+    dragNdrop_background.style.display = 'flex';
+    image_dragNdrop.style.display = 'flex';
+
+    const boxes = document.querySelectorAll(".box");
+
+    image_dragNdrop.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text/plain", e.target.id);
+        e.target.classList.add("dragging");
+        console.log("Estado: Arrastrando la imagen");
+    });
+
+    image_dragNdrop.addEventListener("dragend", (e) => {
+        e.target.classList.remove("dragging");
+        console.log("Estado: Arrastre finalizado");
+    });
+
+    boxes.forEach(box => {
+        box.addEventListener("dragover", (e) => e.preventDefault());
+        box.addEventListener("dragenter", () => box.classList.add("dragover"));
+        box.addEventListener("dragleave", () => box.classList.remove("dragover"));
+
+        box.addEventListener("drop", (e) => {
+          e.preventDefault();
+          if (!box.contains(image_dragNdrop)) {
+              box.appendChild(image_dragNdrop);
+          }
+          box.classList.remove("dragover");
+      
+          // Esperar 2 segundos y cambiar a Level2
+          setTimeout(() => {
+              dragNdrop_div.style.display = 'none';
+              image_dragNdrop.style.display = 'none';
+              box1.style.display = box2.style.display = 'none';
+
+              document.querySelector("canvas").style.display = "flex";
+              this.registry.set("level", 2);
+              this.registry.set("score", this.score);
+              this.registry.set("lives", this.lives);
+              this.scene.start("Level2");
+              console.log("cambio de nivel");
+          }, 2000);
+      });
+      
+    });
+
+
+    
+  }
   nextLevel() {
     this.bgmusic1.pause();
     this.bgmusic1.currentTime = 0;
-    this.registry.set("level", 2);
-    this.registry.set("score", this.score);
-    this.registry.set("lives", this.lives);
-    this.scene.start("Level2");
-    console.log("cambio de nivel");
+    
+    this.scene.stop();
+    document.querySelector("canvas").style.display = "none";
+    this.dragNdrop();
   }
 
   setupInputHandlers() {
