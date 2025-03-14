@@ -52,6 +52,7 @@ class Level2 extends Phaser.Scene {
     this.LoadSprites();
     this.load.audio("penguinspawn", "sounds/Ice King/gunterspawn1.mp3");
     this.load.audio("penguinspawn2", "sounds/Ice King/gunterspawn2.mp3");
+    this.load.audio("penguinspawn3", "sounds/Ice King/gunterspawn3.mp3");
     // gunter Wenk
     this.load.audio("Wenk1", "sounds/Gunter/General_wenk5.mp3");
     this.load.audio("Wenk2", "sounds/Gunter/Gunter_Wenk01.mp3");
@@ -63,6 +64,10 @@ class Level2 extends Phaser.Scene {
     this.load.audio("Wenk8", "sounds/Gunter/Gunter_Wenk07.mp3");
     this.load.audio("Wenk9", "sounds/Gunter/Gunter_Wenk08.mp3");
     this.load.audio("Wenk10", "sounds/Gunter/Gunter_Wenk09.mp3");
+    this.load.audio("guntercalls", "sounds/guntercalls.mp3");
+    this.load.audio("sonidofase1", "sounds/fase1.mp3");
+    this.load.audio("sonidofase2", "sounds/fase2.mp3");
+
     
 
     this.load.on("filecomplete", (key) => {
@@ -328,7 +333,6 @@ class Level2 extends Phaser.Scene {
       paused: true,
       onComplete: () => {
         this.boss.anims.play("iceking_up");
-
         // Guardamos referencia al evento para poder detenerlo después
         if (!this.spawnmobsevent) {
           this.spawnCount = 0;
@@ -348,14 +352,17 @@ class Level2 extends Phaser.Scene {
             
               
               this.spawnCount++;
-              if(this.spawnCount % 4 === 0){
-                this.penguinsound = Phaser.Math.Between(1, 2);
-              if (this.penguinsound === 1) {
+              // sonar sonido de spawn secuencialmente
+              if (this.spawnCount % 3 === 0) {
                 this.sound.play("penguinspawn", { volume: 4 });
-              } else {
+              }
+              if (this.spawnCount % 3 === 1) {
                 this.sound.play("penguinspawn2", { volume: 2 });
               }
+              if (this.spawnCount % 3 === 2) {
+                this.sound.play("penguinspawn3", { volume: 2 });
               }
+
               penguin.anims.play("penguin_idle");
               penguin.setBounce(0.5);
               penguin.setCollideWorldBounds(true);
@@ -382,12 +389,16 @@ class Level2 extends Phaser.Scene {
           },
         });
       },
+      onStart: () => {
+        this.sound.play("sonidofase1", { volume: 2 });
+      }
     });
+    this.regresofase1 = false;
     this.regresarfase1 = this.tweens.add({
       targets: this.boss,
       x: 4800,
       y: 650,
-      duration: 5000,
+      duration: 6000,
       ease: "Power2",
       paused: true,
       onComplete: () => {
@@ -396,12 +407,52 @@ class Level2 extends Phaser.Scene {
         this.tweens.add({
           targets: this.boss,
           y: this.boss.y - 600,
-          duration: 4000,
+          duration: 6000,
           yoyo: true,
           repeat: -1,
           ease: "Sine.easeInOut",
         });
+        let randomtimespawn = Phaser.Math.Between(1000, 1500);
+            this.sound.play("guntercalls", { volume: 2 });
+            this.numpenguins = 0;
+            this.regresarfase1event = this.time.addEvent({
+                delay: randomtimespawn,
+                callback: () => {
+                    this.numpenguins++;
+                    // Generar pingüino que venga de la derecha
+                    let penguin = this.flyingpenguins
+                        .create(5000, 700, "penguin_idle")
+                        .setScale(2);
+                    penguin.anims.play("penguin_left");
+                    penguin.setBounce(0.5);
+                    penguin.setCollideWorldBounds(true);
+                    penguin.setVelocityX(-100);       
+                    let randomtimespawn = Phaser.Math.Between(100, 4000);
+                    penguin.soundEvent = this.time.addEvent({
+                        delay: randomtimespawn,
+                        callback: () => {
+                            if (penguin.active) { // Verifica si el pingüino sigue en el juego
+                                let randomWenk = Phaser.Math.Between(1, 10); // Número aleatorio entre 1 y 10
+                                this.sound.play(`Wenk${randomWenk}`, { volume: 0.3 }); // Reproducir sonido aleatorio
+                              } else {
+                                penguin.soundEvent.remove(); // Si el pingüino muere, detener el sonido
+                            }
+                            if(this.numpenguins % 7 === 0){
+                                this.sound.play("guntercalls", { volume: 2.5 });
+                              
+                            }
+                        },
+                        
+                        loop: true,
+                      
+                    });                    
+                },
+                loop: true // Hacer que el evento se repita indefinidamente
+            });
       },
+      onStart: () => {
+        this.sound.play("sonidofase2", { volume: 2 });
+      }
     });
 
     this.fase1.play();
@@ -638,6 +689,7 @@ class Level2 extends Phaser.Scene {
         this.fase2.play();
       }
     }
+
     if (this.flyingpenguins.getChildren().length === 15) {
       if (this.fase2.isPlaying()) {
         this.fase2.stop();
@@ -650,49 +702,8 @@ class Level2 extends Phaser.Scene {
         this.spawnmobsevent.remove(false);
         this.spawnmobsevent = null;
       }
-      if (this.regresarfase1.isPaused()) {
+      if (this.regresarfase1.isPaused() ) {
         this.regresarfase1.play();
-        // Crear timer event
-        if (!this.regresarfase1event) {
-            let randomtimespawn = Phaser.Math.Between(500, 2000);
-            this.regresarfase1event = this.time.addEvent({
-                delay: randomtimespawn,
-                callback: () => {
-                    // Generar pingüino que venga de la derecha
-                    let penguin = this.flyingpenguins
-                        .create(5000, 700, "penguin_idle")
-                        .setScale(2);
-                    penguin.anims.play("penguin_left");
-                    penguin.setBounce(0.5);
-                    penguin.setCollideWorldBounds(true);
-                    penguin.setVelocityX(-100);       
-                    let randomtimespawn = Phaser.Math.Between(100, 4000);
-                    penguin.soundEvent = this.time.addEvent({
-                        delay: randomtimespawn,
-                        callback: () => {
-                            if (penguin.active) { // Verifica si el pingüino sigue en el juego
-                                let randomWenk = Phaser.Math.Between(1, 10); // Número aleatorio entre 1 y 10
-                                this.sound.play(`Wenk${randomWenk}`, { volume: 0.3 }); // Reproducir sonido aleatorio
-                              } else {
-                                penguin.soundEvent.remove(); // Si el pingüino muere, detener el sonido
-                            }
-                        },
-                        loop: true
-                    });
-                    this.spawnCount++;
-                    if(this.spawnCount % 4 === 0){
-                      this.penguinsound = Phaser.Math.Between(1, 2);
-                    if (this.penguinsound === 1) {
-                      // cambiar mas adelante
-                      this.sound.play("penguinspawn", { volume: 4 });
-                    } else {
-                      this.sound.play("penguinspawn2", { volume: 2 });
-                    }
-                    }
-                },
-                loop: true // Hacer que el evento se repita indefinidamente
-            });
-        }
     }
     
     }
