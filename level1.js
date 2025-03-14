@@ -12,12 +12,13 @@ class Level1 extends Phaser.Scene {
       { x: 3000, y: 350 },
     ];
     this.platformPositions = platformPositions;
-
-    const world_bounds = { width: 5000, height: 800 };
-    const gravityY = 2500;
-    
-
+    this.WORLD_BOUNDS = { width: 5000, height: 800 };
+    this.GRAVITY_Y = 2500;
+    this.PLAYER_VELOCITY = {x: 500, y: -1300};
+    this.PLATFORM_DIMENSIONS = { width: 500, height: 64 };
+    this.WORM_VELOCITY = 150;
   }
+  
   init() {
     this.gameOver = false;
     this.selectedCharacter = this.game.registry.get("selectedCharacter");
@@ -100,7 +101,7 @@ class Level1 extends Phaser.Scene {
   }
 
   setupWorld() {
-    this.physics.world.setBounds(0, 0, 5000, 800);
+    this.physics.world.setBounds(0, 0, this.this.WORLD_BOUNDS.width, this.this.WORLD_BOUNDS.height);
    
   }
 
@@ -131,11 +132,11 @@ class Level1 extends Phaser.Scene {
   setupPlayerPhysics() {
     this.player.setBounce(0);
     this.player.setCollideWorldBounds(true);
-    this.player.setGravityY(2500);
+    this.player.setGravityY(this.GRAVITY_Y);
   }
 
   setupCamera() {
-    this.cameras.main.setBounds(0, 0, 5000, 800);
+    this.cameras.main.setBounds(0, 0, this.this.WORLD_BOUNDS.width, this.this.WORLD_BOUNDS.height);
     this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
   }
 
@@ -428,13 +429,13 @@ class Level1 extends Phaser.Scene {
     this.platforms_worms = this.physics.add.staticGroup();
 
     // Forsito para crear las plataformas
-    for (let x = 0; x <= 5000; x += 490) {
+    for (let x = 0; x <= this.this.WORLD_BOUNDS.width; x += 490) {
       let platform = this.platforms
         .create(x, 770, "ground")
-        .setDisplaySize(500, 64)
+        .setDisplaySize(this.PLATFORM_DIMENSIONS.width, this.PLATFORM_DIMENSIONS.height)
         .refreshBody();
 
-      platform.body.setSize(500, 58);
+      platform.body.setSize(this.PLATFORM_DIMENSIONS.width, this.PLATFORM_DIMENSIONS.height);
       platform.body.setOffset(0, 20);
     }
 
@@ -442,7 +443,7 @@ class Level1 extends Phaser.Scene {
     this.platformPositions.forEach((pos) => {
       this.platforms
         .create(pos.x, pos.y, "ground")
-        .setDisplaySize(350, 60)
+        .setDisplaySize(this.PLATFORM_DIMENSIONS.width - 250, this.PLATFORM_DIMENSIONS.height - 20)
         .refreshBody();
 
       // Paredes a cada lado
@@ -467,7 +468,7 @@ class Level1 extends Phaser.Scene {
     let numWorms = 5;
     let startX = 1000;
     let spacing = 300;
-    let wormSpeed = 150;
+    
 
     for (let i = 0; i < numWorms; i++) {
       let x = startX + i * spacing;
@@ -478,7 +479,7 @@ class Level1 extends Phaser.Scene {
       worm.setBounce(0.5);
       worm.body.setSize(46, 16);
       worm.setCollideWorldBounds(true);
-      worm.setVelocityX(wormSpeed * direction);
+      worm.setVelocityX(this.WORM_VELOCITY * direction);
       if (direction === -1) {
         worm.anims.play("worm_left");
       }
@@ -504,9 +505,9 @@ class Level1 extends Phaser.Scene {
 
   handlePlayerMovement() {
     if (this.cursors.left.isDown) {
-      this.setPlayerMovement("left", -500, true);
+      this.setPlayerMovement("left", -this.PLAYER_VELOCITY.x, true);
     } else if (this.cursors.right.isDown) {
-      this.setPlayerMovement("right", 500, false);
+      this.setPlayerMovement("right", this.PLAYER_VELOCITY.x, false);
     } else {
       this.stopPlayer();
     }
@@ -564,12 +565,12 @@ class Level1 extends Phaser.Scene {
       (this.cursors.up.isDown || this.cursors.space.isDown) &&
       this.player.body.touching.down
     ) {
-      this.player.setVelocityY(-1300);
+      this.player.setVelocityY(this.PLAYER_VELOCITY.y);
     }
   }
 
   applyGravity() {
-    this.player.setGravityY(this.player.body.velocity.y > 0 ? 3000 : 2500);
+    this.player.setGravityY(this.player.body.velocity.y > 0 ? this.GRAVITY_Y + 500 : this.GRAVITY_Y);
   }
 
   updateWorms() {
