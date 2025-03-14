@@ -4,13 +4,22 @@ class Level1 extends Phaser.Scene {
     this.score = 0;
     this.lives = 3;
     const platformPositions = [
-      { x: 400, y: 500 },
-      { x: 900, y: 400 },
-      { x: 1400, y: 450 },
-      { x: 2000, y: 450 },
-      { x: 2500, y: 550 },
-      { x: 3000, y: 350 },
-    ];
+      { x: 400, y: 450 },
+      { x: 1000, y: 420 },
+      { x: 1600, y: 430 },
+      { x: 2300, y: 500 },
+      { x: 3000, y: 250 },
+      { x: 3700, y: 300 },
+      { x: 4200, y: 550 },
+      { x: 4800, y: 380 },
+      { x: 5300, y: 600 },
+      { x: 6000, y: 270 },
+      { x: 6700, y: 460 },
+      { x: 7200, y: 320 },
+      { x: 7800, y: 510 },
+      { x: 8100, y: 290 },
+      
+  ];
     this.platformPositions = platformPositions;
     this.WORLD_BOUNDS = { width: 5000, height: 800 };
     this.GRAVITY_Y = 2500;
@@ -116,6 +125,7 @@ class Level1 extends Phaser.Scene {
   }
 
   setupGoalItem() {
+    const setScale = this.selectedCharacter === "finn" ? 2 : 4;
     const goalItems = { finn: "sword", jake: "sandwich" };
     const positions = { finn: { x: 200, y: 80 }, jake: { x: 200, y: 80 } };
 
