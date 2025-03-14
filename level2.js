@@ -2,23 +2,35 @@ class Level2 extends Phaser.Scene {
   constructor() {
     super({ key: "Level2" });
     this.score = 0;
-    this.lives = 5;
+    this.lives = 3;
     const platformPositions = [
-      { x: 400, y: 500 },
-      { x: 900, y: 400 },
-      { x: 1400, y: 450 },
-      { x: 2000, y: 450 },
-      { x: 2500, y: 550 },
-      { x: 3000, y: 350 },
-    ];
+      { x: 400, y: 450 },
+      { x: 1000, y: 420 },
+      { x: 1600, y: 430 },
+      { x: 2300, y: 500 },
+      { x: 3000, y: 250 },
+      { x: 3700, y: 300 },
+      { x: 4200, y: 550 },
+      { x: 4800, y: 380 },
+      { x: 5300, y: 600 },
+      { x: 6000, y: 270 },
+      { x: 6700, y: 460 },
+      { x: 7200, y: 320 },
+      { x: 7800, y: 510 },
+      { x: 8100, y: 290 },
+      
+  ];
+  
+  
     this.platformPositions = platformPositions;
+    this.cameralocked = false;
+    this.WORLD_BOUNDS = { x: 10000, y: 800 };
   }
   init() {
     this.gameOver = false;
     this.selectedCharacter = this.game.registry.get("selectedCharacter");
     this.score = this.game.registry.get("score");
     this.lives = this.game.registry.get("lives");
-
   }
   LoadImages() {
     this.load.image("sky2", "assets/bg2.png");
@@ -46,6 +58,10 @@ class Level2 extends Phaser.Scene {
       frameWidth: 140,
       frameHeight: 68,
     });
+    this.load.spritesheet("icicle", "assets/icicle.png", {
+      frameWidth: 57,
+      frameHeight: 20,
+    });
   }
   preload() {
     this.LoadImages();
@@ -68,14 +84,12 @@ class Level2 extends Phaser.Scene {
     this.load.audio("sonidofase1", "sounds/fase1.mp3");
     this.load.audio("sonidofase2", "sounds/fase2.mp3");
 
-    
-
     this.load.on("filecomplete", (key) => {
       this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST);
     });
   }
   setupWorld() {
-    this.physics.world.setBounds(0, 0, 5000, 800);
+    this.physics.world.setBounds(0, 0, this.WORLD_BOUNDS.x, this.WORLD_BOUNDS.y);
   }
   setupMusic() {
     this.bossmusic = document.getElementById("bossMusic");
@@ -83,6 +97,7 @@ class Level2 extends Phaser.Scene {
     this.bossmusic.loop = true;
     this.events.on("resume", () => {
       this.bossmusic.play();
+      this.sound.resumeAll();
     });
     this.bossmusic.play();
   }
@@ -97,7 +112,7 @@ class Level2 extends Phaser.Scene {
     this.platforms_penguins = this.physics.add.staticGroup();
 
     // Forsito para crear las plataformas
-    for (let x = 0; x <= 5000; x += 490) {
+    for (let x = 0; x <= this.WORLD_BOUNDS.x; x += 490) {
       let platform = this.platforms
         .create(x, 770, "iceground")
         .setDisplaySize(500, 64)
@@ -261,7 +276,7 @@ class Level2 extends Phaser.Scene {
       penguin.setBounce(0.5);
       penguin.setCollideWorldBounds(true);
       penguin.setVelocityX(penguinspeed * direction);
-      let randomtime = Phaser.Math.Between(1000,5000);
+      let randomtime = Phaser.Math.Between(1000, this.WORLD_BOUNDS.x);
       penguin.soundEvent = this.time.addEvent({
         delay: randomtime,
         callback: () => {
@@ -272,7 +287,7 @@ class Level2 extends Phaser.Scene {
             penguin.soundEvent.remove();
           }
         },
-        loop: true
+        loop: true,
       });
       if (direction === -1) {
         penguin.anims.play("penguin_left");
@@ -287,7 +302,7 @@ class Level2 extends Phaser.Scene {
       penguin.setCollideWorldBounds(true);
       penguin.setVelocityX(penguinspeed);
       // añadir timer de sonido
-      let randomtime = Phaser.Math.Between(1000,5000);
+      let randomtime = Phaser.Math.Between(1000, this.WORLD_BOUNDS.x);
       penguin.soundEvent = this.time.addEvent({
         delay: randomtime,
         callback: () => {
@@ -298,14 +313,12 @@ class Level2 extends Phaser.Scene {
             penguin.soundEvent.remove();
           }
         },
-        loop: true
+        loop: true,
       });
-
-     });
-
+    });
   }
   CreateBoss() {
-    this.boss = this.physics.add.sprite(4800, 600, "iceking").setScale(2);
+    this.boss = this.physics.add.sprite(this.WORLD_BOUNDS.x - 200, 600, "iceking").setScale(2);
     this.boss.anims.play("iceking_right");
     this.boss.salud = 200;
     // boss sin gravedad
@@ -322,17 +335,19 @@ class Level2 extends Phaser.Scene {
       yoyo: true,
       repeat: -1,
       ease: "Sine.easeInOut",
+      paused: true,
     });
     this.flyingpenguins = this.physics.add.group();
     this.fase2 = this.tweens.add({
       targets: this.boss,
-      x: 4150,
+      x: this.WORLD_BOUNDS.x - 850,
       y: 150,
       duration: 4000,
       ease: "Power2",
       paused: true,
       onComplete: () => {
         this.boss.anims.play("iceking_up");
+        let soundnum = Phaser.Math.Between(0, 2);
         // Guardamos referencia al evento para poder detenerlo después
         if (!this.spawnmobsevent) {
           this.spawnCount = 0;
@@ -342,27 +357,33 @@ class Level2 extends Phaser.Scene {
               let penguin = this.flyingpenguins
                 .create(this.boss.x, this.boss.y, "penguin_idle")
                 .setScale(2);
-                
-                if (penguin.active) { 
-                    let randomWenk = Phaser.Math.Between(1, 10); 
-                    this.sound.play(`Wenk${randomWenk}`, { volume: 0.3 }); 
-                  } else {
-                    penguin.soundEvent.remove(); 
-                }
-            
-              
-              this.spawnCount++;
-              // sonar sonido de spawn secuencialmente
-              if (this.spawnCount % 3 === 0) {
-                this.sound.play("penguinspawn", { volume: 4 });
-              }
-              if (this.spawnCount % 3 === 1) {
-                this.sound.play("penguinspawn2", { volume: 2 });
-              }
-              if (this.spawnCount % 3 === 2) {
-                this.sound.play("penguinspawn3", { volume: 2 });
+
+              if (penguin.active) {
+                let randomWenk = Phaser.Math.Between(1, 10);
+                this.sound.play(`Wenk${randomWenk}`, { volume: 0.3 });
+              } else {
+                penguin.soundEvent.remove();
               }
 
+              this.spawnCount++;
+              // sonar sonido de spawn secuencialmente cada 4 pinguinos
+              if (this.spawnCount % 4 === 0) {
+                switch (soundnum) {
+                  case 0:
+                    this.sound.play("penguinspawn", { volume: 4 });
+                    break;
+                  case 1:
+                    this.sound.play("penguinspawn2", { volume: 2 });
+                    break;
+                  case 2:
+                    this.sound.play("penguinspawn3", { volume: 2 });
+                    break;
+                }
+                soundnum++;
+                if (soundnum > 2) {
+                  soundnum = 0;
+                }
+              }
               penguin.anims.play("penguin_idle");
               penguin.setBounce(0.5);
               penguin.setCollideWorldBounds(true);
@@ -372,14 +393,14 @@ class Level2 extends Phaser.Scene {
         }
         this.tweens.add({
           targets: this.boss,
-          x: 3750,
+          x: this.WORLD_BOUNDS.x - 1250,
           duration: 4000,
           ease: "Sine.easeInOut",
           onComplete: () => {
             if (!this.bossLoopTween) {
               this.bossLoopTween = this.tweens.add({
                 targets: this.boss,
-                x: 4750,
+                x: this.WORLD_BOUNDS.x - 250,
                 duration: 4000,
                 ease: "Sine.easeInOut",
                 yoyo: true,
@@ -391,14 +412,13 @@ class Level2 extends Phaser.Scene {
       },
       onStart: () => {
         this.sound.play("sonidofase1", { volume: 2 });
-      }
+      },
     });
-    this.regresofase1 = false;
     this.regresarfase1 = this.tweens.add({
       targets: this.boss,
-      x: 4800,
+      x: this.WORLD_BOUNDS.x - 200,
       y: 650,
-      duration: 6000,
+      duration: 4500,
       ease: "Power2",
       paused: true,
       onComplete: () => {
@@ -413,49 +433,47 @@ class Level2 extends Phaser.Scene {
           ease: "Sine.easeInOut",
         });
         let randomtimespawn = Phaser.Math.Between(1000, 1500);
-            this.sound.play("guntercalls", { volume: 2 });
-            this.numpenguins = 0;
-            this.regresarfase1event = this.time.addEvent({
-                delay: randomtimespawn,
-                callback: () => {
-                    this.numpenguins++;
-                    // Generar pingüino que venga de la derecha
-                    let penguin = this.flyingpenguins
-                        .create(5000, 700, "penguin_idle")
-                        .setScale(2);
-                    penguin.anims.play("penguin_left");
-                    penguin.setBounce(0.5);
-                    penguin.setCollideWorldBounds(true);
-                    penguin.setVelocityX(-100);       
-                    let randomtimespawn = Phaser.Math.Between(100, 4000);
-                    penguin.soundEvent = this.time.addEvent({
-                        delay: randomtimespawn,
-                        callback: () => {
-                            if (penguin.active) { // Verifica si el pingüino sigue en el juego
-                                let randomWenk = Phaser.Math.Between(1, 10); // Número aleatorio entre 1 y 10
-                                this.sound.play(`Wenk${randomWenk}`, { volume: 0.3 }); // Reproducir sonido aleatorio
-                              } else {
-                                penguin.soundEvent.remove(); // Si el pingüino muere, detener el sonido
-                            }
-                            if(this.numpenguins % 7 === 0){
-                                this.sound.play("guntercalls", { volume: 2.5 });
-                              
-                            }
-                        },
-                        
-                        loop: true,
-                      
-                    });                    
-                },
-                loop: true // Hacer que el evento se repita indefinidamente
+        this.sound.play("guntercalls", { volume: 2 });
+        this.numpenguins = 0;
+        this.regresarfase1event = this.time.addEvent({
+          delay: randomtimespawn,
+          callback: () => {
+            this.numpenguins++;
+            // Generar pingüino que venga de la derecha
+            let penguin = this.flyingpenguins
+              .create(this.WORLD_BOUNDS.x, 700, "penguin_idle")
+              .setScale(2);
+            penguin.anims.play("penguin_left");
+            penguin.setBounce(0.5);
+            penguin.setCollideWorldBounds(true);
+            penguin.setVelocityX(-100);
+            let randomtimespawn = Phaser.Math.Between(100, 4000);
+            penguin.soundEvent = this.time.addEvent({
+              delay: randomtimespawn,
+              callback: () => {
+                if (penguin.active) {
+                  // Verifica si el pingüino sigue en el juego
+                  let randomWenk = Phaser.Math.Between(1, 10); // Número aleatorio entre 1 y 10
+                  this.sound.play(`Wenk${randomWenk}`, { volume: 0.3 }); // Reproducir sonido aleatorio
+                } else {
+                  penguin.soundEvent.remove(); // Si el pingüino muere, detener el sonido
+                }
+              },
+              loop: true,
             });
+            console.log(this.numpenguins);
+            if (this.numpenguins % 7 === 0) {
+              this.sound.play("guntercalls", { volume: 2.5 });
+            }
+          },
+          loop: true, // Hacer que el evento se repita indefinidamente
+        });
       },
       onStart: () => {
         this.sound.play("sonidofase2", { volume: 2 });
-      }
+      },
     });
 
-    this.fase1.play();
   }
   setupPlayerPhysics() {
     this.player.setBounce(0);
@@ -463,7 +481,7 @@ class Level2 extends Phaser.Scene {
     this.player.setGravityY(2500);
   }
   setupCamera() {
-    this.cameras.main.setBounds(0, 0, 5000, 800);
+    this.cameras.main.setBounds(0, 0, this.WORLD_BOUNDS.x,this.WORLD_BOUNDS.y);
     this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
   }
   setupUI() {
@@ -513,11 +531,13 @@ class Level2 extends Phaser.Scene {
 
   setupPhysics() {
     this.canAttack = true;
-    this.bombs = this.physics.add.group();
+    this.icicles = this.physics.add.group();
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.penguins, this.platforms_penguins);
     this.physics.add.collider(this.penguins, this.platforms);
     this.physics.add.collider(this.flyingpenguins, this.platforms);
+    this.physics.add.collider(this.icicles, this.platforms);
+    this.colisionicicle = this.physics.add.collider(this.player, this.icicles, this.handleIcicleCollision, null, this);
     this.colisionpenguinil2 = this.physics.add.overlap(
       this.player,
       this.flyingpenguins,
@@ -544,11 +564,13 @@ class Level2 extends Phaser.Scene {
   handlePause() {
     document.getElementById("pause").play();
     this.bossmusic.pause();
+    this.sound.pauseAll();
     this.scene.launch("PauseScene");
     this.scene.pause();
   }
 
   handleWin() {
+    this.sound.pauseAll();
     this.bossmusic.pause();
     this.bossmusic.currentTime = 0;
     this.grabarscore();
@@ -575,11 +597,38 @@ class Level2 extends Phaser.Scene {
         // debugear posicion antes de atacar
       }
     });
+    this.icicleCounter = 0;
+    this.boss.on("animationupdate", (anim, frame) => {
+      if (frame.index === anim.frames.length - 1) {
+        if (anim.key === "iceking_right" && this.cameralocked) {
+          this.icicleCounter++;
+          if (this.icicleCounter % 4 === 0) {
+            // arrojar un icicle
+            let icicle = this.icicles
+              .create(this.boss.x, this.boss.y, "icicle")
+              .setScale(4);
+
+            icicle.setVelocityY(-500);
+            let randomvelocityx = Phaser.Math.Between(-100, -400);
+            icicle.setCollideWorldBounds(true);
+            icicle.setBounce(0.5);
+            icicle.setGravityY(100);
+            // en 3 segundos destruir
+            this.time.addEvent({
+              delay: this.WORLD_BOUNDS.x,
+              callback: () => {
+                icicle.destroy();
+              },
+            });
+          }
+        }
+      }
+    });
   }
   handlePlayerMovement() {
     // prevenir que el jugador se caiga abajo del suelo
-    if (this.player.y > 790) {
-      this.player.y = 769;
+    if (this.player.y > 780) {
+      this.player.y = 750;
       console.log(this.player.y);
     }
 
@@ -614,7 +663,7 @@ class Level2 extends Phaser.Scene {
           this.player.body.setSize(140, 68);
         }
         this.time.addEvent({
-          delay: 700, 
+          delay: 700,
           callback: () => {
             this.attackCooldown = false;
           },
@@ -683,13 +732,13 @@ class Level2 extends Phaser.Scene {
   updateBoss() {
     if (this.boss.salud <= 100) {
       if (this.fase1.isPlaying() && this.fase2.isPaused()) {
-        this.fase1.pause();
+        this.fase1.stop();
       }
       if (this.fase2.isPaused()) {
         this.fase2.play();
       }
     }
-
+    
     if (this.flyingpenguins.getChildren().length === 15) {
       if (this.fase2.isPlaying()) {
         this.fase2.stop();
@@ -702,10 +751,9 @@ class Level2 extends Phaser.Scene {
         this.spawnmobsevent.remove(false);
         this.spawnmobsevent = null;
       }
-      if (this.regresarfase1.isPaused() ) {
+      if (this.regresarfase1.isPaused()) {
         this.regresarfase1.play();
-    }
-    
+      }
     }
     if (this.boss.salud <= 0) {
       this.handleWin();
@@ -713,12 +761,15 @@ class Level2 extends Phaser.Scene {
   }
   cameraBossLocked() {
     let cameraEnd = this.cameras.main.scrollX + this.cameras.main.width;
-    if (cameraEnd >= 5000 && this.player.x >= 4350) {
+    if (cameraEnd >= this.WORLD_BOUNDS.x && this.player.x >= this.WORLD_BOUNDS.x - 700) {
       this.cameras.main.stopFollow();
       this.cameralocked = true;
+      if(this.fase1.isPaused()) {
+        this.fase1.play();
+      }
     }
     if (this.cameralocked) {
-      const maxX = 5050 - this.cameras.main.width;
+      const maxX = this.WORLD_BOUNDS.x - this.cameras.main.width;
       if (this.player.x <= maxX) {
         this.player.x = maxX;
       }
@@ -729,19 +780,19 @@ class Level2 extends Phaser.Scene {
           penguin.anims.play("penguin_right");
         }
       });
-      // matar al grupo de pinguinos 1 vez 
+      // matar al grupo de pinguinos 1 vez
       if (this.penguins.getChildren().length > 0) {
         let toDestroy = [];
-    
+
         this.penguins.children.iterate((penguin) => {
-            if (penguin.x <= this.cameras.main.scrollX) {
-                toDestroy.push(penguin);
-            }
+          if (penguin.x <= this.cameras.main.scrollX) {
+            toDestroy.push(penguin);
+          }
         });
-    
+
         // Elimina todos los pingüinos fuera de la cámara en una sola iteración
-        toDestroy.forEach(penguin => penguin.destroy());
-    }
+        toDestroy.forEach((penguin) => penguin.destroy());
+      }
     }
   }
 
@@ -758,24 +809,45 @@ class Level2 extends Phaser.Scene {
       return;
     }
   }
-    
-  handleAttackBoss() {
-    if (this.attacking) { 
-        if (!this.bossHit) { 
-            this.bossHit = true; 
-            this.boss.setTint(0xff0000); 
-            this.boss.salud -= 10; 
 
-            this.time.delayedCall(500, () => {
-                this.boss.clearTint(); 
-                this.bossHit = false; 
-            });
-        }
+  handleAttackBoss() {
+    if (this.attacking) {
+      if (!this.bossHit) {
+        this.bossHit = true;
+        this.boss.setTint(0xff0000);
+        this.boss.salud -= 10;
+
+        this.time.delayedCall(500, () => {
+          this.boss.clearTint();
+          this.bossHit = false;
+        });
+      }
     } else {
-        this.reduceLives();
+      this.reduceLives();
+    }
+  }
+  handleIcicleCollision(player, icicle) {
+    if (this.attacking) { 
+        let direction = (icicle.x > player.x) ? 1 : -1; // Si el icicle está a la derecha, moverlo a la derecha
+        icicle.x += direction * 50; 
+        icicle.setVelocityX(direction * 300);
+        // si jugador presiona z, rebotar el icicle
+        if(this.zkey.isDown) {
+          icicle.setVelocityY(-800);
+          console.log("rebotar");
+        }else{
+          icicle.setVelocityY(-500);
+          console.log("no rebotar");
+        }
+        // player inmune por 1 segundo
+        this.colisionicicle.active = false;
+        this.time.delayedCall(500, () => {
+            this.colisionicicle.active = true;
+        });
+    } else {
+        this.handleLives(); 
     }
 }
-
 
   handleLives() {
     if (this.attacking) {
@@ -785,8 +857,8 @@ class Level2 extends Phaser.Scene {
       this.reduceLives();
     }
   }
+ 
   reduceLives() {
-    
     this.lives--;
     if (this.lives >= 0) this.heartSprites[this.lives].setVisible(false);
     this.playDeathSound();
@@ -810,7 +882,6 @@ class Level2 extends Phaser.Scene {
     this.scoreText.setText("Score: " + this.score);
   }
 
-
   playDeathSound() {
     let random3 = Phaser.Math.Between(1, 3);
     let soundKey =
@@ -831,18 +902,21 @@ class Level2 extends Phaser.Scene {
     this.time.delayedCall(1000, () => {
       this.bossmusic.pause();
       this.bossmusic.currentTime = 0;
+      this.sound.pauseAll();
       this.scene.start("LoseScene");
     });
   }
 
   respawnPlayer() {
-    if(this.cameralocked){
+    if (this.cameralocked) {
       this.player.setPosition(4000, 600);
       this.colisionboss.active = false;
       this.colisionpenguinil2.active = false;
-    }else{
+      this.colisionicicle.active = false;
+    } else {
       this.player.setPosition(100, 450);
       this.colisionpenguinil.active = false;
+  
     }
     this.player.setVelocity(0, 0);
     this.player.clearTint();
@@ -853,6 +927,7 @@ class Level2 extends Phaser.Scene {
       this.colisionpenguinil.active = true;
       this.colisionpenguinil2.active = true;
       this.colisionboss.active = true;
+      this.colisionicicle.active = true;
     });
   }
 

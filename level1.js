@@ -2,7 +2,7 @@ class Level1 extends Phaser.Scene {
   constructor() {
     super({ key: "Level1" });
     this.score = 0;
-    this.lives = 5;
+    this.lives = 3;
     const platformPositions = [
       { x: 400, y: 500 },
       { x: 900, y: 400 },
@@ -282,8 +282,8 @@ class Level1 extends Phaser.Scene {
     this.bgmusic1.currentTime = 0;
     
     this.scene.stop();
-    document.querySelector("canvas").style.display = "none";
-     this.dragNdrop();
+    //document.querySelector("canvas").style.display = "none";
+    // this.dragNdrop();
 
     /*
     this.registry.set("level", 2);
