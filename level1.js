@@ -101,7 +101,7 @@ class Level1 extends Phaser.Scene {
   }
 
   setupWorld() {
-    this.physics.world.setBounds(0, 0, this.this.WORLD_BOUNDS.width, this.this.WORLD_BOUNDS.height);
+    this.physics.world.setBounds(0, 0, this.WORLD_BOUNDS.width, this.WORLD_BOUNDS.height);
    
   }
 
