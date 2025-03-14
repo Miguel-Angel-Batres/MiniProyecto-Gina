@@ -12,6 +12,11 @@ class Level1 extends Phaser.Scene {
       { x: 3000, y: 350 },
     ];
     this.platformPositions = platformPositions;
+
+    const world_bounds = { width: 5000, height: 800 };
+    const gravityY = 2500;
+    
+
   }
   init() {
     this.gameOver = false;

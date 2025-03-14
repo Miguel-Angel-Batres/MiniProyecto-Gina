@@ -392,6 +392,7 @@ class Level2 extends Phaser.Scene {
       paused: true,
       onComplete: () => {
         this.boss.anims.play("iceking_right");
+        this.spawnCount = 0;
         this.tweens.add({
           targets: this.boss,
           y: this.boss.y - 600,
@@ -653,8 +654,9 @@ class Level2 extends Phaser.Scene {
         this.regresarfase1.play();
         // Crear timer event
         if (!this.regresarfase1event) {
+            let randomtimespawn = Phaser.Math.Between(500, 2000);
             this.regresarfase1event = this.time.addEvent({
-                delay: 2000,
+                delay: randomtimespawn,
                 callback: () => {
                     // Generar pingüino que venga de la derecha
                     let penguin = this.flyingpenguins
@@ -677,6 +679,16 @@ class Level2 extends Phaser.Scene {
                         },
                         loop: true
                     });
+                    this.spawnCount++;
+                    if(this.spawnCount % 4 === 0){
+                      this.penguinsound = Phaser.Math.Between(1, 2);
+                    if (this.penguinsound === 1) {
+                      // cambiar mas adelante
+                      this.sound.play("penguinspawn", { volume: 4 });
+                    } else {
+                      this.sound.play("penguinspawn2", { volume: 2 });
+                    }
+                    }
                 },
                 loop: true // Hacer que el evento se repita indefinidamente
             });
