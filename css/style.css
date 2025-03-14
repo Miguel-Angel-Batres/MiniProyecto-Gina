@@ -53,7 +53,9 @@ img,
 canvas {
   image-rendering: pixelated !important;
 }
-
+body{
+  z-
+}
 body,
 h1,
 p,
@@ -410,3 +412,5 @@ button:active {
       cursor: grab;
       display: none;
   }
+
+
