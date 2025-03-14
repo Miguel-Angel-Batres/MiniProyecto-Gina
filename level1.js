@@ -136,7 +136,7 @@ class Level1 extends Phaser.Scene {
   }
 
   setupCamera() {
-    this.cameras.main.setBounds(0, 0, this.this.WORLD_BOUNDS.width, this.this.WORLD_BOUNDS.height);
+    this.cameras.main.setBounds(0, 0, this.WORLD_BOUNDS.width, this.WORLD_BOUNDS.height);
     this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
   }
 
@@ -429,7 +429,7 @@ class Level1 extends Phaser.Scene {
     this.platforms_worms = this.physics.add.staticGroup();
 
     // Forsito para crear las plataformas
-    for (let x = 0; x <= this.this.WORLD_BOUNDS.width; x += 490) {
+    for (let x = 0; x <= this.WORLD_BOUNDS.width; x += 490) {
       let platform = this.platforms
         .create(x, 770, "ground")
         .setDisplaySize(this.PLATFORM_DIMENSIONS.width, this.PLATFORM_DIMENSIONS.height)
@@ -491,7 +491,7 @@ class Level1 extends Phaser.Scene {
       worm.setBounce(0.5);
       worm.body.setSize(46, 16);
       worm.setCollideWorldBounds(true);
-      worm.setVelocityX(wormSpeed);
+      worm.setVelocity(this.WORM_VELOCITY);
     });
   }
   update() {

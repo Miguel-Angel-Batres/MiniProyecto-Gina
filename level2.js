@@ -824,7 +824,7 @@ class Level2 extends Phaser.Scene {
 
   respawnPlayer() {
     if(this.cameralocked){
-      this.player.setPosition(4000, 650);
+      this.player.setPosition(4000, 600);
       this.colisionboss.active = false;
       this.colisionpenguinil2.active = false;
     }else{
