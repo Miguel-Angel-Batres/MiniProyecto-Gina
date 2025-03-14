@@ -786,10 +786,10 @@ class Level2 extends Phaser.Scene {
     }
   }
   reduceLives() {
+    
     this.lives--;
-    this.heartSprites[this.lives].setVisible(false);
+    if (this.lives >= 0) this.heartSprites[this.lives].setVisible(false);
     this.playDeathSound();
-
     if (this.lives <= 0) {
       this.endGame();
     } else {
@@ -822,6 +822,8 @@ class Level2 extends Phaser.Scene {
 
   endGame() {
     this.physics.pause();
+    this.physics.pause();
+    this.player.setVelocity(0, 0);
     this.player.setTint(0xff0000);
     this.player.anims.play("turn");
     this.gameOver = true;
