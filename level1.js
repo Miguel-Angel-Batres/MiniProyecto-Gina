@@ -262,7 +262,15 @@ class Level1 extends Phaser.Scene {
     
     this.scene.stop();
     document.querySelector("canvas").style.display = "none";
-    this.dragNdrop();
+    // this.dragNdrop();
+
+    //*
+    this.registry.set("level", 2);
+    this.registry.set("score", this.score);
+    this.registry.set("lives", this.lives);
+    this.scene.start("Level2");
+    console.log("cambio de nivel");
+    //*/
   }
 
   setupInputHandlers() {
