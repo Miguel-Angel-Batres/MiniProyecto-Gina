@@ -60,9 +60,11 @@ class Level1 extends Phaser.Scene {
     this.load.audio("finn_attack1", "sounds/Finn/finn_attack1_03.mp3");
     this.load.audio("finn_attack2", "sounds/Finn/finn_attack2_03.mp3");
     this.load.audio("finn_attack3", "sounds/Finn/finn_attack2_01.mp3");
+    this.load.audio("finn_achieve", "sounds/Finn/finn_achieve.mp3");
     this.load.audio("jake_attack1", "sounds/Jake/jake_attack1_03.mp3");
       this.load.audio("jake_attack2", "sounds/Jake/jake_attack2_03.mp3");
       this.load.audio("jake_attack3", "sounds/Jake/jake_attack3_03.mp3");
+      this.load.audio("jake_achieve", "sounds/Jake/jake_achieve.mp3");
     
   }
   LoadSprites() {
@@ -160,15 +162,31 @@ class Level1 extends Phaser.Scene {
       })
       .setScrollFactor(0);
 
-    let fecha = new Date();
-    fecha = `${fecha.getFullYear()}-${fecha.getMonth() + 1}-${fecha.getDate()}`;
-    this.dateText = this.add
+      let fecha = new Date();
+      fecha = `${fecha.getFullYear()}-${fecha.getMonth() + 1}-${fecha.getDate()}`;
+
+      // Mostrar la fecha en pantalla
+      this.dateText = this.add
       .text(1100, 16, "Date: " + fecha, {
         fontFamily: '"Press Start 2P", Arial',
         fontSize: "32px",
         fill: "#000",
       })
       .setScrollFactor(0);
+
+      // Obtener el nickname desde localStorage
+      let nickname = localStorage.getItem("nickname");
+
+      // Mostrar el nickname debajo de la fecha
+      if (nickname) {
+        this.nicknameText = this.add
+        .text(1100, 60, "alias: " + nickname, {
+          fontFamily: '"Press Start 2P", Arial',
+          fontSize: "32px",
+          fill: "#000",
+        })
+        .setScrollFactor(0);
+      }
   }
 
   setupCollisions() {
@@ -208,13 +226,15 @@ class Level1 extends Phaser.Scene {
     dragNdrop_background.style.display = 'none';  
 
     let hero = this.game.registry.get("selectedCharacter");
-
+    let winSound = null;
     if (hero == "finn") {
       dragNdrop_background.src = "assets/BottomDragNDrop_FINN.png";
       image_dragNdrop.src = "assets/SwordDragNDrop_FINN.png";
+      winSound = this.sound.add("finn_achieve");
     } else {
       dragNdrop_background.src = "assets/BottomDragNDrop_JAKE.png";
       image_dragNdrop.src = "assets/SanwisDragNDrop_JAKE.png";
+      winSound = this.sound.add("jake_achieve");
     }
     dragNdrop_div.style.display = 'flex';
     box1.style.display = box2.style.display ='flex';
@@ -233,7 +253,7 @@ class Level1 extends Phaser.Scene {
         e.target.classList.remove("dragging");
         console.log("Estado: Arrastre finalizado");
     });
-
+//
     boxes.forEach(box => {
         box.addEventListener("dragover", (e) => e.preventDefault());
         box.addEventListener("dragenter", () => box.classList.add("dragover"));
@@ -245,7 +265,8 @@ class Level1 extends Phaser.Scene {
               box.appendChild(image_dragNdrop);
           }
           box.classList.remove("dragover");
-      
+
+          winSound.play();
           // Esperar 2 segundos y cambiar a Level2
           setTimeout(() => {
               dragNdrop_div.style.display = 'none';
@@ -274,13 +295,13 @@ class Level1 extends Phaser.Scene {
     //document.querySelector("canvas").style.display = "none";
     // this.dragNdrop();
 
-    //*
+    /*
     this.registry.set("level", 2);
     this.registry.set("score", this.score);
     this.registry.set("lives", this.lives);
     this.scene.start("Level2");
     console.log("cambio de nivel");
-    //*/
+    */
   }
 
   setupInputHandlers() {

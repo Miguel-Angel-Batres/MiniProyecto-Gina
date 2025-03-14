@@ -1,267 +1,350 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <!-- App manifest -->
-    <link rel="manifest" href="./manifest.json">
+    <link rel="manifest" href="./manifest.json" />
     <!-- Meta -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="keywords" content="Adventure Time">
-    <meta name="description" content="Adventure Time">
-    <meta name="author" content="Adventure Time">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="keywords" content="Adventure Time" />
+    <meta name="description" content="Adventure Time" />
+    <meta name="author" content="Adventure Time" />
     <title>Adventure Time</title>
     <!-- Stylesheets -->
-    <link rel="preload" href="/css/normalize.css" as="style">
-    <link rel="preload" href="/css/style.css" as="style">
-    <link rel="stylesheet" href="/css/normalize.css">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preload" href="/css/normalize.css" as="style" />
+    <link rel="preload" href="/css/style.css" as="style" />
+    <link rel="stylesheet" href="/css/normalize.css" />
+    <link rel="stylesheet" href="/css/style.css" />
     <!-- JS -->
-    <link rel="preload" href="https://arielparra.github.io/js/favicon.js" as="script">
-    <link rel="preload" href="node_modules/phaser/dist/phaser.min.js" as="script">
-    <script defer src="https://arielparra.github.io/js/favicon.js"></script>
-    <script defer src="node_modules/phaser/dist/phaser.min.js"></script>    
+    <link
+      rel="preload"
+      href="node_modules/phaser/dist/phaser.min.js"
+      as="script"
+    />
+    <script defer src="node_modules/phaser/dist/phaser.min.js"></script>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/page_icon.png">
-</head>
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/page_icon.png"
+    />
+  </head>
 
-<body class="body">
-  <div id="dragNdrop">
-    <img id="dragNdrop_background" src="" alt="">
-    <div id="box1" class="box">
-        <img id="image_dragNdrop" draggable="true" alt="">
+  <body class="body">
+    <div
+      id="introVideoContainer"
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: black;
+        z-index: 9999;
+      "
+    >
+      <canvas
+        id="win"
+        style="
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 10000;
+        "
+      ></canvas>
+
+      <video id="introVideo" width="100%" height="100%" autoplay muted>
+        <source src="assets/intro.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
     </div>
-    <div id="box2" class="box"></div>
-  </div>
-  <div class="menu">
-    <h1> Adventure Time</h1>
-    <button id="start">Play</button>
-    <button id="ayuda">Help</button>
-    <button id="creditos">Credits</button>
-    <button id="scores">Scores</button>
-    <button id="exit">Exit</button>
-  </div>
-  <div class="instructions">
-    <h1>Instructions</h1>
-    <p>use the arrow keys to move</p>
-    <p>press the `ESC` key to pause/exit</p>
-    <button id="exitInstructions">exit</button>
-  </div>
-  <div class="creditos">
-    <h1>Game Developed By</h1>
-    <div >
-      <p>Ariel Emilio Parra Martinez</p>
-      <p>Miguel Angel Batres Luna</p>
-      <p>Martin Alfonso Romo Martinez</p>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const video = document.getElementById("introVideo");
+        const videoContainer = document.getElementById("introVideoContainer");
+
+        // Si el video ya se reprodujo, lo oculta
+        if (localStorage.getItem("videoPlayed")) {
+          video.muted = true;
+          videoContainer.style.display = "none";
+          return;
+        }
+
+        // Esperar interacción del usuario para habilitar sonido
+        const enableSound = () => {
+          video.muted = false; // Desmutear el video
+          video
+            .play()
+            .catch((error) =>
+              console.log("Error al reproducir el video:", error)
+            );
+          document.removeEventListener("click", enableSound);
+          document.removeEventListener("keydown", enableSound);
+        };
+
+        // Ocultar video cuando termine
+        video.onended = () => {
+          videoContainer.style.display = "none";
+          video.muted = true;
+          video.style.display = "none";
+          localStorage.setItem("videoPlayed", "true");
+        };
+      });
+    </script>
+
+    <div id="dragNdrop">
+      <img id="dragNdrop_background" src="" alt="" />
+      <div id="box1" class="box">
+        <img id="image_dragNdrop" draggable="true" alt="" />
+      </div>
+      <div id="box2" class="box"></div>
     </div>
-    <p>Signature: Web Technologies</p>
-    <p>2025/03/10</p>
-
-    <button id="exitCreditos">exit</button>
-  </div>
-  <div class="nickname">
-    <h1>Enter your nickname</h1>
-    <input type="text" id="nickname" placeholder="Nickname">
-    <p>You Must Enter Your Nickname</p>
-    <button id="startGame">Start</button>
-  </div>
-  <div class="menuscores">
-    <h1>Top Scores</h1>
-    <!-- Tabla de scores -->
-    <table class="tabla-scores">
-      <thead>
-        <tr>
-          <th>Player</th>
-          <th>Score</th>
-          <th>Time</th>
-        </tr>
-      </thead>
-    </table>
-    <button id="exitScores">exit</button>
-  </div>
-  <div class="selectPJ">
-    <h1>Select your hero</h1>
-
-    <div class="Grid_select_pj">
-      <button id="finn">
-        <div class="hero_square">
-          <img src="assets/finn_select.png" alt="Finn">
-        </div>
-      </button>
-      <button id="jake">
-        <div class="hero_square">
-          <img src="assets/jake_select.png" alt="Jake">
-        </div>
-      </button>
+    <div class="menu">
+      <h1>Adventure Time</h1>
+      <button id="start">Play</button>
+      <button id="ayuda">Help</button>
+      <button id="creditos">Credits</button>
+      <button id="scores">Scores</button>
+      <button id="exit">Exit</button>
     </div>
-  </div>
-  <audio id="bgMusic"  preload="auto" loop style="display: none;">
-    <source src="sounds/background_music_1.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="bossMusic" src="sounds/bossmusic.mp3" preload="none" loop style="display: none;"></audio>
-  <audio id="buttonsound" preload="none" style="display: none;" controls>
-    <source src="sounds/buttons.ogg" type="audio/ogg">
-  </audio>
-  <audio id="buttonsoundexit" preload="none" style="display: none;" controls>
-    <source src="sounds/buttonsexit.ogg" type="audio/ogg">
-  </audio>
-  <!-- pause audio -->
-  <audio id="pause" preload="none" style="display: none;" controls>
-    <source src="sounds/pause.ogg" type="audio/ogg">
-  </audio>
-  <script type="module">
-    import { startGame } from './config.js'; 
-    // Esperamos que el DOM esté completamente cargado antes de manipular elementos
-    document.addEventListener('DOMContentLoaded', () => {
-      document
-        .getElementById('startGame')
-        .addEventListener('click', () => {
+    <div class="instructions">
+      <h1>Instructions</h1>
+      <p>use the arrow keys to move</p>
+      <p>press the `ESC` key to pause/exit</p>
+      <button id="exitInstructions">exit</button>
+    </div>
+    <div class="creditos">
+      <h1>Game Developed By</h1>
+      <div>
+        <p>Ariel Emilio Parra Martinez</p>
+        <p>Miguel Angel Batres Luna</p>
+        <p>Martin Alfonso Romo Martinez</p>
+      </div>
+      <p>Signature: Web Technologies</p>
+      <p>2025/03/10</p>
 
-          if (document.getElementById('nickname').value === '') {
-            // sonido del boton
-            document.getElementById('buttonsoundexit').play();
-            // si no hay nombre, mostrar mensaje de error
-            document.querySelector('.nickname p').style.display = 'block';
+      <button id="exitCreditos">exit</button>
+    </div>
+    <div class="nickname">
+      <h1>Enter your nickname</h1>
+      <input
+        type="text"
+        id="nickname"
+        placeholder="Nickname"
+        minlength="4"
+        maxlength="8"
+      />
+      <p
+        id="error-message"
+        style="font-size: 16px; display: none; color: var(--red)"
+      ></p>
+      <button id="startGame">Start</button>
+    </div>
+
+    <div class="menuscores">
+      <h1>Top Scores</h1>
+      <!-- Tabla de scores -->
+      <table class="tabla-scores">
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Score</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+      </table>
+      <button id="exitScores">exit</button>
+    </div>
+    <div class="selectPJ">
+      <h1>Select your hero</h1>
+
+      <div class="Grid_select_pj">
+        <button id="finn">
+          <div class="hero_square">
+            <img src="assets/finn_select.png" alt="Finn" />
+          </div>
+        </button>
+        <button id="jake">
+          <div class="hero_square">
+            <img src="assets/jake_select.png" alt="Jake" />
+          </div>
+        </button>
+      </div>
+    </div>
+    <audio id="bgMusic" preload="auto" loop style="display: none">
+      <source src="sounds/background_music_1.mp3" type="audio/mpeg" />
+    </audio>
+    <audio
+      id="bossMusic"
+      src="sounds/bossmusic.mp3"
+      preload="none"
+      loop
+      style="display: none"
+    ></audio>
+    <audio id="buttonsound" preload="none" style="display: none" controls>
+      <source src="sounds/buttons.ogg" type="audio/ogg" />
+    </audio>
+    <audio id="buttonsoundexit" preload="none" style="display: none" controls>
+      <source src="sounds/buttonsexit.ogg" type="audio/ogg" />
+    </audio>
+    <!-- pause audio -->
+    <audio id="pause" preload="none" style="display: none" controls>
+      <source src="sounds/pause.ogg" type="audio/ogg" />
+    </audio>
+    <script type="module">
+      import { startGame } from "./config.js";
+
+      // Esperamos que el DOM esté completamente cargado antes de manipular elementos
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("startGame").addEventListener("click", () => {
+          const nicknameInput = document.getElementById("nickname").value;
+
+          // Verifica si el campo de nombre está vacío
+          if (nicknameInput === "") {
+            document.getElementById("buttonsoundexit").play();
+            // Muestra un mensaje de error por un nickname vacío
+            document.querySelector("#error-message").textContent =
+              "You must enter your nickname.";
+            document.querySelector("#error-message").style.display = "block";
             setTimeout(() => {
-              document.querySelector('.nickname p').style.display = 'none';
-            }, 3000);           
-           return;
-          }else{
-            // Sonido del boton
-          document.getElementById('buttonsound').play();
-          // Ocultar el menú
-          document.querySelector('.nickname').style.display = 'none';
-          // Mostrar el menú de selección de personaje
-          document.querySelector('.selectPJ').style.display = 'grid';
-          
-          let nickname = localStorage.setItem('nickname', document.getElementById('nickname').value);
+              document.querySelector("#error-message").style.display = "none";
+            }, 3000);
+            return;
           }
-          
-        });
-      document
-        .getElementById('start')
-        .addEventListener('click', () => {
-          // Sonido del boton
-          document.getElementById('buttonsound').play();
-          // Ocultar el menú
-          document.querySelector('.menu').style.display = 'none';
+
+          // Verifica si el nombre tiene entre 4 y 8 caracteres y es alfanumérico
+          const regex = /^[a-zA-Z0-9]{4,8}$/;
+          if (!regex.test(nicknameInput)) {
+            document.getElementById("buttonsoundexit").play();
+            // Muestra el mensaje de error
+            document.querySelector("#error-message").textContent =
+              "Please enter a valid nickname";
+            document.querySelector("#error-message").style.display = "block";
+            setTimeout(() => {
+              document.querySelector("#error-message").style.display = "none";
+            }, 4000);
+            return;
+          }
+
+          // Si el nickname es válido, lo guarda en localStorage
+          localStorage.setItem("nickname", nicknameInput);
+
+          // Sonido del botón
+          document.getElementById("buttonsound").play();
+
+          // Ocultar el menú de nickname
+          document.querySelector(".nickname").style.display = "none";
           // Mostrar el menú de selección de personaje
-          document.querySelector('.nickname').style.display = 'flex';
-
+          document.querySelector(".selectPJ").style.display = "grid";
         });
-      document
-        .getElementById('ayuda')
-        .addEventListener('click', () => {
+        document.getElementById("start").addEventListener("click", () => {
           // Sonido del boton
-          document.getElementById('buttonsound').play();
+          document.getElementById("buttonsound").play();
           // Ocultar el menú
-          document.querySelector('.menu').style.display = 'none';
+          document.querySelector(".menu").style.display = "none";
+          // Mostrar el menú de selección de personaje
+          document.querySelector(".nickname").style.display = "flex";
+        });
+        document.getElementById("ayuda").addEventListener("click", () => {
+          // Sonido del boton
+          document.getElementById("buttonsound").play();
+          // Ocultar el menú
+          document.querySelector(".menu").style.display = "none";
           // Mostrar las instructions
-          document.querySelector('.instructions').style.display = 'flex';
+          document.querySelector(".instructions").style.display = "flex";
+        });
+        document
+          .getElementById("exitInstructions")
+          .addEventListener("click", () => {
+            // Sonido del boton
+            document.getElementById("buttonsoundexit").play();
+            // Ocultar todos los menus
+            document.querySelector(".instructions").style.display = "none";
 
-        });
-      document
-        .getElementById('exitInstructions')
-        .addEventListener('click', () => {
+            document.querySelector(".menu").style.display = "flex";
+          });
+        // Exit Credits
+        document
+          .getElementById("exitCreditos")
+          .addEventListener("click", () => {
+            // Sonido del boton
+            document.getElementById("buttonsoundexit").play();
+            // Ocultar los creditos
+            document.querySelector(".creditos").style.display = "none";
+            // Mostrar el menú
+            document.querySelector(".menu").style.display = "flex";
+          });
+        // Exit Scores
+        document.getElementById("exitScores").addEventListener("click", () => {
           // Sonido del boton
-          document.getElementById('buttonsoundexit').play();
-          // Ocultar todos los menus
-          document.querySelector('.instructions').style.display = 'none';
-         
-          document.querySelector('.menu').style.display = 'flex';
-        });
-      // Exit Credits
-      document
-        .getElementById('exitCreditos')
-        .addEventListener('click', () => {
-          // Sonido del boton
-          document.getElementById('buttonsoundexit').play();
-          // Ocultar los creditos
-          document.querySelector('.creditos').style.display = 'none';
-          // Mostrar el menú
-          document.querySelector('.menu').style.display = 'flex';
-
-        });
-      // Exit Scores
-      document
-        .getElementById('exitScores')
-        .addEventListener('click', () => {
-          // Sonido del boton
-          document.getElementById('buttonsoundexit').play();
+          document.getElementById("buttonsoundexit").play();
           // Ocultar los scores
-          document.querySelector('.menuscores').style.display = 'none';
+          document.querySelector(".menuscores").style.display = "none";
           // Mostrar el menú
-          document.querySelector('.menu').style.display = 'flex';
-
+          document.querySelector(".menu").style.display = "flex";
         });
-      
-      document
-        .getElementById('creditos')
-        .addEventListener('click', () => {
+
+        document.getElementById("creditos").addEventListener("click", () => {
           // Sonido del boton
-          document.getElementById('buttonsound').play();
+          document.getElementById("buttonsound").play();
           // Ocultar el menú
-          document.querySelector('.menu').style.display = 'none';
+          document.querySelector(".menu").style.display = "none";
           // Mostrar los creditos
-          document.querySelector('.creditos').style.display = 'flex';
-
+          document.querySelector(".creditos").style.display = "flex";
         });
-      document.
-        getElementById('finn')
-        .addEventListener('click', () => {
+        document.getElementById("finn").addEventListener("click", () => {
           // Sonido del boton
-          document.getElementById('buttonsound').play();
+          document.getElementById("buttonsound").play();
           // Ocultar el menú
-          document.querySelector('.selectPJ').style.display = 'none';
-          document.body.classList.add('inactive');
+          document.querySelector(".selectPJ").style.display = "none";
+          document.body.classList.add("inactive");
 
           startGame("finn");
         });
 
-      document.
-        getElementById('jake')
-        .addEventListener('click', () => {
+        document.getElementById("jake").addEventListener("click", () => {
           // Sonido del boton
-          document.getElementById('buttonsound').play();
+          document.getElementById("buttonsound").play();
           // Ocultar el menú
-          document.querySelector('.selectPJ').style.display = 'none';
-          document.body.classList.add('inactive');
+          document.querySelector(".selectPJ").style.display = "none";
+          document.body.classList.add("inactive");
           startGame("jake");
         });
-      
-      document.
-        getElementById('exit')
-        .addEventListener('click', () => {
+
+        document.getElementById("exit").addEventListener("click", () => {
           // cerrar pagina
           window.close();
         });
-      document 
-        .getElementById('scores')
-        .addEventListener('click', () => {
+        document.getElementById("scores").addEventListener("click", () => {
           // Sonido del boton
-          document.getElementById('buttonsound').play();
+          document.getElementById("buttonsound").play();
           // Ocultar el menú
-          document.querySelector('.menu').style.display = 'none';
+          document.querySelector(".menu").style.display = "none";
           // Mostrar el menú de selección de personaje
-          document.querySelector('.menuscores').style.display = 'flex';
+          document.querySelector(".menuscores").style.display = "flex";
 
           // Obtener los scores
-          let scores = JSON.parse(localStorage.getItem('scores')) || [];
+          let scores = JSON.parse(localStorage.getItem("scores")) || [];
           scores.sort((a, b) => b.score - a.score);
-          let tabla = document.querySelector('.tabla-scores');
-          tabla.innerHTML = '<thead><tr><th>Player</th><th>Score</th><th>Time</th><th>Character</th></tr></thead>';
+          let tabla = document.querySelector(".tabla-scores");
+          tabla.innerHTML =
+            "<thead><tr><th>Player</th><th>Score</th><th>Time</th><th>Character</th></tr></thead>";
           let numfila;
           scores.forEach((score, index) => {
-          
             // Crear una fila
-            let tr = document.createElement('tr');
+            let tr = document.createElement("tr");
             // Crear las celdas
-            let td1 = document.createElement('td');
-            let td2 = document.createElement('td');
-            let td3 = document.createElement('td');
-            let td4 = document.createElement('td');
-  
+            let td1 = document.createElement("td");
+            let td2 = document.createElement("td");
+            let td3 = document.createElement("td");
+            let td4 = document.createElement("td");
+
             // Asignar el contenido
             td1.textContent = score.nickname;
             td2.textContent = score.score;
@@ -278,56 +361,52 @@
           });
         });
         //escape
-        document
-        .addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') {
-            if(document.querySelector('.nickname').style.display === 'flex'){
-              document.querySelector('.nickname').style.display = 'none';
-              document.querySelector('.menu').style.display = 'flex';
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            if (document.querySelector(".nickname").style.display === "flex") {
+              document.querySelector(".nickname").style.display = "none";
+              document.querySelector(".menu").style.display = "flex";
 
               // Sonido del boton
-              document.getElementById('buttonsoundexit').play();
+              document.getElementById("buttonsoundexit").play();
             }
 
-            if(document.querySelector('.selectPJ').style.display === 'grid'){
-              document.querySelector('.selectPJ').style.display = 'none';
-              document.querySelector('.nickname').style.display = 'flex';
+            if (document.querySelector(".selectPJ").style.display === "grid") {
+              document.querySelector(".selectPJ").style.display = "none";
+              document.querySelector(".nickname").style.display = "flex";
 
               // Sonido del boton
-              document.getElementById('buttonsoundexit').play();
+              document.getElementById("buttonsoundexit").play();
             }
-            if(document.querySelector('.instructions').style.display === 'flex'){
-              document.querySelector('.instructions').style.display = 'none';
-              document.querySelector('.menu').style.display = 'flex';
+            if (
+              document.querySelector(".instructions").style.display === "flex"
+            ) {
+              document.querySelector(".instructions").style.display = "none";
+              document.querySelector(".menu").style.display = "flex";
 
               // Sonido del boton
-              document.getElementById('buttonsoundexit').play();
+              document.getElementById("buttonsoundexit").play();
             }
-           
-            if(document.querySelector('.menuscores').style.display === 'flex'){
-              document.querySelector('.menuscores').style.display = 'none';
-              document.querySelector('.menu').style.display = 'flex';
+
+            if (
+              document.querySelector(".menuscores").style.display === "flex"
+            ) {
+              document.querySelector(".menuscores").style.display = "none";
+              document.querySelector(".menu").style.display = "flex";
 
               // Sonido del boton
-              document.getElementById('buttonsoundexit').play();
+              document.getElementById("buttonsoundexit").play();
             }
-            if(document.querySelector('.creditos').style.display === 'flex'){
-              document.querySelector('.creditos').style.display = 'none';
-              document.querySelector('.menu').style.display = 'flex';
+            if (document.querySelector(".creditos").style.display === "flex") {
+              document.querySelector(".creditos").style.display = "none";
+              document.querySelector(".menu").style.display = "flex";
 
               // Sonido del boton
-              document.getElementById('buttonsoundexit').play();
+              document.getElementById("buttonsoundexit").play();
             }
-
           }
-          
         });
-
-    });
-
-
-
-  </script>
-</body>
-
+      });
+    </script>
+  </body>
 </html>

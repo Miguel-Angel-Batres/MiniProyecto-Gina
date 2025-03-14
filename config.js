@@ -19,6 +19,11 @@ const config = {
   scene: [Level1,Level2, PauseScene, WinScene, LoseScene],
 };
 function startGame(hero) {
+  var body = document.body;
+  body.style.backgroundImage = "url('/assets/bmo_bg.png')";
+  body.style.backgroundSize = "contain";
+  body.style.backgroundColor = "#1bbbb1";
+  body.style.imageRendering = "pixelated";
   var game = new Phaser.Game(config);
   game.registry.set("selectedCharacter", hero);
   game.registry.set("level", 1);

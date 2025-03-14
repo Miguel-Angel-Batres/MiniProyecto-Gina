@@ -41,7 +41,7 @@ Este documento detalla los requisitos y criterios de evaluación para el desarro
 
 ## Records
 
-- [ ] **Mostrar registros de jugadores** con nombre, puntuación y fecha (6 pts)
+- [x] **Mostrar registros de jugadores** con nombre, puntuación y fecha (6 pts)
 
 ## Instrucciones
 
@@ -49,7 +49,7 @@ Este documento detalla los requisitos y criterios de evaluación para el desarro
 
 ## Créditos
 
-- [ ] **Pantalla con nombres de los integrantes**, materia y fecha (4 pts)
+- [x] **Pantalla con nombres de los integrantes**, materia y fecha (4 pts)
 
 ## Reglas del Juego
 
@@ -61,26 +61,26 @@ Este documento detalla los requisitos y criterios de evaluación para el desarro
 
 ## Recursos Especiales
 
-- [ ] **Recursos que cambian de color/características aleatoriamente** (6 pts)
+- [x] **Recursos que cambian de color/características aleatoriamente** (6 pts)
 
 ## Persistencia de Datos
 
-- [ ] **Guardado y actualización de alias y puntuaciones en localStorage** (5 pts)
+- [x] **Guardado y actualización de alias y puntuaciones en localStorage** (5 pts)
 
 ## Sonido y Música
 
-- [ ] **Música de fondo con opción de prender/pausar** (3 pts)
-- [ ] **Efectos de sonido para acciones importantes** (3 pts)
+- [x] **Música de fondo con opción de prender/pausar** (3 pts)
+- [x] **Efectos de sonido para acciones importantes** (3 pts)
 
 ## Interfaz de Juego
 
-- [ ] **Mostrar alias, puntuación, vidas, nivel y fecha** (3 pts)
+- [x] **Mostrar alias, puntuación, vidas, nivel y fecha** (3 pts)
 - [x] **Pausar y reanudar el juego** (3 pts)
 
 ## Nivel 2
 
 - [x] **Cambio de diseño de fondo**
-- [ ] **Definir nuevas reglas y mecánica adicional** (8 pts)
+- [x] **Definir nuevas reglas y mecánica adicional** (8 pts)
 
 ## Aspectos Técnicos
 

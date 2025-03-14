@@ -1,0 +1,33 @@
+{
+    "name": "Adventure Time",
+    "short_name": "Adventure Time",
+    "description": "Adventure Time Game",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#d8dee9",
+    "theme_color": "#242933",
+    "icons": [
+      {
+        "src": "/assets/page_icon.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      }
+    ],
+    "screenshots": [
+      {
+       "src": "/assets/screenshot.png",
+        "sizes": "3072x1406",
+        "type": "image/png",
+        "form_factor": "wide",
+        "label": "wide-screenshot"
+      },
+      {
+        "src": "/assets/screenshot.png",
+        "sizes": "3072x1406",
+         "type": "image/png",
+         "form_factor": "narrow",
+         "label": "narrow-screenshot"
+       }
+    ]
+  }
+  
