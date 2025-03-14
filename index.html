@@ -317,6 +317,15 @@
         });
 
     });
+document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("next") === "Level2") {
+        startGame("finn"); // O usa el personaje seleccionado
+        setTimeout(() => {
+            game.scene.start("Level2");
+        }, 1000);
+    }
+});
 
   </script>
 </body>
