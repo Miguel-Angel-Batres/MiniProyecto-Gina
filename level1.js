@@ -70,7 +70,7 @@ class Level1 extends Phaser.Scene {
     });
     this.load.spritesheet("finn_attack", "assets/finn_attack.png", {
       frameWidth: 132,
-      frameHeight: 119,
+      frameHeight: 150,
     });
     this.load.spritesheet("jake_attack", "assets/jake_attack.png", {
       frameWidth: 140,
@@ -435,7 +435,7 @@ class Level1 extends Phaser.Scene {
         .refreshBody();
 
       platform.body.setSize(500, 58);
-      platform.body.setOffset(0, 20);
+      platform.body.setOffset(0, 10);
     }
 
     // Plataformas flotantes
@@ -621,6 +621,8 @@ class Level1 extends Phaser.Scene {
 
   endGame() {
     this.physics.pause();
+    this.player.setVelocity(0, 0);
+    this.player.anims.pause();
     this.player.setTint(0xff0000);
     this.player.anims.play("turn");
     this.gameOver = true;
