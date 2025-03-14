@@ -83,6 +83,7 @@ class Level2 extends Phaser.Scene {
     this.bossmusic.loop = true;
     this.events.on("resume", () => {
       this.bossmusic.play();
+      this.sound.resumeAll();
     });
     this.bossmusic.play();
   }
@@ -333,6 +334,7 @@ class Level2 extends Phaser.Scene {
       paused: true,
       onComplete: () => {
         this.boss.anims.play("iceking_up");
+        let soundnum = Phaser.Math.Between(0, 2);
         // Guardamos referencia al evento para poder detenerlo después
         if (!this.spawnmobsevent) {
           this.spawnCount = 0;
@@ -352,17 +354,24 @@ class Level2 extends Phaser.Scene {
             
               
               this.spawnCount++;
-              // sonar sonido de spawn secuencialmente
-              if (this.spawnCount % 3 === 0) {
-                this.sound.play("penguinspawn", { volume: 4 });
+              // sonar sonido de spawn secuencialmente cada 4 pinguinos
+              if (this.spawnCount % 4 === 0) {
+                switch(soundnum){
+                  case 0:
+                    this.sound.play("penguinspawn", { volume: 4 });
+                    break;
+                  case 1:
+                    this.sound.play("penguinspawn2", { volume: 2 });
+                    break;
+                  case 2:
+                    this.sound.play("penguinspawn3", { volume: 2 });
+                    break; 
+                }
+                soundnum++;
+                if(soundnum > 2){
+                  soundnum = 0;
+                }
               }
-              if (this.spawnCount % 3 === 1) {
-                this.sound.play("penguinspawn2", { volume: 2 });
-              }
-              if (this.spawnCount % 3 === 2) {
-                this.sound.play("penguinspawn3", { volume: 2 });
-              }
-
               penguin.anims.play("penguin_idle");
               penguin.setBounce(0.5);
               penguin.setCollideWorldBounds(true);
@@ -393,7 +402,6 @@ class Level2 extends Phaser.Scene {
         this.sound.play("sonidofase1", { volume: 2 });
       }
     });
-    this.regresofase1 = false;
     this.regresarfase1 = this.tweens.add({
       targets: this.boss,
       x: 4800,
@@ -454,7 +462,7 @@ class Level2 extends Phaser.Scene {
         this.sound.play("sonidofase2", { volume: 2 });
       }
     });
-
+   
     this.fase1.play();
   }
   setupPlayerPhysics() {
@@ -544,11 +552,14 @@ class Level2 extends Phaser.Scene {
   handlePause() {
     document.getElementById("pause").play();
     this.bossmusic.pause();
+    this.sound.pauseAll();
     this.scene.launch("PauseScene");
     this.scene.pause();
+    
   }
 
   handleWin() {
+    this.sound.pauseAll();
     this.bossmusic.pause();
     this.bossmusic.currentTime = 0;
     this.grabarscore();
