@@ -16,6 +16,9 @@ class Level2 extends Phaser.Scene {
   init() {
     this.gameOver = false;
     this.selectedCharacter = this.game.registry.get("selectedCharacter");
+    this.score = this.game.registry.get("score");
+    this.lives = this.game.registry.get("lives");
+
   }
   LoadImages() {
     this.load.image("sky2", "assets/bg2.png");
@@ -348,7 +351,7 @@ class Level2 extends Phaser.Scene {
               if(this.spawnCount % 4 === 0){
                 this.penguinsound = Phaser.Math.Between(1, 2);
               if (this.penguinsound === 1) {
-                this.sound.play("penguinspawn", { volume: 3.2 });
+                this.sound.play("penguinspawn", { volume: 4 });
               } else {
                 this.sound.play("penguinspawn2", { volume: 2 });
               }
@@ -650,10 +653,8 @@ class Level2 extends Phaser.Scene {
         this.regresarfase1.play();
         // Crear timer event
         if (!this.regresarfase1event) {
-            let randomtimespawn = Phaser.Math.Between(100, 4000);
-            let randomtimespawn2 = Phaser.Math.Between(500, 4000);
             this.regresarfase1event = this.time.addEvent({
-                delay: randomtimespawn2,
+                delay: 2000,
                 callback: () => {
                     // Generar pingüino que venga de la derecha
                     let penguin = this.flyingpenguins
@@ -662,9 +663,8 @@ class Level2 extends Phaser.Scene {
                     penguin.anims.play("penguin_left");
                     penguin.setBounce(0.5);
                     penguin.setCollideWorldBounds(true);
-                    penguin.setVelocityX(-100);
-    
-                    // Agregar un evento de sonido cada 500ms mientras el pingüino exista
+                    penguin.setVelocityX(-100);       
+                    let randomtimespawn = Phaser.Math.Between(100, 4000);
                     penguin.soundEvent = this.time.addEvent({
                         delay: randomtimespawn,
                         callback: () => {
