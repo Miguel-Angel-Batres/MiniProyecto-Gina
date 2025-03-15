@@ -2,7 +2,7 @@ class Level1 extends Phaser.Scene {
   constructor() {
     super({ key: "Level1" });
     this.score = 0;
-    this.lives = 10;
+    this.lives = 3;
     const platformPositions = [
       { x: 400, y: 500 },
       { x: 1000, y: 420 },
