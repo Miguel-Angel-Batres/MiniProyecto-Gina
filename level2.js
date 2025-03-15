@@ -9,7 +9,7 @@ class Level2 extends Phaser.Scene {
       { x: 1600, y: 440 },
       { x: 2300, y: 500 },
       { x: 3000, y: 340 },
-      { x: 3700, y: 300 },
+      { x: 3700, y: 320 },
       { x: 4200, y: 550 },
       { x: 4800, y: 380 },
       { x: 5300, y: 600 },
@@ -37,7 +37,6 @@ class Level2 extends Phaser.Scene {
     this.load.image("sky2", "assets/bg2.png");
     this.load.image("iceground", "assets/platform_ice.png");
     this.load.image("heart", "assets/heart.png");
-   
   }
   LoadSprites() {
     this.load.spritesheet("penguin", "assets/gunter.png", {
@@ -90,7 +89,8 @@ class Level2 extends Phaser.Scene {
   preload() {
     this.LoadImages();
     this.LoadSprites();
-    this.LoadSounds();
+    this.LoadSounds(); 
+
 
     this.load.on("filecomplete", (key) => {
       this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST);
@@ -166,26 +166,43 @@ class Level2 extends Phaser.Scene {
   }
   CreateFood() {
     this.food = this.physics.add.staticGroup();
+    this.hearts = this.physics.add.staticGroup();
     // crear comida arriba de cada plataforma
     if (this.selectedCharacter === "finn") {
       this.platformPositions.forEach((pos) => {
-      let random = Phaser.Math.Between(0, 1);
+        let random = Phaser.Math.Between(0, 1);
         if (random === 0) {
-          let food = this.food
-            .create(pos.x, pos.y - 200, "finn_cupcake")
-            .setScale(3);
-          food.setBounce(0);
+          let random2 = Phaser.Math.Between(0, 1);
+          if (random2 === 0) {
+            let food = this.food
+              .create(pos.x, pos.y - 200, "finn_cupcake")
+              .setScale(3);
+            food.setBounce(0);
+          } else {
+            let heart = this.hearts
+              .create(pos.x, pos.y - 200, "heart")
+              .setScale(2);
+            heart.setBounce(0);
+          }
         }
       });
     } else {
       this.platformPositions.forEach((pos) => {
-      let random = Phaser.Math.Between(0, 1);
+        let random = Phaser.Math.Between(0, 1);
 
         if (random === 0) {
-          let food = this.food
-            .create(pos.x, pos.y - 200, "jake_cupcake")
-            .setScale(2);
-          food.setBounce(0);
+          let random2 = Phaser.Math.Between(0, 1);
+          if (random2 === 0) {
+            let food = this.food
+              .create(pos.x, pos.y - 200, "jake_cupcake")
+              .setScale(3);
+            food.setBounce(0);
+          } else {
+            let heart = this.hearts
+              .create(pos.x, pos.y - 200, "heart")
+              .setScale(2);
+            heart.setBounce(0);
+          }
         }
       });
     }
@@ -420,7 +437,7 @@ class Level2 extends Phaser.Scene {
               let penguin = this.flyingpenguins
                 .create(this.boss.x, this.boss.y, "penguin_idle")
                 .setScale(2);
-              
+
               if (penguin.active) {
                 let randomWenk = Phaser.Math.Between(1, 10);
                 this.sound.play(`Wenk${randomWenk}`, { volume: 0.3 });
@@ -580,6 +597,7 @@ class Level2 extends Phaser.Scene {
     this.setupPlayerPhysics();
     this.setupCamera();
     this.setupUI();
+    this.updateScore(this.score);
     this.setupInput();
     this.setupPhysics();
     this.setupAnimationEvents();
@@ -600,7 +618,20 @@ class Level2 extends Phaser.Scene {
     this.physics.add.collider(this.penguins, this.platforms);
     this.physics.add.collider(this.flyingpenguins, this.platforms);
     this.physics.add.collider(this.icicles, this.platforms);
-    this.physics.add.collider(this.player, this.food, this.handleFood, null, this);
+    this.physics.add.collider(
+      this.player,
+      this.food,
+      this.handleFood,
+      null,
+      this
+    );
+    this.physics.add.collider(
+      this.player,
+      this.hearts,
+      this.handleHealth,
+      null,
+      this
+    );
     this.colisionicicle = this.physics.add.collider(
       this.player,
       this.icicles,
@@ -638,7 +669,6 @@ class Level2 extends Phaser.Scene {
     this.scene.launch("PauseScene");
     this.scene.pause();
   }
-
 
   setupAnimationEvents() {
     this.player.on("animationcomplete", (anim) => {
@@ -688,10 +718,14 @@ class Level2 extends Phaser.Scene {
               this.player.x,
               this.player.y
             );
-            let angle = Phaser.Math.Angle.Between(this.player.x, this.player.y, icicle.x,icicle.y);
+            let angle = Phaser.Math.Angle.Between(
+              this.player.x,
+              this.player.y,
+              icicle.x,
+              icicle.y
+            );
             icicle.setRotation(angle);
 
-            
             // en 3 segundos destruir
             this.time.addEvent({
               delay: this.WORLD_BOUNDS.x,
@@ -702,7 +736,6 @@ class Level2 extends Phaser.Scene {
           }
         }
       }
-      
     });
   }
   handlePlayerMovement() {
@@ -776,20 +809,26 @@ class Level2 extends Phaser.Scene {
   }
   handleWin() {
     if (
-      this.boss.anims.currentAnim && 
+      this.boss.anims.currentAnim &&
       this.boss.anims.currentAnim.key === "iceking_death"
-  ) {
-      return; 
-  }
-   // parar cualquiera de los tweens que estén corriendo
-   this.tweens.killTweensOf(this.boss);
-   this.boss.setVelocity(0, 0);
-      this.boss.anims.play("iceking_death");
-
+    ) {
+      return;
+    }
+    // parar cualquiera de los tweens que estén corriendo
+    this.tweens.killTweensOf(this.boss);
+    this.boss.setVelocity(0, 0);
+    this.boss.anims.play("iceking_death");
   }
   handleFood(player, food) {
     food.disableBody(true, true);
     this.updateScore(20);
+  }
+  handleHealth(player, heart) {
+    if (this.lives < 3) {
+      this.lives++;
+      this.heartSprites[this.lives - 1].setVisible(true);
+    }
+    heart.disableBody(true, true);
   }
   applyGravity() {
     this.player.setGravityY(this.player.body.velocity.y > 0 ? 3000 : 2500);
@@ -836,7 +875,7 @@ class Level2 extends Phaser.Scene {
       }
     }
     if (this.boss.salud === 0) {
-      handleWin();
+      this.handleWin();
     }
     if (this.flyingpenguins.getChildren().length === 15) {
       if (this.fase2.isPlaying()) {
@@ -854,7 +893,6 @@ class Level2 extends Phaser.Scene {
         this.regresarfase1.play();
       }
     }
-   
   }
   cameraBossLocked() {
     let cameraEnd = this.cameras.main.scrollX + this.cameras.main.width;
@@ -873,6 +911,22 @@ class Level2 extends Phaser.Scene {
       if (this.player.x <= maxX) {
         this.player.x = maxX;
       }
+
+      if(!this.crearcorazones ){
+        this.crearcorazones = this.time.addEvent({
+          delay: 10000,
+          callback: () => {
+            let randomx = Phaser.Math.Between(this.WORLD_BOUNDS.x - 1450, this.WORLD_BOUNDS.x - 100);
+            let heart = this.hearts
+              .create(randomx, 700, "heart")
+              .setScale(2);
+            heart.setBounce(0);
+          },
+          loop: true,
+        });
+      }
+      
+      
       // Pinguinos tampoco se pueden salir de la pantalla
       this.flyingpenguins.children.iterate((penguin) => {
         if (penguin.x <= this.cameras.main.scrollX) {
@@ -915,7 +969,7 @@ class Level2 extends Phaser.Scene {
       if (!this.bossHit) {
         this.bossHit = true;
         this.boss.setTint(0xff0000);
-        this.boss.salud -= 50;
+        this.boss.salud -= 10;
 
         this.time.delayedCall(500, () => {
           this.boss.clearTint();
@@ -928,11 +982,10 @@ class Level2 extends Phaser.Scene {
   }
   handleIcicleCollision(player, icicle) {
     if (this.attacking) {
-      
-      if(icicle.body.velocity.x > 0 ){
-        icicle.setVelocityX(icicle.body.velocity.x*2);
-      }else{
-        icicle.setVelocityX(icicle.body.velocity.x*-1);
+      if (icicle.body.velocity.x > 0) {
+        icicle.setVelocityX(icicle.body.velocity.x * 2);
+      } else {
+        icicle.setVelocityX(icicle.body.velocity.x * -1);
       }
       // player inmune por 1 segundo
       this.colisionicicle.active = false;
@@ -1024,7 +1077,6 @@ class Level2 extends Phaser.Scene {
     });
   }
 
-   
   grabarscore() {
     let scores = JSON.parse(localStorage.getItem("scores")) || [];
     let nickname = localStorage.getItem("nickname");
