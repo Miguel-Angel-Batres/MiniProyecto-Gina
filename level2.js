@@ -789,7 +789,7 @@ class Level2 extends Phaser.Scene {
   }
   handleFood(player, food) {
     food.disableBody(true, true);
-    this.updateScore(10);
+    this.updateScore(20);
   }
   applyGravity() {
     this.player.setGravityY(this.player.body.velocity.y > 0 ? 3000 : 2500);

@@ -158,7 +158,7 @@ class Level1 extends Phaser.Scene {
   setupGoalItem() {
     const setScale = this.selectedCharacter === "finn" ? 2 : 4;
     const goalItems = { finn: "sword", jake: "sandwich" };
-    const positions = { finn: { x: 200, y: 80 }, jake: { x:200, y: 80 } };
+    const positions = { finn: { x: 9900, y: 80 }, jake: { x:9900, y: 80 } };
 
     this.sword = this.physics.add
       .sprite(
@@ -649,7 +649,10 @@ class Level1 extends Phaser.Scene {
   applyGravity() {
     this.player.setGravityY(this.player.body.velocity.y > 0 ? this.GRAVITY_Y + 200 : this.GRAVITY_Y);
   }
-
+  updateScore(points) {
+    this.score += points;
+    this.scoreText.setText("Score: " + this.score);
+  }
   updateWorms() {
     this.worms.children.iterate((worm) => {
       if (worm.body.blocked.right) {
