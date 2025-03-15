@@ -2,13 +2,13 @@ class Level1 extends Phaser.Scene {
   constructor() {
     super({ key: "Level1" });
     this.score = 0;
-    this.lives = 3;
+    this.lives = 10;
     const platformPositions = [
-      { x: 400, y: 450 },
+      { x: 400, y: 500 },
       { x: 1000, y: 420 },
       { x: 1600, y: 430 },
       { x: 2300, y: 500 },
-      { x: 3000, y: 250 },
+      { x: 3000, y: 340 },
       { x: 3700, y: 300 },
       { x: 4200, y: 550 },
       { x: 4800, y: 380 },
@@ -17,14 +17,14 @@ class Level1 extends Phaser.Scene {
       { x: 6700, y: 460 },
       { x: 7200, y: 320 },
       { x: 7800, y: 510 },
-      { x: 8100, y: 290 },
-      
+      { x: 8300, y: 290 },
+
   ];
     this.platformPositions = platformPositions;
-    this.WORLD_BOUNDS = { width: 5000, height: 800 };
-    this.GRAVITY_Y = 2500;
+    this.WORLD_BOUNDS = { width: 10000, height: 800 };
+    this.GRAVITY_Y = 2000;
     this.PLAYER_VELOCITY = {x: 500, y: -1300};
-    this.PLATFORM_DIMENSIONS = { width: 500, height: 64 };
+    this.PLATFORM_DIMENSIONS = { width: 600, height: 70 };
     this.WORM_VELOCITY = 150;
   }
   
@@ -49,6 +49,8 @@ class Level1 extends Phaser.Scene {
     this.load.image("sandwich", "assets/sandwich.png");
     this.load.image("sword", "assets/sword.png");
     this.load.image("heart", "assets/heart.png");
+    this.load.image("finn_cupcake", "assets/finn_cupcake.png");
+    this.load.image("jake_cupcake", "assets/pancake.png");
   }
   LoadSounds() {
     this.load.audio("finnDeath1", "sounds/Finn/finn_death_01.mp3");
@@ -90,11 +92,38 @@ class Level1 extends Phaser.Scene {
     });
     
   }
+  CreateFood() {
+    this.food = this.physics.add.staticGroup();
+    // crear comida arriba de cada plataforma
+    if (this.selectedCharacter === "finn") {
+      this.platformPositions.forEach((pos) => {
+      let random = Phaser.Math.Between(0, 1);
+        if (random === 0) {
+          let food = this.food
+            .create(pos.x, pos.y - 200, "finn_cupcake")
+            .setScale(3);
+          food.setBounce(0);
+        }
+      });
+    } else {
+      this.platformPositions.forEach((pos) => {
+      let random = Phaser.Math.Between(0, 1);
+
+        if (random === 0) {
+          let food = this.food
+            .create(pos.x, pos.y - 200, "jake_cupcake")
+            .setScale(2);
+          food.setBounce(0);
+        }
+      });
+    }
+  }
   create() {
     this.setupWorld();
     this.setupMusic();
     this.setupBackground();
     this.CrearPlataformas();
+    this.CreateFood();
     this.CrearAnimaciones();
     this.CrearGusanos();
     this.setupGoalItem();
@@ -129,7 +158,7 @@ class Level1 extends Phaser.Scene {
   setupGoalItem() {
     const setScale = this.selectedCharacter === "finn" ? 2 : 4;
     const goalItems = { finn: "sword", jake: "sandwich" };
-    const positions = { finn: { x: 200, y: 80 }, jake: { x: 200, y: 80 } };
+    const positions = { finn: { x: 200, y: 80 }, jake: { x:200, y: 80 } };
 
     this.sword = this.physics.add
       .sprite(
@@ -137,7 +166,7 @@ class Level1 extends Phaser.Scene {
         positions[this.selectedCharacter].y,
         goalItems[this.selectedCharacter]
       )
-      .setScale(2);
+      .setScale(setScale);
     this.sword.setBounce(0.2);
   }
 
@@ -145,6 +174,7 @@ class Level1 extends Phaser.Scene {
     this.player.setBounce(0);
     this.player.setCollideWorldBounds(true);
     this.player.setGravityY(this.GRAVITY_Y);
+
   }
 
   setupCamera() {
@@ -194,7 +224,7 @@ class Level1 extends Phaser.Scene {
     this.physics.add.collider(this.sword, this.platforms);
     this.physics.add.collider(this.worms, this.platforms);
     this.physics.add.collider(this.worms, this.platforms_worms);
-
+    this.physics.add.collider(this.player, this.food, this.handleFood, null, this);
     this.physics.add.overlap(
       this.player,
       this.sword,
@@ -208,7 +238,7 @@ class Level1 extends Phaser.Scene {
       this.handleLives,
       null,
       this
-    );
+    ); 
   }
 
   dragNdrop(){
@@ -295,13 +325,13 @@ class Level1 extends Phaser.Scene {
     //document.querySelector("canvas").style.display = "none";
     // this.dragNdrop();
 
-    /*
+    
     this.registry.set("level", 2);
     this.registry.set("score", this.score);
     this.registry.set("lives", this.lives);
     this.scene.start("Level2");
     console.log("cambio de nivel");
-    */
+    
   }
 
   setupInputHandlers() {
@@ -318,6 +348,8 @@ class Level1 extends Phaser.Scene {
 
     this.input.keyboard.on("keydown-W", () => {
       this.grabarscore();
+      this.bgmusic1.pause();
+      this.bgmusic1.currentTime = 0;
       this.scene.start("WinScene");
     });
 
@@ -503,10 +535,9 @@ class Level1 extends Phaser.Scene {
   CrearGusanos() {
     // Grupo de gusanos
     this.worms = this.physics.add.group();
-
-    let numWorms = 5;
+    let spacing = 2000;
+    let numWorms = (this.WORLD_BOUNDS.width - 1000) / spacing;
     let startX = 1000;
-    let spacing = 300;
     
 
     for (let i = 0; i < numWorms; i++) {
@@ -523,14 +554,18 @@ class Level1 extends Phaser.Scene {
         worm.anims.play("worm_left");
       }
     }
+    let spawnonthree = 0;
     // Gusanos en plataformas flotantes
     this.platformPositions.forEach((pos) => {
-      let worm = this.worms.create(pos.x, pos.y - 50, "worm_idle").setScale(2);
+      spawnonthree ++;
+      if(spawnonthree % 3 == 0){
+      let worm = this.worms.create(pos.x, pos.y - 50, "worm_idle").setScale(3);
       worm.anims.play("worm_right");
       worm.setBounce(0.5);
       worm.body.setSize(46, 16);
       worm.setCollideWorldBounds(true);
       worm.setVelocity(this.WORM_VELOCITY);
+      }
     });
   }
   update() {
@@ -607,9 +642,12 @@ class Level1 extends Phaser.Scene {
       this.player.setVelocityY(this.PLAYER_VELOCITY.y);
     }
   }
-
+  handleFood(player, food) {
+    food.disableBody(true, true);
+    this.updateScore(20);
+  }
   applyGravity() {
-    this.player.setGravityY(this.player.body.velocity.y > 0 ? this.GRAVITY_Y + 500 : this.GRAVITY_Y);
+    this.player.setGravityY(this.player.body.velocity.y > 0 ? this.GRAVITY_Y + 200 : this.GRAVITY_Y);
   }
 
   updateWorms() {
@@ -675,7 +713,6 @@ class Level1 extends Phaser.Scene {
   }
 
   respawnPlayer() {
-    this.player.setPosition(100, 450);
     this.player.setVelocity(0, 0);
     this.player.clearTint();
     this.player.setAlpha(0.5);
@@ -686,10 +723,6 @@ class Level1 extends Phaser.Scene {
     });
   }
 
-  updateScore(points) {
-    this.score += points;
-    this.scoreText.setText("Score: " + this.score);
-  }
 
   grabarscore() {
     let scores = JSON.parse(localStorage.getItem("scores")) || [];

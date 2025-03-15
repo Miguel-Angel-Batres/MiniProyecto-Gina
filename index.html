@@ -322,44 +322,70 @@
           window.close();
         });
         document.getElementById("scores").addEventListener("click", () => {
-          // Sonido del boton
-          document.getElementById("buttonsound").play();
-          // Ocultar el menú
-          document.querySelector(".menu").style.display = "none";
-          // Mostrar el menú de selección de personaje
-          document.querySelector(".menuscores").style.display = "flex";
+    // Sonido del botón
+    document.getElementById("buttonsound").play();
+    // Ocultar el menú
+    document.querySelector(".menu").style.display = "none";
+    // Mostrar el menú de selección de personaje
+    document.querySelector(".menuscores").style.display = "flex";
 
-          // Obtener los scores
-          let scores = JSON.parse(localStorage.getItem("scores")) || [];
-          scores.sort((a, b) => b.score - a.score);
-          let tabla = document.querySelector(".tabla-scores");
-          tabla.innerHTML =
-            "<thead><tr><th>Player</th><th>Score</th><th>Time</th><th>Character</th></tr></thead>";
-          let numfila;
-          scores.forEach((score, index) => {
-            // Crear una fila
-            let tr = document.createElement("tr");
-            // Crear las celdas
-            let td1 = document.createElement("td");
-            let td2 = document.createElement("td");
-            let td3 = document.createElement("td");
-            let td4 = document.createElement("td");
+    // Obtener los scores
+    let scores = JSON.parse(localStorage.getItem("scores")) || [];
+    scores.sort((a, b) => b.score - a.score);
+    
+    let tabla = document.querySelector(".tabla-scores");
+    tabla.innerHTML = `
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Score</th>
+                <th>Time</th>
+                <th>Character</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+    `;
 
-            // Asignar el contenido
-            td1.textContent = score.nickname;
-            td2.textContent = score.score;
-            td3.textContent = score.time;
-            console.log(score.time);
-            td4.textContent = score.character;
-            // Agregar las celdas a la fila
-            tr.appendChild(td1);
-            tr.appendChild(td2);
-            tr.appendChild(td3);
-            tr.appendChild(td4);
-            // Agregar la fila a la tabla
-            tabla.appendChild(tr);
-          });
-        });
+    scores.forEach((score, index) => {
+        // Crear una fila
+        let tr = document.createElement("tr");
+
+        // Crear las celdas
+        let td1 = document.createElement("td");
+        let td2 = document.createElement("td");
+        let td3 = document.createElement("td");
+        let td4 = document.createElement("td");
+        let td5 = document.createElement("td");
+        let deleteButton = document.createElement("button");
+
+        // Asignar el contenido
+        td1.textContent = score.nickname;
+        td2.textContent = score.score;
+        td3.textContent = score.time;
+        td4.textContent = score.character;
+        
+        // Configurar botón de eliminación
+        deleteButton.textContent = "❌";
+        deleteButton.style.cursor = "pointer";
+        deleteButton.onclick = () => {
+            scores.splice(index, 1); // Eliminar del array
+            localStorage.setItem("scores", JSON.stringify(scores)); // Guardar en localStorage
+            document.getElementById("scores").click(); // Refrescar la tabla
+        };
+        
+        // Agregar botón a la celda y la celda a la fila
+        td5.appendChild(deleteButton);
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tr.appendChild(td3);
+        tr.appendChild(td4);
+        tr.appendChild(td5);
+
+        // Agregar la fila a la tabla
+        tabla.appendChild(tr);
+    });
+});
+
         //escape
         document.addEventListener("keydown", (e) => {
           if (e.key === "Escape") {
