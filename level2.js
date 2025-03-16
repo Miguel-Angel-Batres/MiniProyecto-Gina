@@ -886,6 +886,12 @@ class Level2 extends Phaser.Scene {
 
   }
   handleHealth(player, heart) {
+    console.log(this.lives);
+    if (this.lives >= 3) {
+      this.lives=3;
+      this.updateScore(30);
+      this.popSound.play();
+    }
     if (this.lives < 3) {
       this.popSound.play();
       this.lives++;
@@ -1074,7 +1080,7 @@ class Level2 extends Phaser.Scene {
 
   reduceLives() {
     this.lives--;
-    if (this.lives >= 0) this.heartSprites[this.lives].setVisible(false);
+    if (this.lives >= 0 && this.lives < this.heartSprites.length) this.heartSprites[this.lives].setVisible(false);
     this.playDeathSound();
     if (this.lives <= 0) {
       this.endGame();
