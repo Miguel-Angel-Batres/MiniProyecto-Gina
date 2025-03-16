@@ -113,12 +113,71 @@
       <button id="scores">Scores</button>
       <button id="exit">Exit</button>
     </div>
+
     <div class="instructions">
       <h1>Instructions</h1>
-      <p>use the arrow keys to move</p>
-      <p>press the `ESC` key to pause/exit</p>
+      <div class ="carousel-container">
+        <input type="radio" name="slider" id="slide1" checked>
+        <input type="radio" name="slider" id="slide2">
+        <input type="radio" name="slider" id="slide3">
+        <input type="radio" name="slider" id="slide4">
+
+        <div class="carousel">
+          <div class="carousel-slide">
+            <h2>Instructions</h2>
+            <p>Combine exploration, item collection, and platforming with the challenge of avoiding dangers and managing available lives to reach the goal and prepare for the next challenge!</p>
+            <img src="assets/jake_select.png">
+          </div>
+          
+          <div class="carousel-slide">
+              <h2>Game</h2>
+              <p>Press the `ESC` to pause</p>
+              <p>Press  `ESC` twice to exit</p>
+              <p>Press `SPACE` to resume, if you paused </p>
+              <img src="assets/finn_select.png">
+          </div>
+          
+          <div class="carousel-slide">
+              <h2>Motion - Level 1</h2>
+              <p>Press `←` to move to the left</p>
+              <p>Press `SPACE` or `↑` to jump </p>
+              <p>Press `→` to move to the right</p>
+              <img src="assets/sandwich.png">
+          </div>
+          
+          <div class="carousel-slide">
+            <h2>Motion & Atack - Level 2</h2>
+              <p>Press `←` to move to the left</p>
+              <p>Press `SPACE` or `↑` to jump </p>
+              <p>Press `→` to move to the right</p>
+              <p>Press `Z` to ATACK!</p>
+              <img src="assets/sword.png">
+          </div>
+      </div>
+
+      <div class="carousel-nav">
+        <label for="slide1"></label>
+        <label for="slide2"></label>
+        <label for="slide3"></label>
+        <label for="slide4"></label>
+      </div>
+
+      <div class="carousel-arrows">
+        <label for="slide1" class="arrow arrow-prev" id="arrow-1">&#10094;</label>
+        <label for="slide2" class="arrow arrow-prev" id="arrow-2">&#10094;</label>
+        <label for="slide3" class="arrow arrow-prev" id="arrow-3">&#10094;</label>
+        <label for="slide4" class="arrow arrow-prev" id="arrow-4">&#10094;</label>
+        
+        <label for="slide2" class="arrow arrow-next" id="arrow-5">&#10095;</label>
+        <label for="slide3" class="arrow arrow-next" id="arrow-6">&#10095;</label>
+        <label for="slide4" class="arrow arrow-next" id="arrow-7">&#10095;</label>
+        <label for="slide1" class="arrow arrow-next" id="arrow-8">&#10095;</label>
+      </div>
+
+      </div> <p> </p>
       <button id="exitInstructions">exit</button>
     </div>
+
     <div class="creditos">
       <h1>Game Developed By</h1>
       <div>
@@ -433,6 +492,43 @@
           }
         });
       });
+
+      // Script para controlar la visibilidad de las flechas
+      document.addEventListener('DOMContentLoaded', function() {
+            // Ocultar todas las flechas inicialmente
+            document.querySelectorAll('.arrow').forEach(arrow => {
+                arrow.style.display = 'none';
+            });
+            
+            // Mostrar solo las flechas relevantes según el slide activo
+            function updateArrows() {
+                const activeSlide = document.querySelector('input[name="slider"]:checked').id;
+                
+                document.querySelectorAll('.arrow').forEach(arrow => {
+                    arrow.style.display = 'none';
+                });
+                
+                if (activeSlide === 'slide1') {
+                    document.getElementById('arrow-5').style.display = 'flex';
+                } else if (activeSlide === 'slide2') {
+                    document.getElementById('arrow-1').style.display = 'flex';
+                    document.getElementById('arrow-6').style.display = 'flex';
+                } else if (activeSlide === 'slide3') {
+                    document.getElementById('arrow-2').style.display = 'flex';
+                    document.getElementById('arrow-7').style.display = 'flex';
+                } else if (activeSlide === 'slide4') {
+                    document.getElementById('arrow-3').style.display = 'flex';
+                }
+            }
+            
+            // Actualizar flechas inicialmente
+            updateArrows();
+            
+            // Actualizar flechas cuando cambia el slide
+            document.querySelectorAll('input[name="slider"]').forEach(input => {
+                input.addEventListener('change', updateArrows);
+            });
+        });
     </script>
   </body>
 </html>
