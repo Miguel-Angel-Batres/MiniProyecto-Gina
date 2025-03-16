@@ -294,10 +294,14 @@ class Level1 extends Phaser.Scene {
     let hero = this.game.registry.get("selectedCharacter");
     let winSound = null;
     if (hero == "finn") {
+      box2.style.top = "45%";
+      box2.style.left = "43%";
       dragNdrop_background.src = "assets/BottomDragNDrop_FINN.png";
       image_dragNdrop.src = "assets/SwordDragNDrop_FINN.png";
       winSound = this.sound.add("finn_achieve");
     } else {
+      box2.style.top = "70%";
+      box2.style.left = "22%";
       dragNdrop_background.src = "assets/BottomDragNDrop_JAKE.png";
       image_dragNdrop.src = "assets/SanwisDragNDrop_JAKE.png";
       winSound = this.sound.add("jake_achieve");
