@@ -356,11 +356,6 @@ class Level1 extends Phaser.Scene {
     document.querySelector("canvas").style.display = "none";
      this.dragNdrop();
 
-    this.registry.set("level", 2);
-    this.registry.set("score", this.score);
-    this.registry.set("lives", this.lives);
-    this.scene.start("Level2");
-    console.log("cambio de nivel");
   }
 
   setupInputHandlers() {
@@ -694,6 +689,7 @@ class Level1 extends Phaser.Scene {
       this.heartSprites[this.lives - 1].setVisible(true);
     }
     heart.disableBody(true, true);
+    this.updateScore(30);
     this.sound.play("pop");
   }
   applyGravity() {

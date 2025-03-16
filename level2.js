@@ -31,7 +31,7 @@ class Level2 extends Phaser.Scene {
     this.gameOver = false;
     this.selectedCharacter = this.game.registry.get("selectedCharacter");
     this.score = this.game.registry.get("score");
-    this.lives = 3;
+    this.lives = this.game.registry.get("lives");
   }
   LoadImages() {
     this.load.image("sky2", "assets/bg2.png");
@@ -843,24 +843,13 @@ class Level2 extends Phaser.Scene {
 
   }
   handleHealth(player, heart) {
-    console.log(this.lives);
-    if (this.lives >= 3) {
-      this.lives=3;
-      this.updateScore(30);
-      this.popSound.play();
-      if (this.lives > 0 && this.heartSprites.length >= this.lives) {
-        this.heartSprites[this.lives - 1].setVisible(true);
-    }    
-    }
     if (this.lives < 3) {
-      this.popSound.play();
       this.lives++;
-      this.updateScore(30);
-      if (this.lives > 0 && this.heartSprites.length >= this.lives) {
-        this.heartSprites[this.lives - 1].setVisible(true);
-    }    
+      this.heartSprites[this.lives - 1].setVisible(true);
     }
     heart.disableBody(true, true);
+    this.updateScore(30);
+    this.sound.play("pop");
   }
   applyGravity() {
     this.player.setGravityY(this.player.body.velocity.y > 0 ? 3000 : 2500);
