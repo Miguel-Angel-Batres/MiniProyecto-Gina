@@ -32,6 +32,7 @@ class Level2 extends Phaser.Scene {
     this.selectedCharacter = this.game.registry.get("selectedCharacter");
     this.score = this.game.registry.get("score");
     this.lives = this.game.registry.get("lives");
+  
   }
   LoadImages() {
     this.load.image("sky2", "assets/bg2.png");
@@ -575,7 +576,7 @@ class Level2 extends Phaser.Scene {
     
     this.livesText.setScrollFactor(0);
     this.heartSprites = [];
-    for (let i = 0; i < this.lives; i++) {
+    for (let i = 0; i < 3; i++) {
       let heart = this.add
         .image(140 + 100 + i * 55, 75, "heart")
         .setScrollFactor(0);
@@ -606,6 +607,13 @@ class Level2 extends Phaser.Scene {
         .setScrollFactor(0);
     }
   }
+  updateLifes(lives) {
+    this.heartSprites.forEach((heart) => heart.setVisible(false));
+    for (let i = 0; i < lives; i++) {
+      this.heartSprites[i].setVisible(true);
+    }
+  }
+
   create() {
     this.setupWorld();
     this.setupMusic();
@@ -619,6 +627,7 @@ class Level2 extends Phaser.Scene {
     this.setupPlayerPhysics();
     this.setupCamera();
     this.setupUI();
+    this.updateLifes(this.lives);
     this.updateScore(this.score);
     this.setupInput();
 
