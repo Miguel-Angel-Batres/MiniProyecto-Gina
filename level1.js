@@ -68,7 +68,7 @@ class Level1 extends Phaser.Scene {
     this.load.audio("jake_achieve", "sounds/Jake/jake_achieve.mp3");
     this.load.audio("worm_sound1", "sounds/worm/worm_wao.mp3");
     this.load.audio("worm_sound2", "sounds/worm/worm_wi.mp3");
-    this.load.audio("pop", "sounds/pop.mp3"); 
+    this.load.audio("pop", "sounds/pop.mp3");
   }
   LoadSprites() {
     this.load.spritesheet("finn", "assets/finn.png", {
@@ -145,22 +145,22 @@ class Level1 extends Phaser.Scene {
             food.setBounce(0);
           } else {
             let heart = this.hearts
-            .create(pos.x, pos.y - 200, "heart")
-            .setScale(2);
-          heart.setBounce(0);
-          this.time.delayedCall(HEART_TIME, () => {
-            heart.destroy();
-          });
-
-          this.time.delayedCall(HEART_BLINK_START, () => {
-            this.time.addEvent({
-              delay: 300, // Blink every 300ms
-              callback: () => {
-                heart.setAlpha(heart.alpha === 1 ? 0.3 : 1);
-              },
-              repeat: 10 // 5 seconds
+              .create(pos.x, pos.y - 200, "heart")
+              .setScale(2);
+            heart.setBounce(0);
+            this.time.delayedCall(HEART_TIME, () => {
+              heart.destroy();
             });
-          });
+
+            this.time.delayedCall(HEART_BLINK_START, () => {
+              this.time.addEvent({
+                delay: 300, // Blink every 300ms
+                callback: () => {
+                  heart.setAlpha(heart.alpha === 1 ? 0.3 : 1);
+                },
+                repeat: 10 // 5 seconds
+              });
+            });
           }
         }
       });
@@ -183,7 +183,6 @@ class Level1 extends Phaser.Scene {
     this.setupHearts();
     this.setupEvents();
     this.setupAttackAnimationEvents();
-
     // Reproducir música de fondo
     this.bgmusic1.play();
   }
@@ -212,7 +211,7 @@ class Level1 extends Phaser.Scene {
     const goalItems = { finn: "sword", jake: "sandwich" };
 
     //9900
-    const positions = { finn: { x: 100, y: 80 }, jake: { x: 100, y: 80 } };
+    const positions = { finn: { x: 9900, y: 80 }, jake: { x: 9900, y: 80 } };
 
     this.sword = this.physics.add
       .sprite(
@@ -337,7 +336,7 @@ class Level1 extends Phaser.Scene {
       winSound = this.sound.add("finn_achieve");
     } else {
       box2.style.top = "70%";
-    box2.style.left = "22%";
+      box2.style.left = "22%";
       dragNdrop_background.src = "assets/BottomDragNDrop_JAKE.png";
       image_dragNdrop.src = "assets/SanwisDragNDrop_JAKE.png";
       winSound = this.sound.add("jake_achieve");
@@ -385,7 +384,7 @@ class Level1 extends Phaser.Scene {
           this.registry.set("lives", this.lives);
           this.scene.start("Level2");
           console.log("cambio de nivel");
-          
+
         }, 2000);
       });
     });
@@ -612,9 +611,27 @@ class Level1 extends Phaser.Scene {
     });
   }
   CrearGusanos() {
+
+    let randomTime = Phaser.Math.Between(1000, 4000);
     this.worm_sound1 = this.sound.add("worm_sound1");
     this.worm_sound2 = this.sound.add("worm_sound2");
-    this.worm_sound2.play(); 
+    let sounds = [this.worm_sound1, this.worm_sound2];
+    let soundIndex = 0;
+
+    // Set an event to play the sound after the random time
+    this.time.addEvent({
+      delay: randomTime, // Delay in ms
+      callback: () => {
+        sounds[soundIndex].play({ volume: 2 });
+
+        // Toggle between 0 and 1 to alternate between worm_sound1 and worm_sound2
+        soundIndex = (soundIndex + 1) % sounds.length;  // Alternates between 0 and 1 (sequential)
+
+        // Optional: Add a new random time before the next sound
+        randomTime = Phaser.Math.Between(1500, 4000); // New random time
+      },
+      loop: true 
+    });
 
     // Grupo de gusanos
     this.worms = this.physics.add.group();
@@ -635,27 +652,8 @@ class Level1 extends Phaser.Scene {
       if (direction === -1) {
         worm.anims.play("worm_left");
       }
-      let randomtime = Phaser.Math.Between(1000, this.WORLD_BOUNDS.x);
-      worm.soundEvent = this.time.addEvent({
-        delay: randomtime, // Random delay between 1000 and world bounds width
-        callback: () => {
-          if (worm.active) {
-            let randomWormSound = Phaser.Math.Between(1, 2);
-            
-            // Play the random sound
-            if (randomWormSound === 1) {
-              this.worm_sound1.play();  // Play worm_sound1
-            } else {
-              this.worm_sound2.play();  // Play worm_sound2
-            }
-          } else {
-            worm.soundEvent.remove();
-          }
-        },
-        loop: true, // Repeat the event
-      });
-  }
- 
+    }
+
 
     let spawnonthree = 0;
     // Gusanos en plataformas flotantes
@@ -716,7 +714,7 @@ class Level1 extends Phaser.Scene {
     food.disableBody(true, true);
     this.updateScore(20);
     this.popSound.play();
-    
+
   }
   handleHealth(player, heart) {
     if (this.lives < 3) {
@@ -725,7 +723,7 @@ class Level1 extends Phaser.Scene {
       this.updateScore(30);
       if (this.lives > 0 && this.heartSprites.length >= this.lives) {
         this.heartSprites[this.lives - 1].setVisible(true);
-    }    
+      }
     }
     heart.disableBody(true, true);
   }

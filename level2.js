@@ -616,6 +616,31 @@ class Level2 extends Phaser.Scene {
         .setScrollFactor(0); // Posición y distancia entre los corazones
       this.heartSprites.push(heart);
     }
+    let fecha = new Date();
+    fecha = `${fecha.getFullYear()}-${fecha.getMonth() + 1}-${fecha.getDate()}`;
+
+    // Mostrar la fecha en pantalla
+    this.dateText = this.add
+      .text(1100, 16, "Date: " + fecha, {
+        fontFamily: '"Press Start 2P", Arial',
+        fontSize: "32px",
+        fill: "#000",
+      })
+      .setScrollFactor(0);
+
+    // Obtener el nickname desde localStorage
+    let nickname = localStorage.getItem("nickname");
+
+    // Mostrar el nickname debajo de la fecha
+    if (nickname) {
+      this.nicknameText = this.add
+        .text(1100, 60, "alias: " + nickname, {
+          fontFamily: '"Press Start 2P", Arial',
+          fontSize: "32px",
+          fill: "#000",
+        })
+        .setScrollFactor(0);
+    }
   }
   create() {
     this.setupWorld();
