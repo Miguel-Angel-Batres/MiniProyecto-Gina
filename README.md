@@ -3,7 +3,7 @@
 ## Integrantes del Equipo
 - Miguel Angel Batres Luna
 - Ariel Emilio Parra Martinez
-- Martin Alfonso Romo Martinez 
+- Martin Alfonso Romo Martinez
 
 ## Información General
 
@@ -11,21 +11,21 @@ Este documento detalla los requisitos y criterios de evaluación para el desarro
 
 ## Redacción y Rúbrica
 
-- [ ] **Portada** con los integrantes del equipo (0.2 pts)
-- [ ] **Link de GitHub** donde se puede descargar el proyecto (0.2 pts)
-- [ ] **Link del video grabado**, además de los links de respaldo
-- [ ] **Link a la nube** con el video explicando la rúbrica, sistema y código (0.2 pts)
-- [ ] **Link de respaldo** en la nube del video explicando la rúbrica, sistema y código (0.2 pts)
-- [ ] **Segundo link de respaldo** en la nube del video explicando la rúbrica, sistema y código (0.2 pts)
-- [ ] **Explicación de la operación del primer nivel** y del segundo nivel (diferencias con el primero) (0.5 pts)
-- [ ] **Imágenes de todas las pantallas** del sistema (sin omitir ninguna) (1 pts)
-- [ ] **Instrucciones detalladas** para ejecutar el código (0.5 pts)
-- [ ] **Reporte de actividades y conclusiones por integrante** (2 pts)
+- [x] **Portada** con los integrantes del equipo (0.2 pts)
+- [x] **Link de GitHub** donde se puede descargar el proyecto (0.2 pts)
+- [x] **Link del video grabado**, además de los links de respaldo
+- [x] **Link a la nube** con el video explicando la rúbrica, sistema y código (0.2 pts)
+- [x] **Link de respaldo** en la nube del video explicando la rúbrica, sistema y código (0.2 pts)
+- [x] **Segundo link de respaldo** en la nube del video explicando la rúbrica, sistema y código (0.2 pts)
+- [x] **Explicación de la operación del primer nivel** y del segundo nivel (diferencias con el primero) (0.5 pts)
+- [x] **Imágenes de todas las pantallas** del sistema (sin omitir ninguna) (1 pts)
+- [x] **Instrucciones detalladas** para ejecutar el código (0.5 pts)
+- [x] **Reporte de actividades y conclusiones por integrante** (2 pts)
 
 ## Foro en Aula Virtual
 
-- [ ] **Video corto** mostrando y narrando el juego, pantallas y niveles (1 pts)
-- [ ] **Publicación en el foro** con el link al video corto, nombres de los integrantes y nombre del juego (1 pts)
+- [x] **Video corto** mostrando y narrando el juego, pantallas y niveles (1 pts)
+- [x] **Publicación en el foro** con el link al video corto, nombres de los integrantes y nombre del juego (1 pts)
 
 ## Características a Evaluar
 
@@ -35,7 +35,7 @@ Este documento detalla los requisitos y criterios de evaluación para el desarro
 
 ## Jugar
 
-- [ ] **Captura de alias del jugador** con validaciones (6 pts)
+- [x] **Captura de alias del jugador** con validaciones (6 pts)
 - [x] **Elección de personaje** con mínimo dos opciones (4 pts)
 - [x] **Posibilidad de iniciar el juego** (0.5 pts)
 
@@ -53,7 +53,7 @@ Este documento detalla los requisitos y criterios de evaluación para el desarro
 
 ## Reglas del Juego
 
-- [ ] **Definir reglas del Nivel 1**
+- [x] **Definir reglas del Nivel 1**
 - [x] **Cambios en imágenes, escenario y contexto** respecto al juego de ejemplo en Phaser
 - [x] **Pantalla de Game Over** con opción de regresar al menú (3 pts)
 - [x] **Pantalla de felicitación** al completar los niveles con alias del jugador (3 pts)
@@ -85,17 +85,17 @@ Este documento detalla los requisitos y criterios de evaluación para el desarro
 ## Aspectos Técnicos
 
 - [x] **Centrar pantallas del juego en el navegador** (1 pts)
-- [ ] **Mostrar y explicar en consola:**
-  - [ ] Guardado de alias en localStorage
-  - [ ] Verificación de alias existente
-  - [ ] Orden de records en tabla
-  - [ ] Actualización de tabla al jugar con otro alias
-- [ ] **Mostrar en código:**
+- [x] **Mostrar y explicar en consola:**
+  - [x] Guardado de alias en localStorage
+  - [x] Verificación de alias existente
+  - [x] Orden de records en tabla
+  - [x] Actualización de tabla al jugar con otro alias
+- [x] **Mostrar en código:**
   - [x] Control de vidas (0.5 pts)
-  - [ ] Mecánica del recurso especial (1 pts)
+  - [x] Mecánica del recurso especial (1 pts)
   - [x] Uso de Flexbox en la vista (1 pts)
-  - [ ] Uso de CSS Grid en la vista (1 pts)
-  - [ ] Uso de variables en estilos (1 pts)
-  - [ ] Uso de Canvas en una pantalla personalizada (4 pts)
-  - [ ] Implementación de Drag and Drop con una función útil (5 pts)
+  - [x] Uso de CSS Grid en la vista (1 pts)
+  - [x] Uso de variables en estilos (1 pts)
+  - [x] Uso de Canvas en una pantalla personalizada (4 pts)
+  - [x] Implementación de Drag and Drop con una función útil (5 pts)
 
