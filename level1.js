@@ -353,8 +353,8 @@ class Level1 extends Phaser.Scene {
     this.bgmusic1.currentTime = 0;
 
     this.scene.stop();
-    //document.querySelector("canvas").style.display = "none";
-    // this.dragNdrop();
+    document.querySelector("canvas").style.display = "none";
+     this.dragNdrop();
 
     this.registry.set("level", 2);
     this.registry.set("score", this.score);
