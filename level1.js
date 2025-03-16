@@ -64,6 +64,9 @@ class Level1 extends Phaser.Scene {
     this.load.audio("jake_attack2", "sounds/Jake/jake_attack2_03.mp3");
     this.load.audio("jake_attack3", "sounds/Jake/jake_attack3_03.mp3");
     this.load.audio("jake_achieve", "sounds/Jake/jake_achieve.mp3");
+    this.load.audio("worm_sound1", "sounds/worm/worm_wi.mp3");
+    this.load.audio("worm_sound2", "sounds/worm/worm_wao.mp3");
+
     this.load.audio("pop", "sounds/pop.mp3");
 
   }
@@ -571,19 +574,16 @@ class Level1 extends Phaser.Scene {
   CrearGusanos() {
 
     let randomTime = Phaser.Math.Between(1000, 4000);
-    this.worm_sound1 = this.sound.add("worm_sound1");
-    this.worm_sound2 = this.sound.add("worm_sound2");
-    let sounds = [this.worm_sound1, this.worm_sound2];
+
     let soundIndex = 0;
 
 
     this.time.addEvent({
       delay: randomTime,
       callback: () => {
-        sounds[soundIndex].play({ volume: 2 });
-
-        soundIndex = (soundIndex + 1) % sounds.length;
-
+        let sound = soundIndex === 0 ? "worm_sound1" : "worm_sound2";
+        this.sound.play(sound);
+        soundIndex = soundIndex === 0 ? 1 : 0;
         randomTime = Phaser.Math.Between(1500, 4000);
       },
       loop: true 
