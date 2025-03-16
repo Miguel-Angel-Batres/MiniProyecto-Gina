@@ -38,6 +38,8 @@ class Level1 extends Phaser.Scene {
     this.load.on("filecomplete", (key) => {
       this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST);
     });
+    
+
   }
   LoadImages() {
     this.load.image("sky", "assets/bg1.png");
@@ -154,6 +156,7 @@ class Level1 extends Phaser.Scene {
 
     // Reproducir música de fondo
     this.bgmusic1.play();
+  
   }
 
   setupWorld() {
@@ -167,6 +170,7 @@ class Level1 extends Phaser.Scene {
 
   setupMusic() {
     this.bgmusic1 = document.getElementById("bgMusic");
+    this.bgmusic1.volume = 0.4;
   }
 
   setupBackground() {
@@ -296,13 +300,11 @@ class Level1 extends Phaser.Scene {
       box2.style.left = "43%";
       dragNdrop_background.src = "assets/BottomDragNDrop_FINN.png";
       image_dragNdrop.src = "assets/SwordDragNDrop_FINN.png";
-      this.sound.play("finn_achieve");
     } else {
       box2.style.top = "70%";
       box2.style.left = "22%";
       dragNdrop_background.src = "assets/BottomDragNDrop_JAKE.png";
       image_dragNdrop.src = "assets/SanwisDragNDrop_JAKE.png";
-      this.sound.play("jake_achieve");
     }
     dragNdrop_div.style.display = "flex";
     box1.style.display = box2.style.display = "flex";
@@ -334,7 +336,13 @@ class Level1 extends Phaser.Scene {
         }
         box.classList.remove("dragover");
 
-        winSound.play();
+        if(hero == "finn"){
+          this.sound.play("finn_achieve", { volume: 0.5 });
+        }
+        else{
+          this.sound.play("jake_achieve", { volume: 0.5 });
+        }
+
         setTimeout(() => {
           dragNdrop_div.style.display = "none";
           image_dragNdrop.style.display = "none";
