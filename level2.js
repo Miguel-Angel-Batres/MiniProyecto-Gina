@@ -721,6 +721,11 @@ class Level2 extends Phaser.Scene {
         this.bossmusic.pause();
         this.bossmusic.currentTime = 0;
         this.grabarscore();
+        if(this.selectedCharacter === "finn"){
+          this.sound.play("finn_achieve");
+        }else{
+          this.sound.play("jake_achieve");
+        }
         this.scene.start("WinScene");
       }
     });
