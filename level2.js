@@ -209,7 +209,6 @@ class Level2 extends Phaser.Scene {
     }
   }
   CreateAnimations() {
-    // animacion de pinguinos
     this.anims.create({
       key: "penguin_left",
       frames: this.anims.generateFrameNumbers("penguin", { start: 0, end: 7 }),
@@ -429,7 +428,6 @@ class Level2 extends Phaser.Scene {
       onComplete: () => {
         this.boss.anims.play("iceking_up");
         let soundnum = Phaser.Math.Between(0, 2);
-        // Guardamos referencia al evento para poder detenerlo después
         if (!this.spawnmobsevent) {
           this.spawnCount = 0;
           this.spawnmobsevent = this.time.addEvent({
@@ -447,7 +445,6 @@ class Level2 extends Phaser.Scene {
               }
 
               this.spawnCount++;
-              // sonar sonido de spawn secuencialmente cada 4 pinguinos
               if (this.spawnCount % 4 === 0) {
                 switch (soundnum) {
                   case 0:
@@ -520,7 +517,6 @@ class Level2 extends Phaser.Scene {
           delay: randomtimespawn,
           callback: () => {
             this.numpenguins++;
-            // Generar pingüino que venga de la derecha
             let penguin = this.flyingpenguins
               .create(this.WORLD_BOUNDS.x, 700, "penguin_idle")
               .setScale(2);
@@ -533,11 +529,10 @@ class Level2 extends Phaser.Scene {
               delay: randomtimespawn,
               callback: () => {
                 if (penguin.active) {
-                  // Verifica si el pingüino sigue en el juego
-                  let randomWenk = Phaser.Math.Between(1, 10); // Número aleatorio entre 1 y 10
-                  this.sound.play(`Wenk${randomWenk}`, { volume: 0.3 }); // Reproducir sonido aleatorio
+                  let randomWenk = Phaser.Math.Between(1, 10);
+                  this.sound.play(`Wenk${randomWenk}`, { volume: 0.3 });
                 } else {
-                  penguin.soundEvent.remove(); // Si el pingüino muere, detener el sonido
+                  penguin.soundEvent.remove();
                 }
               },
               loop: true,
@@ -547,7 +542,7 @@ class Level2 extends Phaser.Scene {
               this.sound.play("guntercalls", { volume: 2.5 });
             }
           },
-          loop: true, // Hacer que el evento se repita indefinidamente
+          loop: true,
         });
       },
       onStart: () => {
@@ -583,14 +578,13 @@ class Level2 extends Phaser.Scene {
     for (let i = 0; i < this.lives; i++) {
       let heart = this.add
         .image(140 + 100 + i * 55, 75, "heart")
-        .setScrollFactor(0); // Posición y distancia entre los corazones
+        .setScrollFactor(0);
       this.heartSprites.push(heart);
     }
 
     let fecha = new Date();
     fecha = `${fecha.getFullYear()}-${fecha.getMonth() + 1}-${fecha.getDate()}`;
 
-    // Mostrar la fecha en pantalla
     this.dateText = this.add
       .text(1100, 16, "Date: " + fecha, {
         fontFamily: '"Press Start 2P", Arial',
@@ -599,10 +593,9 @@ class Level2 extends Phaser.Scene {
       })
       .setScrollFactor(0);
 
-    // Obtener el nickname desde localStorage
+
     let nickname = localStorage.getItem("nickname");
 
-    // Mostrar el nickname debajo de la fecha
     if (nickname) {
       this.nicknameText = this.add
         .text(1100, 60, "alias: " + nickname, {
@@ -727,7 +720,6 @@ class Level2 extends Phaser.Scene {
         let randomSound = Phaser.Math.Between(1, 3);
         let soundKey = `${this.selectedCharacter}_attack${randomSound}`;
         this.sound.play(soundKey);
-        // debugear posicion antes de atacar
       }
     });
     this.icicleCounter = 0;
@@ -736,13 +728,10 @@ class Level2 extends Phaser.Scene {
         if (anim.key === "iceking_right" && this.cameralocked) {
           this.icicleCounter++;
           if (this.icicleCounter % 3 === 0) {
-            // arrojar un icicle
             let icicle = this.icicles
               .create(this.boss.x, this.boss.y, "icicle")
               .setScale(4);
-            // lanzar a la posición del jugador
             this.physics.moveToObject(icicle, this.player, 400);
-            // rotar el icicle hacia el jugador
             icicle.angle = Phaser.Math.Angle.Between(
               icicle.x,
               icicle.y,
@@ -757,7 +746,6 @@ class Level2 extends Phaser.Scene {
             );
             icicle.setRotation(angle);
 
-            // en 3 segundos destruir
             this.time.addEvent({
               delay: this.WORLD_BOUNDS.x,
               callback: () => {
@@ -770,7 +758,6 @@ class Level2 extends Phaser.Scene {
     });
   }
   handlePlayerMovement() {
-    // prevenir que el jugador se caiga abajo del suelo
     if (this.player.y > 780) {
       this.player.y = 750;
       console.log(this.player.y);
@@ -822,7 +809,7 @@ class Level2 extends Phaser.Scene {
           this.player.body.setSize(140, 68);
         }
         this.time.addEvent({
-          delay: 700, // Tiempo de cooldown en milisegundos (0.5s)
+          delay: 700,
           callback: () => {
             this.attackCooldown = false;
           },
@@ -845,7 +832,6 @@ class Level2 extends Phaser.Scene {
     ) {
       return;
     }
-    // parar cualquiera de los tweens que estén corriendo
     this.tweens.killTweensOf(this.boss);
     this.boss.setVelocity(0, 0);
     this.boss.anims.play("iceking_death");
@@ -883,8 +869,7 @@ class Level2 extends Phaser.Scene {
     this.flyingpenguins.children.iterate((penguin) => {
       if (penguin.body.blocked.down) {
         if (penguin.body.velocity.x === 0) {
-          // Si aún no tiene velocidad en X
-          let speedX = 150 * (Math.random() < 0.5 ? -1 : 1); // Velocidad aleatoria a la izquierda o derecha
+          let speedX = 150 * (Math.random() < 0.5 ? -1 : 1);
           penguin.setVelocityX(speedX);
           penguin.anims.play(speedX > 0 ? "penguin_right" : "penguin_left");
         }
@@ -899,7 +884,6 @@ class Level2 extends Phaser.Scene {
       }
     });
 
-    // Controlar la direccion de los pinguinos
     this.penguins.children.iterate((penguin) => {
       if (penguin.body.blocked.right) {
         penguin.setVelocityX(-150);
@@ -972,15 +956,13 @@ class Level2 extends Phaser.Scene {
         });
       }
 
-
-      // Pinguinos tampoco se pueden salir de la pantalla
       this.flyingpenguins.children.iterate((penguin) => {
         if (penguin.x <= this.cameras.main.scrollX) {
           penguin.setVelocityX(150);
           penguin.anims.play("penguin_right");
         }
       });
-      // matar al grupo de pinguinos 1 vez
+
       if (this.penguins.getChildren().length > 0) {
         let toDestroy = [];
 
@@ -990,7 +972,6 @@ class Level2 extends Phaser.Scene {
           }
         });
 
-        // Elimina todos los pingüinos fuera de la cámara en una sola iteración
         toDestroy.forEach((penguin) => penguin.destroy());
       }
     }

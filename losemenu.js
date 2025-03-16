@@ -17,10 +17,9 @@ class LoseScene extends Phaser.Scene {
             fontFamily: '"Press Start 2P", Arial',
             fontSize: '32px', fill: '#fff'
         });
-        // precionar espacio para volver al menu
         this.input.keyboard.on('keydown-SPACE', () => {
             this.scene.stop('Level1');
-            this.game.destroy(true);  // Detener todo el juego y liberar los recursos
+            this.game.destroy(true);
 
             const menu = document.querySelector('.menu');
             menu.style.display = 'flex';
@@ -39,4 +38,4 @@ class LoseScene extends Phaser.Scene {
     }
 }
 
-export { LoseScene }; // Exporta la clase para poder ser importada en otro archivo
+export { LoseScene };
