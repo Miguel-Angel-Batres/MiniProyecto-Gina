@@ -31,7 +31,7 @@ class Level2 extends Phaser.Scene {
     this.gameOver = false;
     this.selectedCharacter = this.game.registry.get("selectedCharacter");
     this.score = this.game.registry.get("score");
-    this.lives = this.game.registry.get("lives");
+    this.lives = 3;
   }
   LoadImages() {
     this.load.image("sky2", "assets/bg2.png");
@@ -616,7 +616,6 @@ class Level2 extends Phaser.Scene {
         .setScrollFactor(0); // Posición y distancia entre los corazones
       this.heartSprites.push(heart);
     }
-    if (this.lives < this.heartSprites.length) this.lives = this.heartSprites.length; //hotfix
 
     let fecha = new Date();
     fecha = `${fecha.getFullYear()}-${fecha.getMonth() + 1}-${fecha.getDate()}`;
