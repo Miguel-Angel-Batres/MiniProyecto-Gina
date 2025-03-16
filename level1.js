@@ -662,7 +662,11 @@ class Level1 extends Phaser.Scene {
   }
 
   setPlayerMovement(direction, velocity, goingLeft) {
-    if (!this.attacking) this.player.anims.play(direction, true);
+    if (!this.attacking){
+      if(this.player.anims.currentAnim.key !== `attack_${direction}`){
+        this.player.anims.play(direction, true);
+      }
+    }
     this.goingleft = goingLeft;
     this.player.setVelocityX(velocity);
   }

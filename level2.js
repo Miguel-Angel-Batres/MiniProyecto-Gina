@@ -411,7 +411,7 @@ class Level2 extends Phaser.Scene {
   CreatePhases() {
     this.fase1 = this.tweens.add({
       targets: this.boss,
-      y: this.boss.y - 600,
+      y: this.boss.y - 500,
       duration: 2000,
       yoyo: true,
       repeat: -1,
@@ -774,13 +774,17 @@ class Level2 extends Phaser.Scene {
 
     if (this.cursors.left.isDown) {
       if (!this.attacking) {
-        this.player.anims.play("left", true);
+        if (this.player.anims.currentAnim.key !== "left") {
+          this.player.anims.play("left", true);
+        }
       }
       this.goingleft = true;
       this.player.setVelocityX(-this.PLAYER_VELOCITY.x);
     } else if (this.cursors.right.isDown) {
       if (!this.attacking) {
+        if (this.player.anims.currentAnim.key !== "right") {
         this.player.anims.play("right", true);
+        }
       }
       this.goingleft = false;
       this.player.setVelocityX(this.PLAYER_VELOCITY.x);
@@ -997,10 +1001,10 @@ class Level2 extends Phaser.Scene {
                   callback: () => {
                       heart.setAlpha(heart.alpha === 1 ? 0.3 : 1);
                   },
-                  repeat: 8,
+                  repeat: 18,
               });
 
-              this.time.delayedCall(300 * 6, () => { 
+              this.time.delayedCall(300 * 18, () => { 
                   heart.destroy(); 
               });
           }
