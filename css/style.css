@@ -65,10 +65,10 @@ button {
 }
 html, body {
   width: 100%;
-  height: 100vh;  /* Usa '100vh' en lugar de '100%' para asegurar que el body ocupe toda la pantalla */
+  height: 100vh;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Evita el desplazamiento */
+  overflow: hidden;
 }
 
 html {
@@ -156,9 +156,6 @@ input:checked {
   border-radius: 0.5rem;
 }
 
-/**/
-
-
 .menu {
   display: flex;
   flex-direction: column;
@@ -177,7 +174,6 @@ h1 {
   margin-bottom: 10rem;
 }
 
-
 button {
   margin: 10px;
   padding: 10px 20px;
@@ -193,7 +189,7 @@ button {
 }
 
 button:focus {
-  outline: 5px solid var(--white); /* outline when tab is pressed */
+  outline: 5px solid var(--white);
 }
 
 button:hover {
@@ -314,8 +310,7 @@ button:active {
   margin-top: 100px;
   gap: 20px;
 }
-/* Hacer tabla */
-/* Estilos para la tabla */
+
 .tabla-scores {
   gap: 1rem;
   width: 80%;
@@ -340,12 +335,10 @@ button:active {
   text-align: center;
 }
 
-/* Estilo para filas impares */
 .tabla-scores tr:nth-child(odd) {
   background-color: var(--white); 
 }
 
-/* Estilo para filas pares */
 .tabla-scores tr:nth-child(even) {
   background-color:#7e8eb4; 
 }
@@ -374,48 +367,45 @@ button:active {
   color: var(--white);
   text-align: center;
 }
+
 #dragNdrop{
   display: none;
 }
-  .box {
-      width: 250px;
-      height: 220px;
-      border: 2px dashed #555;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.5);
-      position: absolute;
-  }
-  #dragNdrop_background {
-    position: absolute;  /* Se posiciona sobre todo */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    
-    background-size: cover;  /* Ajusta la imagen al tamaño */
-    background-position: center;
-    background-repeat: no-repeat;
+
+.box {
+  width: 250px;
+  height: 220px;
+  border: 2px dashed #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.5);
+  position: absolute;
+}
+#dragNdrop_background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: none;
+}
+
+#box1 { top: 16%; left: 73%; }
+
+.box.dragover { background: rgba(200, 200, 200, 0.5); }
+
+#image_dragNdrop {
+    width: 200px;
+    height: auto;
+    object-fit: contain;
+    cursor: grab;
     display: none;
 }
 
-  #box1 { top: 16%; left: 73%; }
-
-  .box.dragover { background: rgba(200, 200, 200, 0.5); }
-
-  #image_dragNdrop {
-      width: 200px;
-      height: auto;
-      object-fit: contain;
-      cursor: grab;
-      display: none;
-  }
-
-
-
-
-/* Carousel */
 .carousel-container {
     width: 100%;
     max-width: 800px;
@@ -496,7 +486,6 @@ input[type="radio"] {
     background-color: #4a90e2;
 }
 
-/* Estilos para las flechas de navegación */
 .carousel-arrows {
     position: absolute;
     top: 0;
@@ -517,7 +506,7 @@ input[type="radio"] {
   align-items: center;
   background-color: transparent;
   cursor: pointer;
-  font-size: 30px; /* Aumentamos el tamaño para mejor visibilidad */
+  font-size: 30px;
   color: #333;
   z-index: 10;
   pointer-events: auto;
@@ -532,7 +521,6 @@ input[type="radio"] {
     right: 15px;
 }
 
-/* Lógica para las flechas */
 #slide1:checked ~ .carousel-arrows .arrow-prev {
     display: none;
 }
@@ -542,23 +530,23 @@ input[type="radio"] {
 }
 
 @media (max-width: 768px) {
-    .carousel-slide {
-        padding: 30px;
-    }
-    
-    .carousel-slide h2 {
-        font-size: 24px;
-    }
-    
-    .carousel-slide p {
-        font-size: 14px;
-    }
-    
-    .arrow {
-        width: 40px;
-        height: 40px;
-        font-size: 20px;
-    }
+  .carousel-slide {
+      padding: 30px;
+  }
+  
+  .carousel-slide h2 {
+      font-size: 24px;
+  }
+  
+  .carousel-slide p {
+      font-size: 14px;
+  }
+  
+  .arrow {
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+  }
 }
 
 .carousel-slide img {

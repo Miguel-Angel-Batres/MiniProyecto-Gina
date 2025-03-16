@@ -35,8 +35,6 @@ class Level1 extends Phaser.Scene {
     this.LoadImages();
     this.LoadSounds();
     this.LoadSprites();
-
-    // Filtro para que las imagenes no se vean borrosas
     this.load.on("filecomplete", (key) => {
       this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST);
     });
@@ -100,7 +98,6 @@ class Level1 extends Phaser.Scene {
     const HEART_TIME = 15000;
     const HEART_BLINK_START = 8000;
 
-    // crear comida arriba de cada plataforma
     if (this.selectedCharacter === "finn") {
       this.platformPositions.forEach((pos) => {
         let random = Phaser.Math.Between(0, 1);
@@ -183,7 +180,6 @@ class Level1 extends Phaser.Scene {
     this.setupHearts();
     this.setupEvents();
     this.setupAttackAnimationEvents();
-    // Reproducir música de fondo
     this.bgmusic1.play();
   }
 
@@ -252,7 +248,6 @@ class Level1 extends Phaser.Scene {
     let fecha = new Date();
     fecha = `${fecha.getFullYear()}-${fecha.getMonth() + 1}-${fecha.getDate()}`;
 
-    // Mostrar la fecha en pantalla
     this.dateText = this.add
       .text(1100, 16, "Date: " + fecha, {
         fontFamily: '"Press Start 2P", Arial',
@@ -261,10 +256,8 @@ class Level1 extends Phaser.Scene {
       })
       .setScrollFactor(0);
 
-    // Obtener el nickname desde localStorage
     let nickname = localStorage.getItem("nickname");
 
-    // Mostrar el nickname debajo de la fecha
     if (nickname) {
       this.nicknameText = this.add
         .text(1100, 60, "alias: " + nickname, {
@@ -312,7 +305,7 @@ class Level1 extends Phaser.Scene {
   }
 
   dragNdrop() {
-    const dragNdrop_div = document.getElementById("dragNdrop"); // nivel intermedio para cambiar al nivel 2
+    const dragNdrop_div = document.getElementById("dragNdrop");
     const box1 = document.getElementById("box1");
     const box2 = document.getElementById("box2");
     const dragNdrop_background = document.getElementById(
@@ -321,7 +314,7 @@ class Level1 extends Phaser.Scene {
     const image_dragNdrop = document.getElementById("image_dragNdrop");
 
     if (!box1.contains(image_dragNdrop)) {
-      box1.appendChild(image_dragNdrop); // Mueve la imagen de vuelta a box1
+      box1.appendChild(image_dragNdrop);
     }
     image_dragNdrop.style.display = "none";
     dragNdrop_background.style.display = "none";
@@ -372,7 +365,6 @@ class Level1 extends Phaser.Scene {
         box.classList.remove("dragover");
 
         winSound.play();
-        // Esperar 2 segundos y cambiar a Level2
         setTimeout(() => {
           dragNdrop_div.style.display = "none";
           image_dragNdrop.style.display = "none";
@@ -470,7 +462,6 @@ class Level1 extends Phaser.Scene {
   }
 
   CrearAnimaciones() {
-    // Animacion del player
     if (this.selectedCharacter === "finn") {
       this.player = this.physics.add.sprite(100, 450, "finn").setScale(2);
 
@@ -548,7 +539,7 @@ class Level1 extends Phaser.Scene {
         repeat: 0,
       });
     }
-    // Animación del gusano
+
     this.anims.create({
       key: "worm_left",
       frames: this.anims.generateFrameNumbers("worm", { start: 0, end: 8 }),
@@ -564,11 +555,9 @@ class Level1 extends Phaser.Scene {
     });
   }
   CrearPlataformas() {
-    // Fisicas de las plataformas
     this.platforms = this.physics.add.staticGroup();
     this.platforms_worms = this.physics.add.staticGroup();
 
-    // Forsito para crear las plataformas
     for (let x = 0; x <= this.WORLD_BOUNDS.width; x += 490) {
       let platform = this.platforms
         .create(x, 770, "ground")
@@ -585,7 +574,6 @@ class Level1 extends Phaser.Scene {
       platform.body.setOffset(0, 20);
     }
 
-    // Plataformas flotantes
     this.platformPositions.forEach((pos) => {
       this.platforms
         .create(pos.x, pos.y, "ground")
@@ -595,7 +583,6 @@ class Level1 extends Phaser.Scene {
         )
         .refreshBody();
 
-      // Paredes a cada lado
       let leftwal = this.platforms_worms
         .create(pos.x - 250, pos.y - 50)
         .setDisplaySize(10, 100)
@@ -618,22 +605,19 @@ class Level1 extends Phaser.Scene {
     let sounds = [this.worm_sound1, this.worm_sound2];
     let soundIndex = 0;
 
-    // Set an event to play the sound after the random time
+
     this.time.addEvent({
-      delay: randomTime, // Delay in ms
+      delay: randomTime,
       callback: () => {
         sounds[soundIndex].play({ volume: 2 });
 
-        // Toggle between 0 and 1 to alternate between worm_sound1 and worm_sound2
-        soundIndex = (soundIndex + 1) % sounds.length;  // Alternates between 0 and 1 (sequential)
+        soundIndex = (soundIndex + 1) % sounds.length;
 
-        // Optional: Add a new random time before the next sound
-        randomTime = Phaser.Math.Between(1500, 4000); // New random time
+        randomTime = Phaser.Math.Between(1500, 4000);
       },
       loop: true 
     });
 
-    // Grupo de gusanos
     this.worms = this.physics.add.group();
     let spacing = 2000;
     let numWorms = (this.WORLD_BOUNDS.width - 1000) / spacing;
@@ -656,7 +640,6 @@ class Level1 extends Phaser.Scene {
 
 
     let spawnonthree = 0;
-    // Gusanos en plataformas flotantes
     this.platformPositions.forEach((pos) => {
       spawnonthree++;
       if (spawnonthree % 3 == 0) {
@@ -699,8 +682,6 @@ class Level1 extends Phaser.Scene {
     if (!this.attacking) this.player.anims.play("turn");
     this.player.setVelocityX(0);
   }
-
-
 
   handlePlayerJump() {
     if (
