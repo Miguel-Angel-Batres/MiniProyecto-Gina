@@ -66,7 +66,6 @@ class Level1 extends Phaser.Scene {
     this.load.audio("jake_achieve", "sounds/Jake/jake_achieve.mp3");
     this.load.audio("worm_sound1", "sounds/worm/worm_wi.mp3");
     this.load.audio("worm_sound2", "sounds/worm/worm_wao.mp3");
-
     this.load.audio("pop", "sounds/pop.mp3");
 
   }
@@ -292,19 +291,18 @@ class Level1 extends Phaser.Scene {
     dragNdrop_background.style.display = "none";
 
     let hero = this.game.registry.get("selectedCharacter");
-    let winSound = null;
     if (hero == "finn") {
       box2.style.top = "45%";
       box2.style.left = "43%";
       dragNdrop_background.src = "assets/BottomDragNDrop_FINN.png";
       image_dragNdrop.src = "assets/SwordDragNDrop_FINN.png";
-      winSound = this.sound.add("finn_achieve");
+      this.sound.play("finn_achieve");
     } else {
       box2.style.top = "70%";
       box2.style.left = "22%";
       dragNdrop_background.src = "assets/BottomDragNDrop_JAKE.png";
       image_dragNdrop.src = "assets/SanwisDragNDrop_JAKE.png";
-      winSound = this.sound.add("jake_achieve");
+      this.sound.play("jake_achieve");
     }
     dragNdrop_div.style.display = "flex";
     box1.style.display = box2.style.display = "flex";
@@ -662,7 +660,11 @@ class Level1 extends Phaser.Scene {
   }
 
   setPlayerMovement(direction, velocity, goingLeft) {
-    if (!this.attacking) this.player.anims.play(direction, true);
+    if (!this.attacking){
+      if(this.player.anims.currentAnim.key !== `attack_${direction}`){
+        this.player.anims.play(direction, true);
+      }
+    }
     this.goingleft = goingLeft;
     this.player.setVelocityX(velocity);
   }
