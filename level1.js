@@ -66,9 +66,8 @@ class Level1 extends Phaser.Scene {
     this.load.audio("jake_attack2", "sounds/Jake/jake_attack2_03.mp3");
     this.load.audio("jake_attack3", "sounds/Jake/jake_attack3_03.mp3");
     this.load.audio("jake_achieve", "sounds/Jake/jake_achieve.mp3");
-    this.load.audio("worm_sound1", "sounds/worm/worm_wao.mp3");
-    this.load.audio("worm_sound2", "sounds/worm/worm_wi.mp3");
     this.load.audio("pop", "sounds/pop.mp3");
+
   }
   LoadSprites() {
     this.load.spritesheet("finn", "assets/finn.png", {
@@ -93,13 +92,8 @@ class Level1 extends Phaser.Scene {
     });
   }
   CreateFood() {
-    this.popSound = this.sound.add("pop");
-
     this.food = this.physics.add.staticGroup();
     this.hearts = this.physics.add.staticGroup();
-    const HEART_TIME = 15000;
-    const HEART_BLINK_START = 8000;
-
     // crear comida arriba de cada plataforma
     if (this.selectedCharacter === "finn") {
       this.platformPositions.forEach((pos) => {
@@ -116,19 +110,6 @@ class Level1 extends Phaser.Scene {
               .create(pos.x, pos.y - 200, "heart")
               .setScale(2);
             heart.setBounce(0);
-            this.time.delayedCall(HEART_TIME, () => {
-              heart.destroy();
-            });
-
-            this.time.delayedCall(HEART_BLINK_START, () => {
-              this.time.addEvent({
-                delay: 300, // Blink every 300ms
-                callback: () => {
-                  heart.setAlpha(heart.alpha === 1 ? 0.3 : 1);
-                },
-                repeat: 10 // 5 seconds
-              });
-            });
           }
         }
       });
@@ -148,19 +129,6 @@ class Level1 extends Phaser.Scene {
               .create(pos.x, pos.y - 200, "heart")
               .setScale(2);
             heart.setBounce(0);
-            this.time.delayedCall(HEART_TIME, () => {
-              heart.destroy();
-            });
-
-            this.time.delayedCall(HEART_BLINK_START, () => {
-              this.time.addEvent({
-                delay: 300, // Blink every 300ms
-                callback: () => {
-                  heart.setAlpha(heart.alpha === 1 ? 0.3 : 1);
-                },
-                repeat: 10 // 5 seconds
-              });
-            });
           }
         }
       });
@@ -183,6 +151,7 @@ class Level1 extends Phaser.Scene {
     this.setupHearts();
     this.setupEvents();
     this.setupAttackAnimationEvents();
+
     // Reproducir música de fondo
     this.bgmusic1.play();
   }
@@ -209,8 +178,6 @@ class Level1 extends Phaser.Scene {
   setupGoalItem() {
     const setScale = this.selectedCharacter === "finn" ? 2 : 4;
     const goalItems = { finn: "sword", jake: "sandwich" };
-
-    //9900
     const positions = { finn: { x: 9900, y: 80 }, jake: { x: 9900, y: 80 } };
 
     this.sword = this.physics.add
@@ -329,14 +296,10 @@ class Level1 extends Phaser.Scene {
     let hero = this.game.registry.get("selectedCharacter");
     let winSound = null;
     if (hero == "finn") {
-      box2.style.top = "45%";
-      box2.style.left = "43%";
       dragNdrop_background.src = "assets/BottomDragNDrop_FINN.png";
       image_dragNdrop.src = "assets/SwordDragNDrop_FINN.png";
       winSound = this.sound.add("finn_achieve");
     } else {
-      box2.style.top = "70%";
-      box2.style.left = "22%";
       dragNdrop_background.src = "assets/BottomDragNDrop_JAKE.png";
       image_dragNdrop.src = "assets/SanwisDragNDrop_JAKE.png";
       winSound = this.sound.add("jake_achieve");
@@ -384,7 +347,6 @@ class Level1 extends Phaser.Scene {
           this.registry.set("lives", this.lives);
           this.scene.start("Level2");
           console.log("cambio de nivel");
-
         }, 2000);
       });
     });
@@ -394,14 +356,14 @@ class Level1 extends Phaser.Scene {
     this.bgmusic1.currentTime = 0;
 
     this.scene.stop();
-    document.querySelector("canvas").style.display = "none";
-    this.dragNdrop();
+    //document.querySelector("canvas").style.display = "none";
+    // this.dragNdrop();
 
-    // this.registry.set("level", 2);
-    // this.registry.set("score", this.score);
-    // this.registry.set("lives", this.lives);
-    // this.scene.start("Level2");
-    // console.log("cambio de nivel");
+    this.registry.set("level", 2);
+    this.registry.set("score", this.score);
+    this.registry.set("lives", this.lives);
+    this.scene.start("Level2");
+    console.log("cambio de nivel");
   }
 
   setupInputHandlers() {
@@ -414,6 +376,13 @@ class Level1 extends Phaser.Scene {
 
     this.input.keyboard.on("keydown-D", () => {
       this.handleLives();
+    });
+
+    this.input.keyboard.on("keydown-W", () => {
+      this.grabarscore();
+      this.bgmusic1.pause();
+      this.bgmusic1.currentTime = 0;
+      this.scene.start("WinScene");
     });
 
     this.zkey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
@@ -611,28 +580,6 @@ class Level1 extends Phaser.Scene {
     });
   }
   CrearGusanos() {
-
-    let randomTime = Phaser.Math.Between(1000, 4000);
-    this.worm_sound1 = this.sound.add("worm_sound1");
-    this.worm_sound2 = this.sound.add("worm_sound2");
-    let sounds = [this.worm_sound1, this.worm_sound2];
-    let soundIndex = 0;
-
-    // Set an event to play the sound after the random time
-    this.time.addEvent({
-      delay: randomTime, // Delay in ms
-      callback: () => {
-        sounds[soundIndex].play({ volume: 2 });
-
-        // Toggle between 0 and 1 to alternate between worm_sound1 and worm_sound2
-        soundIndex = (soundIndex + 1) % sounds.length;  // Alternates between 0 and 1 (sequential)
-
-        // Optional: Add a new random time before the next sound
-        randomTime = Phaser.Math.Between(1500, 4000); // New random time
-      },
-      loop: true 
-    });
-
     // Grupo de gusanos
     this.worms = this.physics.add.group();
     let spacing = 2000;
@@ -653,8 +600,6 @@ class Level1 extends Phaser.Scene {
         worm.anims.play("worm_left");
       }
     }
-
-
     let spawnonthree = 0;
     // Gusanos en plataformas flotantes
     this.platformPositions.forEach((pos) => {
@@ -677,6 +622,27 @@ class Level1 extends Phaser.Scene {
     this.handlePlayerJump();
     this.applyGravity();
     this.updateWorms();
+    this.updateConsumibleHearts();
+    
+  }
+  updateConsumibleHearts(){
+    this.hearts.getChildren().forEach((heart) => { 
+      if (this.cameras.main.worldView.contains(heart.x, heart.y)) {
+          if (!heart.corazonesopacidad) { 
+              heart.corazonesopacidad = this.time.addEvent({
+                  delay: 300,
+                  callback: () => {
+                      heart.setAlpha(heart.alpha === 1 ? 0.3 : 1);
+                  },
+                  repeat: 15,
+              });
+
+              this.time.delayedCall(300 * 15, () => { 
+                  heart.destroy(); 
+              });
+          }
+      }
+  });
   }
 
   handlePlayerMovement() {
@@ -700,7 +666,7 @@ class Level1 extends Phaser.Scene {
     this.player.setVelocityX(0);
   }
 
-
+  
 
   handlePlayerJump() {
     if (
@@ -713,24 +679,15 @@ class Level1 extends Phaser.Scene {
   handleFood(player, food) {
     food.disableBody(true, true);
     this.updateScore(20);
-    this.popSound.play();
-
+    this.sound.play("pop");
   }
   handleHealth(player, heart) {
-    if (this.lives >= 3) {
-      this.lives=3;
-      this.updateScore(30);
-      this.popSound.play();
-    }
     if (this.lives < 3) {
       this.lives++;
-      this.popSound.play();
-      this.updateScore(30);
-      if (this.lives > 0 && this.heartSprites.length >= this.lives) {
-        this.heartSprites[this.lives - 1].setVisible(true);
-      }
+      this.heartSprites[this.lives - 1].setVisible(true);
     }
     heart.disableBody(true, true);
+    this.sound.play("pop");
   }
   applyGravity() {
     this.player.setGravityY(
@@ -757,7 +714,6 @@ class Level1 extends Phaser.Scene {
     if (this.attacking) {
       this.removeWorms();
     } else {
-
       this.reduceLives();
     }
   }
@@ -773,7 +729,7 @@ class Level1 extends Phaser.Scene {
 
   reduceLives() {
     this.lives--;
-    if (this.lives >= 0 && this.lives < this.heartSprites.length) this.heartSprites[this.lives].setVisible(false);
+    if (this.lives >= 0) this.heartSprites[this.lives].setVisible(false);
     this.playDeathSound();
     if (this.lives <= 0) {
       this.endGame();

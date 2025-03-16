@@ -165,12 +165,8 @@ class Level2 extends Phaser.Scene {
     });
   }
   CreateFood() {
-    this.popSound = this.sound.add("pop");
     this.food = this.physics.add.staticGroup();
     this.hearts = this.physics.add.staticGroup();
-    const HEART_TIME = 15000;
-    const HEART_BLINK_START = 8000;
-
 
     // crear comida arriba de cada plataforma
     if (this.selectedCharacter === "finn") {
@@ -187,20 +183,6 @@ class Level2 extends Phaser.Scene {
             let heart = this.hearts
               .create(pos.x, pos.y - 200, "heart")
               .setScale(2);
-            heart.setBounce(0);
-            this.time.delayedCall(HEART_TIME, () => {
-              heart.destroy();
-            });
-
-            this.time.delayedCall(HEART_BLINK_START, () => {
-              this.time.addEvent({
-                delay: 300, // Blink every 300ms
-                callback: () => {
-                  heart.setAlpha(heart.alpha === 1 ? 0.3 : 1);
-                },
-                repeat: 10 // 5 seconds
-              });
-            });
           }
         }
       });
@@ -220,19 +202,7 @@ class Level2 extends Phaser.Scene {
             .create(pos.x, pos.y - 200, "heart")
             .setScale(2);
           heart.setBounce(0);
-          this.time.delayedCall(HEART_TIME, () => {
-            heart.destroy();
-          });
-
-          this.time.delayedCall(HEART_BLINK_START, () => {
-            this.time.addEvent({
-              delay: 300, // Blink every 300ms
-              callback: () => {
-                heart.setAlpha(heart.alpha === 1 ? 0.3 : 1);
-              },
-              repeat: 10 // 5 seconds
-            });
-          });
+        
           }
         }
       });
@@ -883,7 +853,7 @@ class Level2 extends Phaser.Scene {
   handleFood(player, food) {
     food.disableBody(true, true);
     this.updateScore(20);
-    this.popSound.play();
+    this.sound.play("pop");
 
   }
   handleHealth(player, heart) {
@@ -1034,10 +1004,29 @@ class Level2 extends Phaser.Scene {
     this.updatePenguins();
     this.updateBoss();
     this.cameraBossLocked();
-
+    this.updateConsumibleHearts();
     if (this.gameOver) {
       return;
     }
+  }
+  updateConsumibleHearts(){
+    this.hearts.getChildren().forEach((heart) => { 
+      if (this.cameras.main.worldView.contains(heart.x, heart.y)) {
+          if (!heart.corazonesopacidad) { 
+              heart.corazonesopacidad = this.time.addEvent({
+                  delay: 300,
+                  callback: () => {
+                      heart.setAlpha(heart.alpha === 1 ? 0.3 : 1);
+                  },
+                  repeat: 8,
+              });
+
+              this.time.delayedCall(300 * 6, () => { 
+                  heart.destroy(); 
+              });
+          }
+      }
+  });
   }
 
   handleAttackBoss() {
