@@ -616,6 +616,8 @@ class Level2 extends Phaser.Scene {
         .setScrollFactor(0); // Posición y distancia entre los corazones
       this.heartSprites.push(heart);
     }
+    if (this.lives < this.heartSprites.length) this.lives = this.heartSprites.length; //hotfix
+
     let fecha = new Date();
     fecha = `${fecha.getFullYear()}-${fecha.getMonth() + 1}-${fecha.getDate()}`;
 
@@ -891,6 +893,9 @@ class Level2 extends Phaser.Scene {
       this.lives=3;
       this.updateScore(30);
       this.popSound.play();
+      if (this.lives > 0 && this.heartSprites.length >= this.lives) {
+        this.heartSprites[this.lives - 1].setVisible(true);
+    }    
     }
     if (this.lives < 3) {
       this.popSound.play();
