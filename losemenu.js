@@ -2,14 +2,18 @@ class LoseScene extends Phaser.Scene {
     constructor() {
         super({ key: 'LoseScene' });
     }   
-
+    preload(){
+        this.load.image('death_screen', 'assets/death_screen.png');
+    }
 
     create() {
-               this.add.text(620, 400, 'You lose!', {
+        this.add.image(800, 400, 'death_screen').setScale(1.7);  
+
+               this.add.text(620, 120, 'You lose!', {
             fontFamily: '"Press Start 2P", Arial',
             fontSize: '32px', fill: '#fff'
         });
-        this.add.text(380, 450, 'Press SPACE to go to menu', {
+        this.add.text(380, 150, 'Press SPACE to go to menu', {
             fontFamily: '"Press Start 2P", Arial',
             fontSize: '32px', fill: '#fff'
         });

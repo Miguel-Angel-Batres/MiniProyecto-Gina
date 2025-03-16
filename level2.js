@@ -89,7 +89,7 @@ class Level2 extends Phaser.Scene {
   preload() {
     this.LoadImages();
     this.LoadSprites();
-    this.LoadSounds(); 
+    this.LoadSounds();
 
 
     this.load.on("filecomplete", (key) => {
@@ -165,8 +165,13 @@ class Level2 extends Phaser.Scene {
     });
   }
   CreateFood() {
+    this.popSound = this.sound.add("pop");
     this.food = this.physics.add.staticGroup();
     this.hearts = this.physics.add.staticGroup();
+    const HEART_TIME = 15000;
+    const HEART_BLINK_START = 8000;
+
+
     // crear comida arriba de cada plataforma
     if (this.selectedCharacter === "finn") {
       this.platformPositions.forEach((pos) => {
@@ -183,6 +188,19 @@ class Level2 extends Phaser.Scene {
               .create(pos.x, pos.y - 200, "heart")
               .setScale(2);
             heart.setBounce(0);
+            this.time.delayedCall(HEART_TIME, () => {
+              heart.destroy();
+            });
+
+            this.time.delayedCall(HEART_BLINK_START, () => {
+              this.time.addEvent({
+                delay: 300, // Blink every 300ms
+                callback: () => {
+                  heart.setAlpha(heart.alpha === 1 ? 0.3 : 1);
+                },
+                repeat: 10 // 5 seconds
+              });
+            });
           }
         }
       });
@@ -195,13 +213,26 @@ class Level2 extends Phaser.Scene {
           if (random2 === 0) {
             let food = this.food
               .create(pos.x, pos.y - 200, "jake_cupcake")
-              .setScale(3);
+              .setScale(2);
             food.setBounce(0);
           } else {
             let heart = this.hearts
-              .create(pos.x, pos.y - 200, "heart")
-              .setScale(2);
-            heart.setBounce(0);
+            .create(pos.x, pos.y - 200, "heart")
+            .setScale(2);
+          heart.setBounce(0);
+          this.time.delayedCall(HEART_TIME, () => {
+            heart.destroy();
+          });
+
+          this.time.delayedCall(HEART_BLINK_START, () => {
+            this.time.addEvent({
+              delay: 300, // Blink every 300ms
+              callback: () => {
+                heart.setAlpha(heart.alpha === 1 ? 0.3 : 1);
+              },
+              repeat: 10 // 5 seconds
+            });
+          });
           }
         }
       });
@@ -575,6 +606,8 @@ class Level2 extends Phaser.Scene {
       fontSize: "32px",
       fill: "#000",
     });
+
+    
     this.livesText.setScrollFactor(0);
     this.heartSprites = [];
     for (let i = 0; i < this.lives; i++) {
@@ -599,6 +632,7 @@ class Level2 extends Phaser.Scene {
     this.setupUI();
     this.updateScore(this.score);
     this.setupInput();
+
     this.setupPhysics();
     this.setupAnimationEvents();
   }
@@ -610,6 +644,7 @@ class Level2 extends Phaser.Scene {
     this.input.keyboard.on("keydown-S", this.handleWin, this);
   }
 
+ 
   setupPhysics() {
     this.canAttack = true;
     this.icicles = this.physics.add.group();
@@ -822,11 +857,17 @@ class Level2 extends Phaser.Scene {
   handleFood(player, food) {
     food.disableBody(true, true);
     this.updateScore(20);
+    this.popSound.play();
+
   }
   handleHealth(player, heart) {
     if (this.lives < 3) {
+      this.popSound.play();
       this.lives++;
-      this.heartSprites[this.lives - 1].setVisible(true);
+      this.updateScore(30);
+      if (this.lives > 0 && this.heartSprites.length >= this.lives) {
+        this.heartSprites[this.lives - 1].setVisible(true);
+    }    
     }
     heart.disableBody(true, true);
   }
@@ -912,7 +953,7 @@ class Level2 extends Phaser.Scene {
         this.player.x = maxX;
       }
 
-      if(!this.crearcorazones ){
+      if (!this.crearcorazones) {
         this.crearcorazones = this.time.addEvent({
           delay: 10000,
           callback: () => {
@@ -925,8 +966,8 @@ class Level2 extends Phaser.Scene {
           loop: true,
         });
       }
-      
-      
+
+
       // Pinguinos tampoco se pueden salir de la pantalla
       this.flyingpenguins.children.iterate((penguin) => {
         if (penguin.x <= this.cameras.main.scrollX) {
